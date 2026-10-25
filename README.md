@@ -1,7 +1,7 @@
 # HAVEN 🏡
 
 > **Home Awaits, Vision Empowers Navigation.**  
-> Nền tảng khám phá và tìm kiếm bất động sản theo nhu cầu.
+> Nền tảng khám phá và tìm kiếm bất động sản theo nhu cầu người dùng.
 
 HAVEN là dự án web hướng tới việc hỗ trợ người dùng khám phá và tìm kiếm bất động sản theo nhu cầu. Repository hiện đang ở giai đoạn khởi tạo nền tảng kỹ thuật; các chức năng nghiệp vụ sẽ được bổ sung và cập nhật cùng tiến độ phát triển.
 
