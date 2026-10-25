@@ -43,3 +43,6 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+// Expose the entry point for WebApplicationFactory in integration tests.
+public partial class Program { }
