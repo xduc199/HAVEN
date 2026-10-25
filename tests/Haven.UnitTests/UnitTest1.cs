@@ -30,7 +30,8 @@ public sealed class ArchitectureTests
             .Select(element => (string?)element.Attribute("Include"))
             .Where(include => !string.IsNullOrWhiteSpace(include))
             .Select(include =>
-                Path.GetFileNameWithoutExtension(include))
+                Path.GetFileNameWithoutExtension(
+                    include!.Replace('\\', '/')))
             .ToHashSet(StringComparer.Ordinal);
 
         Assert.Contains("Haven.Domain", references);
