@@ -1,0 +1,84 @@
+name: "🐛 Báo cáo lỗi"
+description: "Báo cáo lỗi có thể tái hiện trong HAVEN."
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã báo lỗi. Hãy cung cấp thông tin thực tế và không đăng mật khẩu, token, dữ liệu cá nhân hoặc thông tin xác thực.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Mô tả lỗi
+      description: Nêu ngắn gọn điều gì đang xảy ra.
+      placeholder: Khi tôi ..., hệ thống ...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Các bước tái hiện
+      description: Liệt kê từng bước đủ rõ để người khác tái hiện lỗi.
+      placeholder: |
+        1. Mở ...
+        2. Chọn ...
+        3. Quan sát ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Kết quả mong đợi
+      description: Hệ thống đáng lẽ phải làm gì?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Kết quả thực tế
+      description: Điều gì đã xảy ra? Đính kèm thông báo lỗi hoặc log đã loại bỏ thông tin nhạy cảm nếu có.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Khu vực liên quan
+      description: Chọn khu vực phù hợp nhất.
+      options:
+        - Giao diện / MVC
+        - Application
+        - Domain
+        - Infrastructure / Entity Framework Core
+        - Database / SQL Server
+        - Build / CI
+        - Cấu hình môi trường
+        - Chưa xác định
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Môi trường
+      description: Ví dụ .NET SDK, Windows, trình duyệt hoặc commit/nhánh liên quan.
+      placeholder: ".NET SDK 10.0.401, Windows 11, branch develop"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log hoặc ảnh chụp (không bắt buộc)
+      description: Chỉ cung cấp phần liên quan và xóa secrets/dữ liệu cá nhân trước khi gửi.
+      render: text
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Xác nhận
+      options:
+        - label: Tôi đã tìm kiếm issue hiện có để tránh tạo báo cáo trùng.
+          required: true
+        - label: Tôi đã loại bỏ mật khẩu, token, API key và dữ liệu nhạy cảm khỏi nội dung đính kèm.
+          required: true

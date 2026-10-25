@@ -1,0 +1,83 @@
+name: "✨ Đề xuất tính năng"
+description: "Đề xuất cải tiến hoặc tính năng mới cho HAVEN."
+title: "[FEATURE] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hãy tập trung vào nhu cầu cần giải quyết và kết quả mong muốn. Chưa cần chỉ định giải pháp kỹ thuật nếu chưa có đủ căn cứ.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vấn đề hoặc nhu cầu
+      description: Ai gặp vấn đề gì? Trong tình huống nào?
+      placeholder: Người dùng cần ...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Giải pháp đề xuất
+      description: Mô tả cách cải thiện mà bạn hình dung. Có thể ghi "chưa xác định" nếu cần cùng phân tích.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Giá trị mang lại
+      description: Tính năng giúp người dùng hoặc nhóm phát triển điều gì?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Tiêu chí chấp nhận
+      description: Liệt kê các kết quả có thể kiểm tra để xác nhận tính năng hoàn thành.
+      placeholder: |
+        - [ ] Khi ..., hệ thống ...
+        - [ ] Nếu ..., hệ thống ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Khu vực dự kiến ảnh hưởng
+      options:
+        - Giao diện / MVC
+        - Application
+        - Domain
+        - Infrastructure / Entity Framework Core
+        - Database / SQL Server
+        - CI / Developer Experience
+        - Chưa xác định
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Mức độ ưu tiên đề xuất
+      description: Nhóm sẽ xác nhận lại mức ưu tiên sau khi đánh giá.
+      options:
+        - P1 - Cao, ảnh hưởng lớn hoặc cần sớm
+        - P2 - Trung bình
+        - P3 - Thấp, có thể cân nhắc sau
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Phương án khác hoặc thông tin bổ sung (không bắt buộc)
+      description: Có thể nêu ví dụ, giới hạn, phụ thuộc hoặc cách giải quyết khác.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Xác nhận
+      options:
+        - label: Tôi đã tìm kiếm issue hiện có để tránh đề xuất trùng lặp.
+          required: true
+        - label: Đây là mô tả nhu cầu; phạm vi và thiết kế kỹ thuật sẽ được xác nhận trước khi triển khai.
+          required: true
