@@ -1,0 +1,26 @@
+﻿# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# Build outputs
+**/bin/
+**/obj/
+.vs/
+# Visual Studio
+*.user
+*.suo
+# Build and test outputs
+TestResults/
+# Logs
+*.log
+# Local databases and user files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+# IDE and operating system
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini
