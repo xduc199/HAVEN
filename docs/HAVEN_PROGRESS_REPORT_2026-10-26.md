@@ -3,7 +3,8 @@
 **Ngày báo cáo:** 26/10/2026  
 **Giai đoạn:** Thiết lập nền tảng kỹ thuật và chuẩn bị phát triển Backend  
 **Repository:** `xduc199/HAVEN`  
-**Nhánh tích hợp:** `develop`
+**Nhánh tích hợp:** `develop`  
+**Commit `develop` đã kiểm thử tại máy:** `0c666d5`
 
 ---
 
@@ -37,11 +38,11 @@ Trong giai đoạn hiện tại, mục tiêu chính là xây dựng nền tảng
 | ORM dự kiến | Entity Framework Core 10 | Đã khai báo package hạ tầng |
 | Cơ sở dữ liệu | SQL Server 2022 Developer | Đã có cấu hình Docker Compose |
 | Container | Docker Compose | Đã có cấu hình |
-| API documentation | OpenAPI | Đã cấu hình trên máy phát triển |
-| API explorer | Scalar.AspNetCore | Đã cấu hình và người dùng xác nhận PASS |
+| API documentation | OpenAPI | Đã cấu hình trong ứng dụng |
+| API explorer | Scalar.AspNetCore | Đã cấu hình; người dùng xác nhận PASS |
 | Unit testing | xUnit | Đã có project kiểm thử |
 | Integration testing | xUnit | Đã có project kiểm thử |
-| CI | GitHub Actions | Đã có workflow |
+| CI | GitHub Actions | Đã có workflow; PR sửa lỗi kiểm thử Linux đã pass theo xác nhận của người dùng |
 | Quản lý mã nguồn | Git và GitHub | Đang sử dụng |
 
 ### 2.2. Cấu trúc solution
@@ -75,7 +76,7 @@ HAVEN/
 - **Haven.Domain:** Dự kiến chứa mô hình miền nghiệp vụ, thực thể và quy tắc cốt lõi. Entity chính thức cần được xác định trong giai đoạn phân tích và thiết kế.
 - **Haven.Application:** Dự kiến chứa use case, DTO, interface và logic điều phối nghiệp vụ. Chưa xác nhận có use case bất động sản hoàn chỉnh.
 - **Haven.Infrastructure:** Dự kiến triển khai truy cập dữ liệu và tích hợp kỹ thuật. Đã có `ApplicationDbContext` và package Entity Framework Core, nhưng chưa xác nhận cấu hình database hoàn chỉnh.
-- **Haven.Web:** Điểm vào của ứng dụng ASP.NET Core MVC. Đã có cấu hình MVC, middleware và định tuyến trang web. Scalar/OpenAPI được bổ sung để phục vụ giai đoạn phát triển API.
+- **Haven.Web:** Điểm vào của ứng dụng ASP.NET Core MVC. Đã có cấu hình MVC, middleware và định tuyến trang web. Scalar/OpenAPI được cấu hình để phục vụ giai đoạn phát triển API.
 
 ## 3. Kết quả đã hoàn thành
 
@@ -105,34 +106,42 @@ Kết quả được cung cấp:
 dotnet build HAVEN.slnx --configuration Release
 ```
 
-Kết quả người dùng cung cấp: `Build succeeded`. Cả sáu project được build thành công.
+Kết quả được cung cấp trước đó: `Build succeeded`. Cả sáu project được build thành công.
 
-Kết quả này xác nhận mã nguồn hiện tại trên máy phát triển vượt qua bước biên dịch Release; không tự chứng minh các chức năng nghiệp vụ hoặc kết nối database hoạt động.
+Trong lần kiểm tra mới nhất, lệnh `dotnet test HAVEN.slnx --configuration Release` cũng tự thực hiện build và kết thúc với `Build succeeded`.
+
+Kết quả này xác nhận mã nguồn tại commit `0c666d5` trên máy phát triển vượt qua bước biên dịch Release; không tự chứng minh các chức năng nghiệp vụ hoặc kết nối database hoạt động.
+
+**Trạng thái: PASS.**
 
 ### 3.3. Chạy kiểm thử
 
-Đã chạy:
+Trước đó, báo cáo ghi nhận kết quả kiểm thử ban đầu là 2/2. Sau khi cập nhật kiểm thử kiến trúc để xử lý dấu phân cách đường dẫn trên Linux, kết quả mới nhất đã được xác nhận bằng lệnh:
 
 ```powershell
-dotnet test HAVEN.slnx --configuration Release --no-build
+dotnet test HAVEN.slnx --configuration Release
 ```
 
-Kết quả:
+Kết quả thực tế:
 
-| Chỉ số | Kết quả |
+| Chỉ số | Kết quả mới nhất |
 |---|---:|
-| Tổng số test | 2 |
-| Thành công | 2 |
+| Tổng số test | 5 |
+| Thành công | 5 |
 | Thất bại | 0 |
 | Bị bỏ qua | 0 |
+| Thời gian kiểm thử được báo cáo | 2,8 giây |
+| Build | Thành công |
 
-**Trạng thái: PASS về mặt thực thi kiểm thử.**
+**Trạng thái: PASS — 5/5 test tại máy phát triển.**
 
-Hai file kiểm thử hiện tại vẫn là test mẫu rỗng, chưa có assertion kiểm tra hành vi nghiệp vụ thực tế. Không nên diễn giải kết quả này thành việc toàn bộ logic HAVEN đã được kiểm thử.
+Các bài kiểm thử hiện có đã chạy thành công, bao gồm kiểm thử kiến trúc và Integration Tests. Tuy nhiên, số lượng test vẫn còn ít và chưa đủ để chứng minh toàn bộ logic nghiệp vụ HAVEN đã được kiểm thử.
+
+Không nên diễn giải kết quả 5/5 thành việc tất cả chức năng nghiệp vụ đã hoàn thành.
 
 ### 3.4. Scalar và OpenAPI
 
-Đã cấu hình trên máy phát triển:
+Đã cấu hình trong ứng dụng:
 
 - Package `Scalar.AspNetCore`.
 - OpenAPI thông qua `AddOpenApi()`.
@@ -140,14 +149,25 @@ Hai file kiểm thử hiện tại vẫn là test mẫu rỗng, chưa có assert
 - Giao diện Scalar thông qua `MapScalarApiReference()`.
 - Giới hạn việc hiển thị tài liệu API trong môi trường Development.
 
+Cấu hình tiêu đề giao diện Scalar:
+
+```csharp
+app.MapScalarApiReference(options =>
+{
+    options.WithTitle("HAVEN API");
+});
+```
+
 Địa chỉ dự kiến theo launch profile HTTP:
 
 - Scalar: `http://localhost:5104/scalar`
 - OpenAPI JSON: `http://localhost:5104/openapi/v1.json`
 
-Người dùng xác nhận bước cấu hình đã PASS.
+Các địa chỉ này dựa trên cấu hình launch profile hiện có. Muốn truy cập được, ứng dụng phải đang chạy.
 
-**Lưu ý về GitHub:** Cần xác nhận các thay đổi Scalar mới đã được commit và push trước khi coi chúng là một phần của nhánh `develop`.
+Người dùng đã xác nhận bước cấu hình Scalar/OpenAPI PASS.
+
+**Lưu ý về GitHub:** Các thay đổi Scalar cần được coi là đã tích hợp vào `develop` khi chúng xuất hiện trong mã nguồn của nhánh đó. Không mặc định các thay đổi local khác đã được commit hoặc push nếu chưa kiểm tra.
 
 ### 3.5. Docker Compose và SQL Server
 
@@ -165,16 +185,18 @@ File `.gitignore` đã loại trừ `.env` và các file đầu ra build phổ b
 
 **Trạng thái:** Đã có cấu hình trong repository. Chưa có bằng chứng xác nhận container đang chạy, ứng dụng kết nối thành công hoặc database đã được khởi tạo.
 
+Việc kiểm tra Docker, kết nối database và migration chưa phải ưu tiên của giai đoạn hiện tại.
+
 ### 3.6. Tài liệu và quy trình phát triển
 
 Các tài liệu đã được tích hợp vào `develop` qua Pull Request trước đó:
 
-- `docs/WORKFLOW.md`: quy trình nhận nhiệm vụ, phân tích, tạo nhánh, kiểm thử, mở Pull Request và tích hợp.
-- `docs/ARCHITECTURE.md`: mô tả kiến trúc hiện tại dựa trên cấu trúc project và cấu hình thực tế.
+- `docs/WORKFLOW.md`: Quy trình nhận nhiệm vụ, phân tích, tạo nhánh, kiểm thử, mở Pull Request và tích hợp.
+- `docs/ARCHITECTURE.md`: Mô tả kiến trúc hiện tại dựa trên cấu trúc project và cấu hình thực tế.
 
 Các tài liệu nhấn mạnh việc đọc mã nguồn trước khi sửa, kiểm tra diff, chạy test và không tự giả định những chức năng chưa tồn tại.
 
-**Trạng thái: Đã có trên nhánh `develop`.**
+**Trạng thái: Đã có trên nhánh `develop` theo lịch sử làm việc đã ghi nhận.**
 
 ### 3.7. CI trên GitHub
 
@@ -188,11 +210,17 @@ Workflow `.github/workflows/ci.yml` đã được cấu hình để:
 
 Workflow được thiết lập cho các sự kiện push và Pull Request nhắm tới `main` hoặc `develop`.
 
-**Trạng thái:** Đã có cấu hình. Chưa xác nhận một lượt chạy GitHub Actions cụ thể đã thành công.
+Trong quá trình kiểm thử, một lỗi tương thích đường dẫn trên Linux xuất hiện ở kiểm thử kiến trúc. Lỗi này đã được xử lý trong PR #14.
+
+Theo xác nhận của người dùng, **PR #14 đã pass CI**. Sau đó, thay đổi được kéo về local thông qua `git pull origin develop`; kết quả kiểm thử tại máy đạt 5/5.
+
+**Trạng thái: Đã có workflow; PR sửa lỗi kiểm thử Linux đã pass theo xác nhận của người dùng.**
 
 ### 3.8. Lệnh chạy ứng dụng
 
-Đã thống nhất dùng file `run.ps1` tại thư mục gốc để chạy ứng dụng nhanh hơn. Nội dung đề xuất:
+Đã thống nhất sử dụng file `run.ps1` tại thư mục gốc để chạy ứng dụng thuận tiện hơn.
+
+Nội dung đề xuất:
 
 ```powershell
 $ErrorActionPreference = "Stop"
@@ -212,16 +240,54 @@ Chạy từ thư mục gốc:
 .\run.ps1
 ```
 
-**Trạng thái:** Nội dung đã được thống nhất trong quá trình làm việc; cần xác nhận file đã được tạo, kiểm thử và đưa lên GitHub.
+**Trạng thái:** Nội dung đã được thống nhất trong quá trình làm việc; chưa xác nhận file `run.ps1` đã được tạo, kiểm thử và đưa lên GitHub.
+
+Không coi hạng mục này là hoàn thành cho đến khi kiểm tra trực tiếp file và trạng thái Git.
+
+### 3.9. Đồng bộ mã nguồn sau PR #14
+
+Người dùng đã chạy:
+
+```powershell
+git switch develop
+git pull origin develop
+dotnet test HAVEN.slnx --configuration Release
+```
+
+Kết quả cho thấy:
+
+```text
+ebe253c..0c666d5  develop -> origin/develop
+Updating ebe253c..0c666d5
+Fast-forward
+tests/Haven.UnitTests/UnitTest1.cs | 5 +++--
+```
+
+Sau đó, build và kiểm thử hoàn tất với:
+
+```text
+Test summary: total: 5, failed: 0, succeeded: 5, skipped: 0
+Build succeeded
+```
+
+**Trạng thái: PASS.** Thay đổi kiểm thử kiến trúc đã được đồng bộ vào `develop` và xác minh thành công tại máy phát triển.
+
+Trong Integration Tests vẫn xuất hiện cảnh báo:
+
+```text
+Failed to determine the https port for redirect.
+```
+
+Cảnh báo này không làm bài kiểm thử thất bại. Đây là vấn đề cấu hình HTTPS trong môi trường kiểm thử cần xem xét riêng nếu có yêu cầu kiểm thử chuyển hướng HTTPS; hiện tại chưa cần ưu tiên xử lý.
 
 ## 4. Trạng thái Backend
 
-HAVEN hiện vẫn ở giai đoạn nền tảng kỹ thuật.
+HAVEN hiện vẫn ở giai đoạn nền tảng kỹ thuật và chuẩn bị phân tích nghiệp vụ.
 
 | Thành phần | Trạng thái thực tế |
 |---|---|
 | ASP.NET Core MVC | Đã có khung ứng dụng |
-| Scalar/OpenAPI | Đã cấu hình trên máy phát triển |
+| Scalar/OpenAPI | Đã cấu hình trong ứng dụng |
 | API nghiệp vụ bất động sản | Chưa triển khai |
 | Entity miền nghiệp vụ chính thức | Chưa xác nhận |
 | Use case và DTO nghiệp vụ | Chưa xác nhận |
@@ -240,32 +306,45 @@ Scalar là công cụ hiển thị tài liệu và gửi request HTTP. Giao di�
 
 Repository sử dụng hai nhánh chính:
 
-- `main`: nhánh ổn định.
-- `develop`: nhánh tích hợp.
+- `main`: Nhánh ổn định.
+- `develop`: Nhánh tích hợp.
 
 Quy trình là tạo nhánh công việc từ `develop`, thực hiện thay đổi, kiểm thử, push nhánh và mở Pull Request.
 
-Các Pull Request trước đây đã được merge vào `develop`, bao gồm:
+Các Pull Request trước đây đã được ghi nhận merge vào `develop`, bao gồm:
 
 - PR #2: README và hướng dẫn đóng góp.
-- PR #4: issue templates.
-- PR #6: tài liệu quy trình phát triển.
-- PR #8: tài liệu kiến trúc hiện tại.
+- PR #4: Issue templates.
+- PR #6: Tài liệu quy trình phát triển.
+- PR #8: Tài liệu kiến trúc hiện tại.
 
-Trạng thái đã ghi nhận trước đó: `develop` đồng bộ với `origin/develop` tại commit `efdcd66d5d2675d1af09e4486c603c0666610304`.
+PR #14 sửa kiểm thử kiến trúc để xử lý dấu phân cách đường dẫn đa nền tảng. Theo xác nhận của người dùng, PR đã pass CI. Sau khi cập nhật local, nhánh `develop` được fast-forward từ `ebe253c` lên `0c666d5`; bộ kiểm thử đạt 5/5.
 
-Đối với thay đổi Scalar và `run.ps1`, cần kiểm tra trạng thái local và tạo Pull Request mới. Không coi những thay đổi này đã được push nếu chúng chưa xuất hiện trên GitHub.
+Không kết luận trạng thái của những thay đổi local khác như `run.ps1` nếu chưa kiểm tra trực tiếp working tree và GitHub.
+
+### Quy trình làm việc thống nhất
+
+1. Đồng bộ `develop`.
+2. Tạo nhánh công việc có tên phù hợp với nhiệm vụ.
+3. Chỉ sửa các file nằm trong phạm vi nhiệm vụ.
+4. Kiểm tra diff và chạy các bài kiểm thử liên quan.
+5. Commit và push nhánh công việc.
+6. Mở Pull Request vào `develop`.
+7. Chờ CI và review.
+8. Chỉ merge khi đã được xem xét và chấp thuận.
 
 ## 6. Hạng mục còn tồn tại
 
 ### Ưu tiên 1 — Chốt cấu hình nền tảng
 
-- Đưa thay đổi Scalar/OpenAPI lên GitHub.
-- Đưa file `run.ps1` lên GitHub.
+- Kiểm tra trạng thái tích hợp Scalar/OpenAPI trên GitHub.
+- Xác nhận file `run.ps1` đã được tạo, kiểm thử và đưa lên GitHub hay chưa.
 - Lưu báo cáo này trong `docs/`.
 - Kiểm tra diff và trạng thái working tree.
-- Chạy lại build và test sau thay đổi cuối.
+- Chạy lại build và test sau các thay đổi cuối.
 - Xác nhận CI trên Pull Request.
+
+Các mục này cần được kiểm tra theo trạng thái thực tế, không mặc định là đã hoàn thành.
 
 ### Ưu tiên 2 — Chuẩn bị Backend
 
@@ -273,8 +352,10 @@ Trạng thái đã ghi nhận trước đó: `develop` đồng bộ với `origi
 - Phân tích mô hình dữ liệu.
 - Thiết kế entity và quan hệ dữ liệu.
 - Hoàn thiện Dependency Injection giữa các tầng.
-- Xác định và triển khai cấu hình database phù hợp.
+- Xác định cấu hình database phù hợp.
 - Thiết lập migration đầu tiên sau khi mô hình dữ liệu được thống nhất.
+
+Việc kiểm tra hoặc hoàn thiện SQL Server không phải ưu tiên bắt buộc ngay lúc này. Trước hết cần làm rõ yêu cầu và mô hình nghiệp vụ để tránh thiết kế database dựa trên giả định chưa được thống nhất.
 
 ### Ưu tiên 3 — Phát triển nghiệp vụ
 
@@ -298,10 +379,19 @@ Danh sách trên là định hướng dự kiến, không phải cam kết rằn
 
 ## 7. Kết luận
 
-HAVEN đã hoàn thành phần lớn công việc thiết lập nền tảng ban đầu: chuẩn hóa SDK, tổ chức solution, chuẩn bị Docker Compose, tài liệu hóa quy trình và kiến trúc, thiết lập CI, đồng thời cấu hình Scalar/OpenAPI trên máy phát triển.
+HAVEN đã hoàn thành phần lớn công việc thiết lập nền tảng ban đầu: chuẩn hóa SDK, tổ chức solution, chuẩn bị Docker Compose, tài liệu hóa quy trình và kiến trúc, thiết lập CI, đồng thời cấu hình Scalar/OpenAPI trong ứng dụng.
 
-Kết quả build và test local đã được người dùng xác nhận thành công. Tuy nhiên, số lượng test còn ít và chưa kiểm tra nghiệp vụ thực tế. Kết nối database, migrations, API nghiệp vụ và xác thực vẫn là các hạng mục cần triển khai sau.
+Kết quả mới nhất được người dùng xác nhận:
 
-**Trạng thái phù hợp của dự án: HOÀN THÀNH GIAI ĐOẠN THIẾT LẬP NỀN TẢNG BAN ĐẦU — SẴN SÀNG CHUYỂN SANG GIAI ĐOẠN PHÂN TÍCH VÀ PHÁT TRIỂN BACKEND.**
+- Nhánh `develop` đã được cập nhật từ `origin/develop` đến commit `0c666d5`.
+- Build Release thành công.
+- Unit Tests và Integration Tests đều chạy thành công.
+- Tổng cộng **5/5 test pass, 0 test thất bại**.
+- PR #14 đã pass CI theo xác nhận của người dùng.
+- Cảnh báo HTTPS vẫn xuất hiện trong Integration Tests nhưng không làm bài kiểm thử thất bại.
 
-Trước khi đóng sổ hoàn toàn trên GitHub, cần tích hợp các thay đổi local cuối cùng vào một Pull Request, xác nhận CI và cập nhật trạng thái sau khi merge.
+Tuy nhiên, phạm vi test còn nhỏ và chưa kiểm tra đầy đủ nghiệp vụ thực tế. Kết nối database, migrations, API nghiệp vụ và xác thực vẫn là những hạng mục cần triển khai hoặc xác minh ở các giai đoạn sau.
+
+**Trạng thái phù hợp của dự án: HOÀN THÀNH GIAI ĐOẠN THIẾT LẬP NỀN TẢNG KỸ THUẬT BAN ĐẦU — SẴN SÀNG CHUYỂN SANG GIAI ĐOẠN PHÂN TÍCH YÊU CẦU VÀ THIẾT KẾ BACKEND.**
+
+Trước khi đóng sổ hoàn toàn trên GitHub, cần tích hợp các thay đổi local còn lại vào Pull Request phù hợp, xác nhận CI và cập nhật trạng thái sau khi merge.
