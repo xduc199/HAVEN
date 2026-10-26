@@ -1,3 +1,8 @@
+﻿using Haven.Application.Abstractions;
+using Haven.Application.Listings;
+using Haven.Infrastructure.Context;
+using Haven.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +12,25 @@ builder.Services.AddControllersWithViews();
 
 // OpenAPI
 builder.Services.AddOpenApi();
+
+// Database
+var connectionString =
+    builder.Configuration.GetConnectionString("HavenDb");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "Connection string 'HavenDb' was not configured.");
+}
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Listing services
+builder.Services.AddScoped<IListingRepository, EfListingRepository>();
+builder.Services.AddScoped<IPropertyTypeRepository, EfPropertyTypeRepository>();
+builder.Services.AddScoped<ListingApplicationService>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 var app = builder.Build();
 
@@ -25,7 +49,7 @@ app.UseAuthorization();
 // Static assets
 app.MapStaticAssets();
 
-// OpenAPI và Scalar chỉ bật trong Development
+// OpenAPI and Scalar only in Development
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
