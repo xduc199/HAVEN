@@ -66,6 +66,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapControllers();
+
 app.Run();
 
 // Expose the entry point for WebApplicationFactory in integration tests.

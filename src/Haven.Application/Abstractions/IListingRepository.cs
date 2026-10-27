@@ -8,6 +8,10 @@ public interface IListingRepository
         int id,
         CancellationToken cancellationToken = default);
 
+    Task<Listing?> GetPublicByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(
         Listing listing,
         CancellationToken cancellationToken = default);
