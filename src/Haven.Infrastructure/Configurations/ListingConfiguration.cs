@@ -15,23 +15,23 @@ public sealed class ListingConfiguration
 
         builder.Property(x => x.OwnerId)
             .IsRequired()
-            .HasMaxLength(450);
+            .HasMaxLength(Listing.OwnerIdMaxLength);
 
         builder.Property(x => x.PropertyTypeId)
             .IsRequired();
 
-	builder.HasOne<PropertyType>()
-    .WithMany()
-    .HasForeignKey(x => x.PropertyTypeId)
-    .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<PropertyType>()
+            .WithMany()
+            .HasForeignKey(x => x.PropertyTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(x => x.Title)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(Listing.TitleMaxLength);
 
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(5000);
+            .HasMaxLength(Listing.DescriptionMaxLength);
 
         builder.Property(x => x.Purpose)
             .HasConversion<int>()
@@ -47,15 +47,15 @@ public sealed class ListingConfiguration
 
         builder.Property(x => x.Province)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(Listing.ProvinceMaxLength);
 
         builder.Property(x => x.District)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(Listing.DistrictMaxLength);
 
         builder.Property(x => x.AddressLine)
             .IsRequired()
-            .HasMaxLength(300);
+            .HasMaxLength(Listing.AddressLineMaxLength);
 
         builder.Property(x => x.Bedrooms);
 
@@ -76,7 +76,7 @@ public sealed class ListingConfiguration
         builder.Property(x => x.ApprovedAtUtc);
 
         builder.Property(x => x.RejectionReason)
-            .HasMaxLength(1000);
+            .HasMaxLength(Listing.RejectionReasonMaxLength);
 
         builder.HasIndex(x => x.OwnerId);
 
