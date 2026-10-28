@@ -21,4 +21,20 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    public IActionResult MuaBan()
+{
+    ViewData["Title"] = "Mua bán bất động sản";
+    return View();
+}
+
+public IActionResult ChoThue()
+{
+    return View();
+}
+
+public IActionResult DuAn()
+{
+    return View();
+}
+
 }

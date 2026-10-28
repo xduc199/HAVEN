@@ -1,0 +1,301 @@
+
+@{
+    ViewData["Title"] = "Dự án bất động sản";
+}
+
+<main class="haven-sale-page haven-project-page">
+
+    <!-- BANNER -->
+    <section class="haven-project-hero">
+        <div class="haven-project-hero__content">
+            <span class="haven-sale-eyebrow">
+                HAVEN PROPERTY COLLECTION
+            </span>
+
+            <h1>Khám phá dự án<br />xứng tầm tương lai</h1>
+
+            <p>
+                Khám phá những khu đô thị, căn hộ và không gian sống
+                được tuyển chọn dành cho nhu cầu an cư và đầu tư.
+            </p>
+
+            <a href="#danh-sach-du-an"
+               class="haven-project-button">
+                Khám phá dự án <span>→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- GIỚI THIỆU -->
+    <section class="haven-project-intro">
+        <div>
+            <span class="haven-sale-eyebrow">LỰA CHỌN CỦA BẠN</span>
+            <h2>Không gian sống<br />mở ra những giá trị mới</h2>
+        </div>
+
+        <p>
+            Từ căn hộ hiện đại đến những khu đô thị quy hoạch đồng bộ,
+            HAVEN giúp bạn khám phá thông tin dự án và lựa chọn
+            không gian phù hợp với mục tiêu của mình.
+        </p>
+    </section>
+
+    <!-- TÌM KIẾM DỰ ÁN -->
+    <section class="haven-project-search">
+        <form method="get"
+              asp-controller="Home"
+              asp-action="DuAn">
+
+            <div class="haven-project-search__field">
+                <label for="projectKeyword">Tên dự án</label>
+                <input id="projectKeyword"
+                       name="keyword"
+                       type="search"
+                       placeholder="Nhập tên dự án..." />
+            </div>
+
+            <div class="haven-project-search__field">
+                <label for="projectLocation">Khu vực</label>
+                <select id="projectLocation" name="location">
+                    <option value="">Tất cả khu vực</option>
+                    <option value="ha-noi">Hà Nội</option>
+                    <option value="ho-chi-minh">TP. Hồ Chí Minh</option>
+                    <option value="da-nang">Đà Nẵng</option>
+                    <option value="binh-duong">Bình Dương</option>
+                    <option value="nghe-an">Nghệ An</option>
+                </select>
+            </div>
+
+            <div class="haven-project-search__field">
+                <label for="projectType">Loại hình</label>
+                <select id="projectType" name="type">
+                    <option value="">Tất cả loại hình</option>
+                    <option value="apartment">Căn hộ</option>
+                    <option value="urban">Khu đô thị</option>
+                    <option value="villa">Biệt thự</option>
+                    <option value="resort">Nghỉ dưỡng</option>
+                </select>
+            </div>
+
+            <button type="submit" class="haven-project-button">
+                Tìm dự án
+            </button>
+        </form>
+    </section>
+
+    <!-- DANH SÁCH DỰ ÁN -->
+    <section class="haven-project-list" id="danh-sach-du-an">
+
+        <div class="haven-project-heading">
+            <div>
+                <span class="haven-sale-eyebrow">KHÔNG GIAN TIỀM NĂNG</span>
+                <h2>Dự án bất động sản nổi bật</h2>
+                <p>
+                    Khám phá các dự án tiêu biểu qua hình ảnh và thông tin tổng quan.
+                </p>
+            </div>
+
+            <select aria-label="Sắp xếp dự án">
+                <option>Dự án nổi bật</option>
+                <option>Tên dự án A–Z</option>
+                <option>Quy mô lớn</option>
+            </select>
+        </div>
+
+        <div class="haven-project-grid">
+
+            <!-- DỰ ÁN 1 -->
+            <article class="haven-project-card haven-project-card--featured">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=1200&amp;q=85"
+                        alt="Không gian kiến trúc nhà ở cao cấp" />
+                    <span class="haven-project-status">DỰ ÁN NỔI BẬT</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">KHU ĐÔ THỊ</span>
+                    <h3>Không gian đô thị xanh</h3>
+                    <p class="haven-project-location">TP. Hồ Chí Minh</p>
+
+                    <div class="haven-project-meta">
+                        <span>Quy hoạch đồng bộ</span>
+                        <span>Không gian xanh</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- DỰ ÁN 2 -->
+            <article class="haven-project-card">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                        alt="Kiến trúc và nội thất căn hộ hiện đại" />
+                    <span class="haven-project-status">CĂN HỘ</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">CĂN HỘ CAO CẤP</span>
+                    <h3>Không gian sống hiện đại</h3>
+                    <p class="haven-project-location">Hà Nội</p>
+
+                    <div class="haven-project-meta">
+                        <span>Căn hộ</span>
+                        <span>Tiện nghi hiện đại</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- DỰ ÁN 3 -->
+            <article class="haven-project-card">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                        alt="Nhà ở hiện đại với thiết kế kiến trúc tinh tế" />
+                    <span class="haven-project-status">NHÀ Ở</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">NHÀ PHỐ</span>
+                    <h3>Không gian an cư gia đình</h3>
+                    <p class="haven-project-location">Đà Nẵng</p>
+
+                    <div class="haven-project-meta">
+                        <span>Nhà phố</span>
+                        <span>Thiết kế hiện đại</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- DỰ ÁN 4 -->
+            <article class="haven-project-card">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                        alt="Không gian biệt thự sang trọng" />
+                    <span class="haven-project-status">BIỆT THỰ</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">BIỆT THỰ</span>
+                    <h3>Không gian riêng tư đẳng cấp</h3>
+                    <p class="haven-project-location">Bình Dương</p>
+
+                    <div class="haven-project-meta">
+                        <span>Biệt thự</span>
+                        <span>Không gian riêng</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- DỰ ÁN 5 -->
+            <article class="haven-project-card">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                        alt="Kiến trúc công trình bất động sản hiện đại" />
+                    <span class="haven-project-status">KIẾN TRÚC HIỆN ĐẠI</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">CĂN HỘ</span>
+                    <h3>Dự án căn hộ tiện nghi</h3>
+                    <p class="haven-project-location">TP. Hồ Chí Minh</p>
+
+                    <div class="haven-project-meta">
+                        <span>Căn hộ</span>
+                        <span>Thiết kế hiện đại</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- DỰ ÁN 6 -->
+            <article class="haven-project-card">
+                <a href="#tu-van-du-an" class="haven-project-card__image">
+                    <img
+                        src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                        alt="Không gian nhà ở cao cấp với thiết kế tối giản" />
+                    <span class="haven-project-status">KHÔNG GIAN XANH</span>
+                </a>
+
+                <div class="haven-project-card__body">
+                    <span class="haven-project-type">KHU ĐÔ THỊ</span>
+                    <h3>Không gian sống gần thiên nhiên</h3>
+                    <p class="haven-project-location">Nghệ An</p>
+
+                    <div class="haven-project-meta">
+                        <span>Khu đô thị</span>
+                        <span>Không gian xanh</span>
+                    </div>
+
+                    <div class="haven-project-card__footer">
+                        <div>
+                            <small>Thông tin giá</small>
+                            <strong>Liên hệ tư vấn</strong>
+                        </div>
+                        <a href="#tu-van-du-an">Khám phá →</a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- LIÊN HỆ -->
+    <section class="haven-sale-contact" id="tu-van-du-an">
+        <div>
+            <span class="haven-sale-eyebrow">HAVEN PROPERTY</span>
+            <h2>Cùng bạn chọn đúng dự án</h2>
+            <p>
+                Liên hệ với HAVEN để được hỗ trợ tìm hiểu thông tin
+                và lựa chọn dự án phù hợp với nhu cầu.
+            </p>
+        </div>
+
+        <a href="mailto:contact@haven.vn"
+           class="haven-sale-contact__button">
+            Nhận tư vấn →
+        </a>
+    </section>
+
+</main>

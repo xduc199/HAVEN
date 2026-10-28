@@ -1,8 +1,586 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿
+@{
+    ViewData["Title"] = "Haven - Không gian sống đẳng cấp";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="haven-hero">
+    <div class="container">
+        <div class="haven-hero__content">
+
+            <p class="haven-hero__eyebrow">
+                KHÔNG GIAN SỐNG ĐẲNG CẤP
+            </p>
+
+            <h1>
+                Tìm nơi bạn muốn gọi là nhà
+            </h1>
+
+            <p class="haven-hero__description">
+                Khám phá những bất động sản chất lượng,
+                không gian sống lý tưởng và cơ hội đầu tư
+                phù hợp với bạn.
+            </p>
+
+            <a href="/Property"
+               class="btn-haven">
+                Khám phá bất động sản
+            </a>
+
+        </div>
+    </div>
+</section>
+<!-- KHU VỰC 1: BẤT ĐỘNG SẢN DÀNH CHO BẠN -->
+<section class="haven-products">
+    <div class="container">
+
+        <div class="haven-products__heading">
+            <h2>Bất động sản dành cho bạn</h2>
+
+            <div class="haven-sort">
+                <a href="/Property">Tin nhà đất mới nhất ↑</a>
+                <a href="/Property">Tin nhà đất cho thuê mới nhất</a>
+            </div>
+        </div>
+
+        <div class="haven-property-grid">
+
+            <!-- Sản phẩm 1 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=700&q=80"
+                         alt="Phòng khách căn hộ hiện đại" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Căn hộ cao cấp, nội thất hiện đại, không gian thoáng
+                    </h3>
+                    <div class="haven-property-card__price">3,8 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>85 m²</span><span>·</span><span>3 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">TP. Hồ Chí Minh</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 2 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=700&q=80"
+                         alt="Không gian nhà ở sang trọng" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Nhà phố thiết kế hiện đại, gần trung tâm thành phố
+                    </h3>
+                    <div class="haven-property-card__price">5,2 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>120 m²</span><span>·</span><span>4 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Hà Nội</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 3 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=700&q=80"
+                         alt="Ngôi nhà có kiến trúc đẹp" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Nhà đẹp có sân vườn, thiết kế tối ưu ánh sáng
+                    </h3>
+                    <div class="haven-property-card__price">6,5 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>150 m²</span><span>·</span><span>3 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Đà Nẵng</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm qua</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 4 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=700&q=80"
+                         alt="Phòng khách biệt thự" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Biệt thự cao cấp, nội thất sang trọng, nhiều tiện ích
+                    </h3>
+                    <div class="haven-property-card__price">12 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>220 m²</span><span>·</span><span>5 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Bình Dương</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 5 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=700&q=80"
+                         alt="Mặt ngoài nhà phố" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Nhà phố hiện đại, khu dân cư yên tĩnh
+                    </h3>
+                    <div class="haven-property-card__price">4,6 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>100 m²</span><span>·</span><span>3 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Nghệ An</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 6 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=700&q=80"
+                         alt="Không gian sống hiện đại" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Căn hộ tiện nghi, ban công rộng, nhiều ánh sáng
+                    </h3>
+                    <div class="haven-property-card__price">2,4 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>70 m²</span><span>·</span><span>2 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Hà Nội</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm qua</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 7 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=700&q=80"
+                         alt="Nội thất nhà ở" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Nhà ở gia đình, thiết kế đẹp, đầy đủ tiện nghi
+                    </h3>
+                    <div class="haven-property-card__price">3,2 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>90 m²</span><span>·</span><span>3 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">TP. Hồ Chí Minh</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sản phẩm 8 -->
+            <article class="haven-property-card">
+                <div class="haven-property-card__image">
+                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=700&q=80"
+                         alt="Ngôi nhà hiện đại" loading="lazy" />
+                </div>
+                <div class="haven-property-card__body">
+                    <h3 class="haven-property-card__title">
+                        Nhà đẹp trong khu dân cư, phù hợp gia đình trẻ
+                    </h3>
+                    <div class="haven-property-card__price">4,1 tỷ</div>
+                    <div class="haven-property-card__meta">
+                        <span>105 m²</span><span>·</span><span>3 phòng ngủ</span>
+                    </div>
+                    <p class="haven-property-card__location">Đà Nẵng</p>
+                    <div class="haven-property-card__footer">
+                        <span class="haven-property-card__date">Đăng hôm nay</span>
+                        <button class="haven-favorite" type="button"
+                                aria-label="Yêu thích bất động sản">♡</button>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <div class="haven-products__expand">
+            <a class="haven-btn-outline" href="/Property">
+                Xem thêm ↓
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- KHU VỰC 2: DỰ ÁN BẤT ĐỘNG SẢN NỔI BẬT -->
+<section class="haven-projects">
+    <div class="container">
+
+        <div class="haven-projects__heading">
+            <h2>Dự án bất động sản nổi bật</h2>
+            <a class="haven-projects__more" href="/Property">
+                Xem thêm →
+            </a>
+        </div>
+
+        <div class="haven-project-grid">
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=700&q=80"
+                         alt="Dự án căn hộ cao tầng" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Đang mở bán</span>
+                    <h3>HAVEN Residence</h3>
+                    <p>Căn hộ hiện đại</p>
+                    <p>Vị trí trung tâm</p>
+                </div>
+            </article>
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=700&q=80"
+                         alt="Dự án nhà ở" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Sắp mở bán</span>
+                    <h3>The Garden Living</h3>
+                    <p>Nhà ở và biệt thự</p>
+                    <p>Không gian xanh</p>
+                </div>
+            </article>
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=700&q=80"
+                         alt="Kiến trúc dự án hiện đại" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Dự án nổi bật</span>
+                    <h3>Golden City</h3>
+                    <p>Khu đô thị hiện đại</p>
+                    <p>Tiện ích đồng bộ</p>
+                </div>
+            </article>
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=700&q=80"
+                         alt="Không gian dự án cao cấp" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Đang cập nhật</span>
+                    <h3>Haven Garden</h3>
+                    <p>Nhà ở cao cấp</p>
+                    <p>Không gian sống lý tưởng</p>
+                </div>
+            </article>
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=700&q=80"
+                         alt="Khu căn hộ cao cấp với kiến trúc hiện đại" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Đang mở bán</span>
+                    <h3>Haven Riverside</h3>
+                    <p>Căn hộ ven sông</p>
+                    <p>Không gian sống thư thái</p>
+                </div>
+            </article>
+
+            <article class="haven-project-card">
+                <div class="haven-project-card__image">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=700&q=80"
+                         alt="Khu biệt thự hiện đại trong không gian xanh" loading="lazy" />
+                </div>
+                <div class="haven-project-card__body">
+                    <span class="haven-project-card__tag">Dự án nổi bật</span>
+                    <h3>Haven Green Park</h3>
+                    <p>Biệt thự và nhà phố</p>
+                    <p>Tiện ích xanh đồng bộ</p>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+<!-- KHU VỰC 3: BẤT ĐỘNG SẢN THEO ĐỊA ĐIỂM -->
+<section class="haven-locations">
+    <div class="container">
+
+        <h2 class="haven-locations__title">
+            Bất động sản theo địa điểm
+        </h2>
+
+        <div class="haven-location-grid">
+
+            <!-- TP. Hồ Chí Minh: ô lớn -->
+            <a href="/Property?location=TP.%20Ho%20Chi%20Minh"
+               class="haven-location-card haven-location-card--large haven-location--hcm">
+
+                <div class="haven-location-card__content">
+                    <h3 class="haven-location-card__name">
+                        TP. Hồ Chí Minh
+                    </h3>
+                    <p class="haven-location-card__count">
+                        Khám phá bất động sản
+                    </p>
+                </div>
+
+            </a>
+
+            <!-- Hà Nội -->
+            <a href="/Property?location=Ha%20Noi"
+               class="haven-location-card haven-location--hanoi">
+
+                <div class="haven-location-card__content">
+                    <h3 class="haven-location-card__name">
+                        Hà Nội
+                    </h3>
+                    <p class="haven-location-card__count">
+                        Khám phá bất động sản
+                    </p>
+                </div>
+
+            </a>
+
+            <!-- Đà Nẵng -->
+            <a href="/Property?location=Da%20Nang"
+               class="haven-location-card haven-location--danang">
+
+                <div class="haven-location-card__content">
+                    <h3 class="haven-location-card__name">
+                        Đà Nẵng
+                    </h3>
+                    <p class="haven-location-card__count">
+                        Khám phá bất động sản
+                    </p>
+                </div>
+
+            </a>
+
+            <!-- Bình Dương -->
+            <a href="/Property?location=Binh%20Duong"
+               class="haven-location-card haven-location--binhduong">
+
+                <div class="haven-location-card__content">
+                    <h3 class="haven-location-card__name">
+                        Bình Dương
+                    </h3>
+                    <p class="haven-location-card__count">
+                        Khám phá bất động sản
+                    </p>
+                </div>
+
+            </a>
+
+            <!-- Đồng Nai -->
+            <a href="/Property?location=Dong%20Nai"
+               class="haven-location-card haven-location--dongnai">
+
+                <div class="haven-location-card__content">
+                    <h3 class="haven-location-card__name">
+                        Đồng Nai
+                    </h3>
+                    <p class="haven-location-card__count">
+                        Khám phá bất động sản
+                    </p>
+                </div>
+
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- KHU VỰC 4: HỖ TRỢ TIỆN ÍCH -->
+<section class="haven-tools">
+    <div class="container">
+
+        <h2 class="haven-section-title">Hỗ trợ tiện ích</h2>
+
+        <div class="haven-tools__grid">
+
+            <a href="#xem-tuoi-xay-nha" class="haven-tool-card">
+                <svg class="haven-tool-card__icon haven-tool-card__icon--teal"
+                     viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                    <path class="haven-tool-card__ornament" d="M22 8h7M43 8h7M57 18l5 5M64 34v7M57 54l-5 5M29 64h-7M8 50v-7M8 29l5-5" />
+                    <circle class="haven-tool-card__outline" cx="36" cy="36" r="20" />
+                    <path class="haven-tool-card__yin-yang" d="M36 16a20 20 0 0 1 0 40 10 10 0 0 0 0-20 10 10 0 0 1 0-20Z" />
+                    <circle class="haven-tool-card__yin-dot" cx="36" cy="26" r="2.5" />
+                    <circle class="haven-tool-card__yin-dot" cx="36" cy="46" r="2.5" />
+                </svg>
+                <span class="haven-tool-card__label">Xem tuổi xây nhà</span>
+            </a>
+
+            <a href="#chi-phi-lam-nha" class="haven-tool-card">
+                <svg class="haven-tool-card__icon haven-tool-card__icon--orange"
+                     viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                    <path class="haven-tool-card__document-back" d="M24 13h30a4 4 0 0 1 4 4v44H28a4 4 0 0 1-4-4V13Z" />
+                    <path class="haven-tool-card__document-front" d="M11 18a4 4 0 0 1 4-4h30a4 4 0 0 1 4 4v43H15a4 4 0 0 1-4-4V18Z" />
+                    <path class="haven-tool-card__filled" d="m18 31 11-11 11 11h-6v8H24v-8h-6Z" />
+                    <path class="haven-tool-card__line" d="M20 47h20M20 53h15M45 25h8M45 32h8M45 39h8" />
+                </svg>
+                <span class="haven-tool-card__label">Chi phí làm nhà</span>
+            </a>
+
+            <a href="#tinh-lai-suat" class="haven-tool-card">
+                <svg class="haven-tool-card__icon haven-tool-card__icon--purple"
+                     viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                    <rect class="haven-tool-card__outline" x="9" y="9" width="50" height="52" rx="3" />
+                    <path class="haven-tool-card__line" d="M9 22h50M25 22v13M43 22v13M18 30h14M18 43l9 9M27 43l-9 9M37 31h12" />
+                    <circle class="haven-tool-card__filled" cx="52" cy="52" r="14" />
+                    <path class="haven-tool-card__currency" d="M56 46c-1-2-7-2-7 1 0 4 8 2 8 6 0 4-7 5-10 2M52 43v18" />
+                </svg>
+                <span class="haven-tool-card__label">Tính lãi suất</span>
+            </a>
+
+            <a href="#tu-van-phong-thuy" class="haven-tool-card">
+                <svg class="haven-tool-card__icon haven-tool-card__icon--gold"
+                     viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                    <path class="haven-tool-card__filled" d="M12 43a24 24 0 0 1 48 0H12Z" />
+                    <path class="haven-tool-card__outline" d="M8 47h56M15 54h42M23 61h26" />
+                    <path class="haven-tool-card__rays" d="M36 7v10M17 14l6 8M55 14l-6 8M7 29l10 3M65 29l-10 3" />
+                </svg>
+                <span class="haven-tool-card__label">Tư vấn phong thủy</span>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- KHU VỰC 5: DOANH NGHIỆP TIÊU BIỂU -->
+<section class="haven-partners">
+    <div class="container">
+
+        <div class="haven-partners__header">
+            <h2 class="haven-section-title">Doanh nghiệp tiêu biểu</h2>
+        </div>
+
+        <div class="haven-partners__carousel">
+
+            <button type="button"
+                    class="haven-partners__arrow haven-partners__arrow--prev"
+                    aria-label="Xem doanh nghiệp trước"
+                    data-partner-scroll="-1">
+                ‹
+            </button>
+
+            <div class="haven-partners__track" id="havenPartnerTrack">
+
+                <a href="#doanh-nghiep-1"
+                   class="haven-partner-card"
+                   aria-label="Thăng Long Homes">
+                    <span class="haven-partner-card__name">
+                        THĂNG LONG
+                        <span>HOMES</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-2"
+                   class="haven-partner-card"
+                   aria-label="T Realty">
+                    <span class="haven-partner-card__name">
+                        T REALTY
+                        <span>REAL ESTATE</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-3"
+                   class="haven-partner-card"
+                   aria-label="Green House">
+                    <span class="haven-partner-card__name">
+                        GREEN HOUSE
+                        <span>PROPERTY</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-4"
+                   class="haven-partner-card"
+                   aria-label="Thiên Minh Capital">
+                    <span class="haven-partner-card__name">
+                        ▲ THIÊN MINH
+                        <span>CAPITAL</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-5"
+                   class="haven-partner-card"
+                   aria-label="Cát Tường Group">
+                    <span class="haven-partner-card__name">
+                        ▤ CÁT TƯỜNG
+                        <span>GROUP</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-6"
+                   class="haven-partner-card"
+                   aria-label="Đối tác bất động sản">
+                    <span class="haven-partner-card__name">
+                        HAVEN
+                        <span>PARTNER</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-7"
+                   class="haven-partner-card"
+                   aria-label="Đối tác phát triển dự án">
+                    <span class="haven-partner-card__name">
+                        GOLDEN LAND
+                        <span>DEVELOPMENT</span>
+                    </span>
+                </a>
+
+                <a href="#doanh-nghiep-8"
+                   class="haven-partner-card"
+                   aria-label="Đối tác nhà ở">
+                    <span class="haven-partner-card__name">
+                        HOME VISION
+                        <span>REAL ESTATE</span>
+                    </span>
+                </a>
+
+            </div>
+
+            <button type="button"
+                    class="haven-partners__arrow haven-partners__arrow--next"
+                    aria-label="Xem doanh nghiệp tiếp theo"
+                    data-partner-scroll="1">
+                ›
+            </button>
+
+        </div>
+    </div>
+</section>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 html {
   font-size: 14px;
 }
@@ -9,7 +11,7 @@ html {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #D4A72C;
 }
 
 html {
@@ -28,4 +30,2989 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* =========================================
+   HAVEN - BỘ MÀU VÀ GIAO DIỆN CHUNG
+   ========================================= */
+
+:root {
+    --haven-gold: #D4A72C;
+    --haven-gold-hover: #C08F1A;
+    --haven-white: #FFFFFF;
+    --haven-cream: #FFF9E8;
+    --haven-light-gold: #F5E7B2;
+    --haven-black: #252525;
+    --haven-gray: #737373;
+    --haven-light-gray: #F8F8F8;
+    --haven-border: #E5E5E5;
+    --bs-primary: #D4A72C;
+    --bs-primary-rgb: 212, 167, 44;
+    --bs-link-color: #C08F1A;
+    --bs-link-hover-color: #947014;
+    --font-body: "Inter", Arial, Helvetica, sans-serif;
+    --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+/* Cài đặt chung */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    color: var(--haven-black);
+    background: var(--haven-white);
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    width: min(1200px, calc(100% - 40px));
+    margin-inline: auto;
+}
+
+/* Nút vàng chủ đạo */
+
+.btn-haven {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid var(--haven-gold);
+    border-radius: 6px;
+    background: var(--haven-gold);
+    color: var(--haven-black);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-haven:hover {
+    background: var(--haven-gold-hover);
+    border-color: var(--haven-gold-hover);
+    color: var(--haven-white);
+}
+
+/* Tiêu đề các khu vực */
+
+.section-heading {
+    margin-bottom: 28px;
+}
+
+.section-heading h2 {
+    margin: 0 0 8px;
+    font-size: clamp(25px, 3vw, 36px);
+    line-height: 1.3;
+}
+
+.section-heading p {
+    margin: 0;
+    color: var(--haven-gray);
+}
+
+/* Hiển thị tốt trên điện thoại */
+
+@media (max-width: 600px) {
+    .container {
+        width: calc(100% - 28px);
+    }
+}
+
+/* =========================================
+   HAVEN - HEADER
+   ========================================= */
+
+.haven-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--haven-border);
+}
+
+.haven-header__inner {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+}
+
+.haven-brand {
+    display: inline-flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    line-height: 1.1;
+}
+
+.haven-brand__name {
+    color: var(--haven-gold);
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.haven-brand__tagline {
+    margin-top: 5px;
+    color: var(--haven-gray);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
+.haven-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 26px;
+}
+
+.haven-nav a {
+    color: var(--haven-black);
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.haven-nav a:hover {
+    color: var(--haven-gold-hover);
+}
+
+.haven-nav .haven-nav__contact {
+    padding: 10px 18px;
+    border-radius: 5px;
+    background: var(--haven-gold);
+}
+
+@media (max-width: 760px) {
+    .haven-header__inner {
+        padding: 14px 0;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .haven-brand__name {
+        font-size: 32px;
+    }
+
+    .haven-nav {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+    }
+}
+
+/* =========================================
+   HAVEN - BANNER TRANG CHỦ
+   ========================================= */
+
+
+.haven-hero {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: #FFF9E8;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(255, 249, 232, 0.97) 0%,
+            rgba(255, 249, 232, 0.88) 40%,
+            rgba(255, 249, 232, 0.15) 100%
+        ),
+        url('/image/haven-hero.jpg');
+
+    background-position: center right;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.haven-hero__content {
+    max-width: 650px;
+    padding: 65px 0;
+}
+
+.haven-hero__eyebrow {
+    color: var(--haven-gold-hover);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.haven-hero h1 {
+    margin: 16px 0;
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.15;
+    text-transform: uppercase;
+}
+
+.haven-hero__description {
+    max-width: 520px;
+    color: var(--haven-gray);
+    font-size: 17px;
+    margin-bottom: 28px;
+}
+
+@media (max-width: 600px) {
+    .haven-hero {
+        min-height: 400px;
+        background-position: 60% center;
+    }
+
+    .haven-hero__content {
+        padding: 45px 0;
+    }
+
+    .haven-hero__description {
+        font-size: 15px;
+    }
+}
+
+/* =========================================
+   HAVEN - BẤT ĐỘNG SẢN DÀNH CHO BẠN
+   ========================================= */
+
+.haven-products {
+    padding: 48px 0 42px;
+    background: #fafafa;
+}
+
+.haven-products__heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.haven-products__heading h2,
+.haven-projects__heading h2 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 700;
+    color: #252525;
+}
+
+.haven-projects__heading h2 {
+    position: relative;
+    width: fit-content;
+}
+
+.haven-projects__heading h2::after {
+    display: block;
+    width: 96px;
+    height: 4px;
+    margin-top: 11px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #9b7012 0%, #e8cc77 28%, #fff0b7 50%, #d4a72c 72%, #9b7012 100%);
+    box-shadow: 0 1px 3px rgba(155, 112, 18, .24);
+    content: "";
+}
+
+.haven-sort {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: #737373;
+}
+
+.haven-sort a:hover,
+.haven-projects__more:hover {
+    color: #C08F1A;
+}
+
+/* Lưới sản phẩm */
+
+.haven-property-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.haven-property-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 5px;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.haven-property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+}
+
+.haven-property-card__image {
+    position: relative;
+    height: 175px;
+    overflow: hidden;
+    background: #eee;
+    aspect-ratio: 4 / 3;
+}
+
+.haven-property-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.haven-property-card:hover .haven-property-card__image img {
+    transform: scale(1.04);
+}
+
+.haven-property-card__body {
+    padding: 12px;
+}
+
+.haven-property-card__title {
+    display: -webkit-box;
+    min-height: 42px;
+    margin: 0 0 8px;
+    overflow: hidden;
+    color: #252525;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.haven-property-card__price {
+    margin-bottom: 6px;
+    color: #b58a1d;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.haven-property-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    color: #737373;
+    font-size: 12px;
+}
+
+.haven-property-card__location {
+    min-height: 34px;
+    margin: 8px 0;
+    color: #737373;
+    font-size: 12px;
+}
+
+.haven-property-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.haven-property-card__date {
+    color: #999;
+    font-size: 11px;
+}
+
+.haven-favorite {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #fff;
+    color: #737373;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.haven-favorite:hover {
+    border-color: #D4A72C;
+    color: #C08F1A;
+}
+
+.haven-products__expand {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.haven-btn-outline {
+    padding: 10px 22px;
+    border: 1px solid #d5d5d5;
+    border-radius: 5px;
+    background: #fff;
+    color: #252525;
+    cursor: pointer;
+}
+
+.haven-btn-outline:hover {
+    border-color: #D4A72C;
+    color: #C08F1A;
+}
+
+/* =========================================
+   HAVEN - DỰ ÁN NỔI BẬT
+   ========================================= */
+
+.haven-projects {
+    padding: 36px 0 50px;
+    background: #fff;
+}
+
+.haven-projects__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.haven-projects__more {
+    color: #b58a1d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.haven-project-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.haven-project-card {
+    overflow: hidden;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.haven-project-card__image {
+    height: 150px;
+    overflow: hidden;
+    background: #eee;
+    aspect-ratio: 4 / 3;
+}
+
+.haven-project-card__image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.haven-project-card__body {
+    padding: 12px;
+}
+
+.haven-project-card__tag {
+    display: inline-block;
+    margin-bottom: 7px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    background: #fff5d6;
+    color: #947014;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.haven-project-card h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+}
+
+.haven-project-card p {
+    margin: 0 0 5px;
+    color: #737373;
+    font-size: 12px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .haven-property-grid,
+    .haven-project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-property-card__image {
+        height: 190px;
+    }
+}
+
+@media (max-width: 600px) {
+    .haven-products {
+        padding: 30px 0;
+    }
+
+    .haven-products__heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .haven-products__heading h2,
+    .haven-projects__heading h2 {
+        font-size: 21px;
+    }
+
+    .haven-sort {
+        flex-wrap: wrap;
+    }
+
+    .haven-property-grid {
+        gap: 12px;
+    }
+
+    .haven-property-card__image {
+        height: 130px;
+    }
+
+    .haven-property-card__body {
+        padding: 9px;
+    }
+
+    .haven-property-card__title {
+        font-size: 12px;
+    }
+
+    .haven-property-card__price {
+        font-size: 12px;
+    }
+
+    .haven-project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .haven-project-card__image {
+        height: 120px;
+    }
+}
+
+/* =========================================
+   HAVEN - BẤT ĐỘNG SẢN THEO ĐỊA ĐIỂM
+   ========================================= */
+
+.haven-locations {
+    padding: 38px 0 48px;
+    background: #fff;
+}
+
+.haven-locations__title {
+    margin: 0 0 20px;
+    color: #252525;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+/* Bố cục 1 ô lớn + 4 ô nhỏ */
+
+.haven-location-grid {
+    display: grid;
+    grid-template-columns: 2.1fr 2.1fr;
+    grid-template-rows: repeat(2, minmax(145px, 1fr));
+    gap: 22px;
+}
+
+.haven-location-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 142px;
+    overflow: hidden;
+    align-items: flex-start;
+    padding: 16px 13px;
+    border-radius: 4px;
+    background-color: #d9d9d9;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-decoration: none;
+    isolation: isolate;
+    transition: transform 0.2s ease;
+}
+
+.haven-location-card::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.58) 0%,
+        rgba(0, 0, 0, 0.10) 58%,
+        rgba(0, 0, 0, 0.05) 100%
+    );
+    content: "";
+}
+
+.haven-location-card:hover {
+    transform: translateY(-3px);
+}
+
+.haven-location-card__content {
+    position: relative;
+    z-index: 1;
+}
+
+.haven-location-card__name {
+    margin: 0 0 3px;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.haven-location-card__count {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Ô TP. Hồ Chí Minh chiếm hai hàng */
+
+.haven-location-card--large {
+    grid-row: 1 / span 2;
+    min-height: 305px;
+}
+
+/* Các ảnh nền */
+
+.haven-location--hcm {
+    background-image: url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=85');
+}
+
+.haven-location--hanoi {
+    background-image: url('https://images.unsplash.com/photo-1509030450996-dd1a26dda07a?auto=format&fit=crop&w=800&q=85');
+}
+
+.haven-location--danang {
+    background-image: url('https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=85');
+}
+
+.haven-location--binhduong {
+    background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=85');
+}
+
+.haven-location--dongnai {
+    background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=85');
+}
+
+/* Máy tính bảng */
+
+@media (max-width: 760px) {
+    .haven-location-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        gap: 14px;
+    }
+
+    .haven-location-card--large {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        min-height: 240px;
+    }
+
+    .haven-location-card {
+        min-height: 145px;
+    }
+}
+
+/* Điện thoại */
+
+@media (max-width: 480px) {
+    .haven-locations {
+        padding: 28px 0;
+    }
+
+    .haven-locations__title {
+        font-size: 21px;
+    }
+
+    .haven-location-grid {
+        gap: 10px;
+    }
+
+    .haven-location-card {
+        min-height: 125px;
+        padding: 12px 10px;
+    }
+
+    .haven-location-card--large {
+        min-height: 200px;
+    }
+
+    .haven-location-card__name {
+        font-size: 14px;
+    }
+
+    .haven-location-card__count {
+        font-size: 11px;
+    }
+}
+
+/* =========================================
+   HAVEN - HỖ TRỢ TIỆN ÍCH
+   ========================================= */
+
+.haven-tools,
+.haven-partners {
+    padding: 26px 0 8px;
+    background: #fff;
+}
+
+.haven-section-title {
+    margin: 0 0 18px;
+    color: #252525;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+/* Bốn tiện ích */
+
+.haven-tools__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.haven-tool-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 108px;
+    padding: 16px 24px;
+    border: 1px solid #ededed;
+    border-radius: 3px;
+    background: #fff;
+    color: #252525;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.025);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.haven-tool-card:hover {
+    border-color: #d4a72c;
+    box-shadow: 0 5px 15px rgba(37, 37, 37, 0.07);
+    transform: translateY(-2px);
+}
+
+.haven-tool-card__icon {
+    display: flex;
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.haven-tool-card__icon--teal {
+    color: #20c1c8;
+}
+
+.haven-tool-card__icon--orange {
+    color: #ff672f;
+}
+
+.haven-tool-card__icon--purple {
+    color: #9870a8;
+}
+
+.haven-tool-card__icon--gold {
+    color: #ffbd3e;
+}
+
+.haven-tool-card__ornament {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3.5;
+    stroke-dasharray: 8 6;
+}
+
+.haven-tool-card__outline,
+.haven-tool-card__document-front,
+.haven-tool-card__document-back {
+    fill: #fff;
+    stroke: currentColor;
+    stroke-width: 3.5;
+}
+
+.haven-tool-card__document-back {
+    opacity: .4;
+}
+
+.haven-tool-card__yin-yang,
+.haven-tool-card__filled {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+.haven-tool-card__yin-dot {
+    fill: #fff;
+    stroke: none;
+}
+
+.haven-tool-card__line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+}
+
+.haven-tool-card__currency {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.5;
+}
+
+.haven-tool-card__rays {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3.5;
+}
+
+.haven-tool-card__label {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* =========================================
+   HAVEN - DOANH NGHIỆP TIÊU BIỂU
+   ========================================= */
+
+.haven-partners {
+    padding-top: 28px;
+    padding-bottom: 35px;
+}
+
+.haven-partners__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.haven-partners__header .haven-section-title {
+    margin-bottom: 18px;
+}
+
+.haven-partners__carousel {
+    position: relative;
+    padding: 0 25px;
+}
+
+.haven-partners__track {
+    display: grid;
+    grid-auto-columns: calc((100% - 100px) / 6);
+    grid-auto-flow: column;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 0 1px 6px;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.haven-partners__track::-webkit-scrollbar {
+    display: none;
+}
+
+.haven-partner-card {
+    display: flex;
+    min-width: 0;
+    height: 83px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: 1px solid #ededed;
+    border-radius: 3px;
+    background: #fff;
+    scroll-snap-align: start;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.025);
+}
+
+.haven-partner-card__logo {
+    max-width: 100%;
+    max-height: 54px;
+    object-fit: contain;
+}
+
+.haven-partner-card__name {
+    color: #555;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.haven-partner-card__name span {
+    display: block;
+    color: #a7832b;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.haven-partners__arrow {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    display: flex;
+    width: 27px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: #252525;
+    font-size: 25px;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.haven-partners__arrow:hover {
+    color: #d4a72c;
+}
+
+.haven-partners__arrow--prev {
+    left: -2px;
+}
+
+.haven-partners__arrow--next {
+    right: -2px;
+}
+
+.haven-partners__arrow:focus-visible,
+.haven-tool-card:focus-visible {
+    outline: 2px solid #d4a72c;
+    outline-offset: 3px;
+}
+
+/* Máy tính bảng */
+
+@media (max-width: 900px) {
+    .haven-tools__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .haven-partners__track {
+        grid-auto-columns: calc((100% - 40px) / 3);
+        gap: 20px;
+    }
+}
+
+/* Điện thoại */
+
+@media (max-width: 480px) {
+    .haven-section-title {
+        font-size: 19px;
+    }
+
+    .haven-tools__grid {
+        gap: 10px;
+    }
+
+    .haven-tool-card {
+        gap: 8px;
+        min-height: 72px;
+        padding: 10px;
+    }
+
+    .haven-tool-card__icon {
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
+    }
+
+    .haven-tool-card__label {
+        font-size: 12px;
+    }
+
+    .haven-partners__carousel {
+        padding: 0 20px;
+    }
+
+    .haven-partners__track {
+        grid-auto-columns: calc((100% - 12px) / 2);
+        gap: 12px;
+    }
+}
+
+/* ==========================================
+   HAVEN - KHUNG CHAT HỖ TRỢ KHÁCH HÀNG
+   ========================================== */
+
+.haven-chat {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9999;
+    width: 350px;
+    max-width: calc(100vw - 24px);
+    font-family: Arial, sans-serif;
+    color: #252525;
+}
+
+/* Nút chat nổi */
+
+.haven-chat__toggle {
+    display: flex;
+    width: 54px;
+    height: 54px;
+    margin-left: auto;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: #d4a72c;
+    color: #fff;
+    font-size: 25px;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .2);
+    transition: transform .2s, background .2s;
+}
+
+.haven-chat__toggle:hover {
+    background: #bd901d;
+    transform: scale(1.05);
+}
+
+/* Cửa sổ chat */
+
+.haven-chat__window {
+    position: absolute;
+    right: 0;
+    bottom: 68px;
+    display: none;
+    width: 350px;
+    max-width: calc(100vw - 24px);
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, .18);
+}
+
+.haven-chat.is-open .haven-chat__window {
+    display: block;
+}
+
+/* Phần đầu cửa sổ: có thể kéo để di chuyển */
+
+.haven-chat__header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 15px;
+    background: #fff9e8;
+    border-bottom: 1px solid #eee5cd;
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+}
+
+.haven-chat__avatar {
+    display: flex;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #d4a72c;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.haven-chat__heading {
+    flex: 1;
+    min-width: 0;
+}
+
+.haven-chat__brand {
+    margin: 0 0 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #252525;
+}
+
+.haven-chat__subtitle {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.haven-chat__close {
+    align-self: flex-start;
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Nội dung chat */
+
+.haven-chat__body {
+    padding: 16px;
+}
+
+.haven-chat__message {
+    margin: 0 0 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #444;
+}
+
+.haven-chat__form {
+    display: grid;
+    gap: 11px;
+}
+
+.haven-chat__field label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.haven-chat__field input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 43px;
+    padding: 10px 12px;
+    border: 1px solid #e2d7b7;
+    border-radius: 7px;
+    outline: none;
+    background: #fff;
+    font-size: 13px;
+}
+
+.haven-chat__field input:focus {
+    border-color: #d4a72c;
+    box-shadow: 0 0 0 2px rgba(212, 167, 44, .12);
+}
+
+.haven-chat__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 3px;
+}
+
+.haven-chat__start,
+.haven-chat__cancel {
+    min-height: 38px;
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.haven-chat__start {
+    border: 1px solid #d4a72c;
+    background: #d4a72c;
+    color: #252525;
+    font-weight: 700;
+}
+
+.haven-chat__start:hover {
+    background: #e5bd53;
+}
+
+.haven-chat__cancel {
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    color: #555;
+}
+
+/* Khu vực sau khi gửi biểu mẫu */
+
+.haven-chat__status {
+    display: none;
+    padding: 13px;
+    border-radius: 8px;
+    background: #fff9e8;
+    color: #5e4a19;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.haven-chat__status.is-visible {
+    display: block;
+}
+
+/* Điện thoại */
+
+@media (max-width: 480px) {
+    .haven-chat {
+        right: 12px;
+        bottom: 12px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .haven-chat__window {
+        right: 0;
+        width: calc(100vw - 24px);
+        max-height: calc(100dvh - 100px);
+        overflow-y: auto;
+    }
+}
+
+/* ==========================================
+   HAVEN - TRANG MUA BÁN BẤT ĐỘNG SẢN
+   ========================================== */
+
+.haven-sale-page {
+    --sale-gold: var(--haven-gold);
+    --sale-gold-dark: var(--haven-gold-hover);
+    --sale-cream: var(--haven-cream);
+    --sale-ink: var(--haven-black);
+    --sale-muted: var(--haven-gray);
+    --sale-border: var(--haven-border);
+    color: var(--sale-ink);
+    background: #fff;
+    padding-bottom: 60px;
+}
+
+.haven-sale-page * {
+    box-sizing: border-box;
+}
+
+.haven-sale-page a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.haven-sale-hero {
+    position: relative;
+    display: flex;
+    min-height: 350px;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 60px max(5%, calc((100% - 1320px) / 2));
+    background:
+        linear-gradient(90deg,
+            rgba(255, 249, 232, .98) 0%,
+            rgba(255, 249, 232, .92) 40%,
+            rgba(255, 249, 232, .15) 100%),
+        url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90")
+        center 55% / cover no-repeat;
+}
+
+.haven-sale-hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 650px;
+}
+
+.haven-sale-eyebrow {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: var(--sale-gold-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.haven-sale-hero h1 {
+    margin: 0 0 18px;
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+}
+
+.haven-sale-hero p {
+    max-width: 480px;
+    margin: 0;
+    color: #65615a;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+/* THANH TÌM KIẾM */
+
+.haven-sale-search {
+    position: relative;
+    z-index: 2;
+    max-width: 1240px;
+    margin: -30px auto 0;
+    padding: 0 24px;
+}
+
+.haven-sale-search__form {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr auto;
+    gap: 14px;
+    align-items: end;
+    padding: 24px;
+    border: 1px solid var(--sale-border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(37, 37, 37, .08);
+}
+
+.haven-sale-search__field label,
+.haven-sale-filter__group label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.haven-sale-search__field input,
+.haven-sale-search__field select,
+.haven-sale-filter__group select {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #e4e1da;
+    border-radius: 6px;
+    outline: none;
+    background: #fff;
+    color: #454545;
+    font-size: 13px;
+}
+
+.haven-sale-search__field input:focus,
+.haven-sale-search__field select:focus,
+.haven-sale-filter__group select:focus {
+    border-color: var(--sale-gold);
+}
+
+.haven-sale-search__button {
+    height: 46px;
+    padding: 0 22px;
+    border: 1px solid var(--sale-gold);
+    border-radius: 6px;
+    background: var(--sale-gold);
+    color: #252525;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.haven-sale-search__button:hover,
+.haven-sale-filter__submit:hover {
+    background: #e5bd53;
+}
+
+/* TIÊU ĐỀ DANH SÁCH */
+
+.haven-sale-listing {
+    max-width: 1320px;
+    margin: 65px auto 0;
+    padding: 0 28px;
+}
+
+.haven-sale-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.haven-sale-heading .haven-sale-eyebrow {
+    margin-bottom: 9px;
+}
+
+.haven-sale-heading h2 {
+    margin: 0 0 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(27px, 3vw, 36px);
+    font-weight: 500;
+}
+
+.haven-sale-heading p {
+    margin: 0;
+    color: var(--sale-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.haven-sale-heading__count {
+    padding: 10px 14px;
+    border: 1px solid #eee5cd;
+    border-radius: 30px;
+    background: var(--sale-cream);
+    color: #775a16;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* BỘ LỌC VÀ DANH SÁCH */
+
+.haven-sale-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.haven-sale-filter {
+    padding: 22px;
+    border: 1px solid var(--sale-border);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.haven-sale-filter h3 {
+    margin: 0 0 24px;
+    font-size: 18px;
+}
+
+.haven-sale-filter__group {
+    margin-bottom: 20px;
+}
+
+.haven-sale-filter__submit {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid var(--sale-gold);
+    border-radius: 6px;
+    background: var(--sale-gold);
+    color: #252525;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.haven-sale-filter__reset {
+    display: block;
+    margin-top: 14px;
+    color: #80631d !important;
+    font-size: 13px;
+    text-align: center;
+}
+
+.haven-sale-filter__note {
+    margin-top: 28px;
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--sale-cream);
+}
+
+.haven-sale-filter__note > span {
+    color: var(--sale-gold-dark);
+    font-size: 22px;
+}
+
+.haven-sale-filter__note strong {
+    display: block;
+    margin: 8px 0;
+    font-size: 13px;
+}
+
+.haven-sale-filter__note p {
+    margin: 0;
+    color: #716958;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* THANH SẮP XẾP */
+
+.haven-sale-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.haven-sale-toolbar > span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.haven-sale-toolbar select {
+    max-width: 190px;
+    min-height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--sale-border);
+    border-radius: 5px;
+    background: #fff;
+    font-size: 12px;
+}
+
+/* THẺ BẤT ĐỘNG SẢN */
+
+.haven-sale-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.haven-property-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--sale-border);
+    border-radius: 9px;
+    background: #fff;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.haven-property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(37, 37, 37, .1);
+}
+
+.haven-property-card__image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: #f5f2e9;
+}
+
+.haven-property-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform .4s;
+}
+
+.haven-property-card:hover .haven-property-card__image img {
+    transform: scale(1.045);
+}
+
+.haven-property-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 7px 10px;
+    border-radius: 4px;
+    background: var(--sale-gold);
+    color: #252525;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.haven-property-heart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .95);
+    color: #4b4030;
+    font-size: 24px;
+}
+
+.haven-property-card__body {
+    padding: 16px;
+}
+
+.haven-property-type {
+    color: var(--sale-gold-dark);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+.haven-property-card h3 {
+    min-height: 44px;
+    margin: 9px 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.haven-property-card h3 a:hover {
+    color: var(--sale-gold-dark);
+}
+
+.haven-property-location {
+    overflow: hidden;
+    margin: 0 0 14px;
+    color: var(--sale-muted);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.haven-property-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 12px 0;
+    border-top: 1px solid #f0eee8;
+    color: #666;
+    font-size: 11px;
+}
+
+.haven-property-card__footer {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 13px;
+    border-top: 1px solid #f0eee8;
+}
+
+.haven-property-card__footer small {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--sale-muted);
+    font-size: 10px;
+}
+
+.haven-property-card__footer strong {
+    display: block;
+    color: #9b7416;
+    font-size: 15px;
+}
+
+.haven-property-detail {
+    padding: 9px 10px;
+    border: 1px solid #e8d8a9;
+    border-radius: 5px;
+    color: #80631d !important;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.haven-property-detail:hover {
+    background: var(--sale-cream);
+}
+
+/* PHÂN TRANG */
+
+.haven-sale-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 36px;
+}
+
+.haven-sale-pagination button {
+    min-width: 38px;
+    height: 38px;
+    border: 1px solid var(--sale-border);
+    border-radius: 5px;
+    background: #fff;
+    color: #444;
+    cursor: pointer;
+}
+
+.haven-sale-pagination button.is-active {
+    border-color: var(--sale-gold);
+    background: var(--sale-gold);
+    color: #252525;
+}
+
+.haven-sale-pagination button:disabled {
+    opacity: .4;
+    cursor: default;
+}
+
+/* BANNER LIÊN HỆ */
+
+.haven-sale-contact {
+    display: flex;
+    max-width: 1264px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin: 70px auto 0;
+    padding: 38px;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #fff9e8, #f5e7b2);
+}
+
+.haven-sale-contact .haven-sale-eyebrow {
+    margin-bottom: 10px;
+}
+
+.haven-sale-contact h2 {
+    margin: 0 0 12px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 500;
+}
+
+.haven-sale-contact p {
+    margin: 0;
+    color: #686153;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.haven-sale-contact__button {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    border-radius: 6px;
+    background: var(--sale-gold);
+    color: #252525 !important;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.haven-sale-contact__button:hover {
+    background: #e5bd53;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+    .haven-sale-layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .haven-sale-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-sale-search__form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-sale-contact {
+        margin-right: 24px;
+        margin-left: 24px;
+    }
+}
+
+@media (max-width: 700px) {
+    .haven-sale-hero {
+        min-height: 300px;
+        padding: 45px 24px;
+        background-position: 60% center;
+    }
+
+    .haven-sale-search {
+        margin-top: -18px;
+        padding: 0 16px;
+    }
+
+    .haven-sale-search__form {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
+
+    .haven-sale-listing {
+        margin-top: 42px;
+        padding: 0 16px;
+    }
+
+    .haven-sale-heading {
+        display: block;
+    }
+
+    .haven-sale-heading__count {
+        display: inline-block;
+        margin-top: 15px;
+    }
+
+    .haven-sale-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .haven-sale-filter {
+        padding: 18px;
+    }
+
+    .haven-sale-filter form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 12px;
+    }
+
+    .haven-sale-filter h3,
+    .haven-sale-filter__submit,
+    .haven-sale-filter__reset,
+    .haven-sale-filter__note {
+        grid-column: 1 / -1;
+    }
+
+    .haven-sale-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .haven-property-card__body {
+        padding: 12px;
+    }
+
+    .haven-property-card h3 {
+        min-height: 60px;
+        font-size: 13px;
+    }
+
+    .haven-property-specs {
+        gap: 8px;
+    }
+
+    .haven-property-card__footer {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .haven-sale-contact {
+        align-items: flex-start;
+        flex-direction: column;
+        margin: 45px 16px 0;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    .haven-sale-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .haven-property-card__footer {
+        align-items: center;
+        flex-direction: row;
+    }
+}
+
+/* =====================================
+   HAVEN - TRANG DỰ ÁN
+   ===================================== */
+
+.haven-project-page {
+    --project-gold: var(--haven-gold);
+    --project-ink: var(--haven-black);
+    --project-cream: var(--haven-cream);
+}
+
+.haven-project-hero {
+    position: relative;
+    display: flex;
+    min-height: 430px;
+    align-items: center;
+    overflow: hidden;
+    padding: 65px max(5%, calc((100% - 1264px) / 2));
+    background:
+        linear-gradient(90deg,
+            rgba(255, 249, 232, .98) 0%,
+            rgba(255, 249, 232, .91) 42%,
+            rgba(255, 249, 232, .08) 100%),
+        url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90")
+        center / cover no-repeat;
+}
+
+.haven-project-hero__content {
+    max-width: 620px;
+}
+
+.haven-project-hero h1 {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-size: clamp(38px, 5vw, 66px);
+    font-weight: 500;
+    line-height: 1.12;
+    color: var(--project-ink);
+    text-transform: uppercase;
+}
+
+.haven-project-hero p {
+    max-width: 490px;
+    color: #65615a;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+.haven-project-button {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 0 22px;
+    border: 1px solid var(--project-gold);
+    border-radius: 6px;
+    background: var(--project-gold);
+    color: #252525 !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.haven-project-button:hover {
+    background: #e5bd53;
+}
+
+.haven-project-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 70px 24px 35px;
+}
+
+.haven-project-intro h2,
+.haven-project-heading h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(27px, 3vw, 38px);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.haven-project-intro p,
+.haven-project-heading p {
+    color: #737373;
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.haven-project-search {
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 20px 24px;
+}
+
+.haven-project-search form {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+    padding: 24px;
+    border: 1px solid #eae7df;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 10px 28px rgba(37, 37, 37, .05);
+}
+
+.haven-project-search__field label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.haven-project-search__field input,
+.haven-project-search__field select {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #e4e1da;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+}
+
+.haven-project-search__field input:focus,
+.haven-project-search__field select:focus {
+    outline: 1px solid var(--project-gold);
+    border-color: var(--project-gold);
+}
+
+.haven-project-list {
+    max-width: 1312px;
+    margin: 50px auto 0;
+    padding: 0 24px;
+}
+
+.haven-project-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.haven-project-heading .haven-sale-eyebrow {
+    margin-bottom: 10px;
+}
+
+.haven-project-heading p {
+    margin-bottom: 0;
+}
+
+.haven-project-heading select {
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #eae7df;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.haven-project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.haven-project-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #eae7df;
+    border-radius: 9px;
+    background: #fff;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.haven-project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(37, 37, 37, .09);
+}
+
+.haven-project-card__image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: #f5f2e9;
+}
+
+.haven-project-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; object-position: center; transition: transform .4s;
+}
+
+.haven-project-card:hover .haven-project-card__image img {
+    transform: scale(1.05);
+}
+
+.haven-project-status {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 8px 11px;
+    border-radius: 4px;
+    background: #d4a72c;
+    color: #252525;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.haven-project-card__body {
+    padding: 20px;
+}
+
+.haven-project-type {
+    color: #a77d13;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+}
+
+.haven-project-card h3 {
+    margin: 10px 0;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.haven-project-location {
+    margin: 0 0 17px;
+    color: #737373;
+    font-size: 12px;
+}
+
+.haven-project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 13px 0;
+    border-top: 1px solid #f0eee8;
+}
+
+.haven-project-meta span {
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #fff9e8;
+    color: #796329;
+    font-size: 10px;
+}
+
+.haven-project-card__footer {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px solid #f0eee8;
+}
+
+.haven-project-card__footer small {
+    display: block;
+    margin-bottom: 7px;
+    color: #737373;
+    font-size: 10px;
+}
+
+.haven-project-card__footer strong {
+    color: #9b7416;
+    font-size: 13px;
+}
+
+.haven-project-card__footer a {
+    color: #8b6814;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.haven-project-card__footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+    .haven-project-search form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-project-intro {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .haven-project-hero {
+        min-height: 340px;
+        padding: 42px 22px;
+        background-position: 60% center;
+    }
+
+    .haven-project-intro {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 45px 18px 20px;
+    }
+
+    .haven-project-search {
+        padding: 16px 18px;
+    }
+
+    .haven-project-search form {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
+
+    .haven-project-list {
+        margin-top: 35px;
+        padding: 0 18px;
+    }
+
+    .haven-project-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .haven-project-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .haven-project-card__image {
+        aspect-ratio: 4 / 3;
+    }
+}
+
+/* =====================================
+   HAVEN - TRANG DỰ ÁN
+   ===================================== */
+
+.haven-project-page {
+    --project-gold: var(--haven-gold);
+    --project-ink: var(--haven-black);
+    --project-cream: var(--haven-cream);
+}
+
+.haven-project-hero {
+    position: relative;
+    display: flex;
+    min-height: 430px;
+    align-items: center;
+    overflow: hidden;
+    padding: 65px max(5%, calc((100% - 1264px) / 2));
+    background:
+        linear-gradient(90deg,
+            rgba(255, 249, 232, .98) 0%,
+            rgba(255, 249, 232, .91) 42%,
+            rgba(255, 249, 232, .08) 100%),
+        url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90")
+        center / cover no-repeat;
+}
+
+.haven-project-hero__content {
+    max-width: 620px;
+}
+
+.haven-project-hero h1 {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-size: clamp(38px, 5vw, 66px);
+    font-weight: 500;
+    line-height: 1.12;
+    color: var(--project-ink);
+    text-transform: uppercase;
+}
+
+.haven-project-hero p {
+    max-width: 490px;
+    color: #65615a;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+.haven-project-button {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 0 22px;
+    border: 1px solid var(--project-gold);
+    border-radius: 6px;
+    background: var(--project-gold);
+    color: #252525 !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.haven-project-button:hover {
+    background: #e5bd53;
+}
+
+.haven-project-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 70px 24px 35px;
+}
+
+.haven-project-intro h2,
+.haven-project-heading h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(27px, 3vw, 38px);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.haven-project-intro p,
+.haven-project-heading p {
+    color: #737373;
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.haven-project-search {
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 20px 24px;
+}
+
+.haven-project-search form {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+    padding: 24px;
+    border: 1px solid #eae7df;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 10px 28px rgba(37, 37, 37, .05);
+}
+
+.haven-project-search__field label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.haven-project-search__field input,
+.haven-project-search__field select {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #e4e1da;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+}
+
+.haven-project-search__field input:focus,
+.haven-project-search__field select:focus {
+    outline: 1px solid var(--project-gold);
+    border-color: var(--project-gold);
+}
+
+.haven-project-list {
+    max-width: 1312px;
+    margin: 50px auto 0;
+    padding: 0 24px;
+}
+
+.haven-project-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.haven-project-heading .haven-sale-eyebrow {
+    margin-bottom: 10px;
+}
+
+.haven-project-heading p {
+    margin-bottom: 0;
+}
+
+.haven-project-heading select {
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #eae7df;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.haven-project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.haven-project-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #eae7df;
+    border-radius: 9px;
+    background: #fff;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.haven-project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(37, 37, 37, .09);
+}
+
+.haven-project-card__image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: #f5f2e9;
+}
+
+.haven-project-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; object-position: center; transition: transform .4s;
+}
+
+.haven-project-card:hover .haven-project-card__image img {
+    transform: scale(1.05);
+}
+
+.haven-project-status {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 8px 11px;
+    border-radius: 4px;
+    background: #d4a72c;
+    color: #252525;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.haven-project-card__body {
+    padding: 20px;
+}
+
+.haven-project-type {
+    color: #a77d13;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+}
+
+.haven-project-card h3 {
+    margin: 10px 0;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.haven-project-location {
+    margin: 0 0 17px;
+    color: #737373;
+    font-size: 12px;
+}
+
+.haven-project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 13px 0;
+    border-top: 1px solid #f0eee8;
+}
+
+.haven-project-meta span {
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #fff9e8;
+    color: #796329;
+    font-size: 10px;
+}
+
+.haven-project-card__footer {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px solid #f0eee8;
+}
+
+.haven-project-card__footer small {
+    display: block;
+    margin-bottom: 7px;
+    color: #737373;
+    font-size: 10px;
+}
+
+.haven-project-card__footer strong {
+    color: #9b7416;
+    font-size: 13px;
+}
+
+.haven-project-card__footer a {
+    color: #8b6814;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.haven-project-card__footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+    .haven-project-search form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .haven-project-intro {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .haven-project-hero {
+        min-height: 340px;
+        padding: 42px 22px;
+        background-position: 60% center;
+    }
+
+    .haven-project-intro {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 45px 18px 20px;
+    }
+
+    .haven-project-search {
+        padding: 16px 18px;
+    }
+
+    .haven-project-search form {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
+
+    .haven-project-list {
+        margin-top: 35px;
+        padding: 0 18px;
+    }
+
+    .haven-project-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .haven-project-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .haven-project-card__image {
+        aspect-ratio: 4 / 3;
+    }
+}
+
+/* Dải trang trí cuối website HAVEN */
+.haven-bottom-decoration {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 120px;
+    margin-top: -22px; /* chồng lên mép footer để dính liền hơn */
+    overflow: hidden;
+    background: #fff9e8;
+    line-height: 0;
+}
+
+.haven-bottom-decoration__art {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Điều chỉnh trên điện thoại */
+@media (max-width: 768px) {
+    .haven-bottom-decoration {
+        height: 75px;
+    }
+}
+
+/* Nút Đăng nhập và Đăng ký - HAVEN Gold */
+.haven-login-link,
+.haven-register-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 125px;
+    height: 48px;
+    padding: 0 20px;
+
+    border: 1.5px solid #D4A72C;
+    border-radius: 10px;
+
+    background: #FFF9E8;
+    color: #252525;
+
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow: 0 2px 6px rgba(212, 167, 44, 0.12);
+    transition: all 0.25s ease;
+}
+
+/* Hiệu ứng khi di chuột */
+.haven-login-link:hover,
+.haven-register-link:hover {
+    background: linear-gradient(135deg, #D4A72C, #F5E7B2);
+    border-color: #B88C1D;
+    color: #252525;
+
+    box-shadow: 0 4px 12px rgba(212, 167, 44, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Hiệu ứng khi nhấn */
+.haven-login-link:active,
+.haven-register-link:active {
+    transform: translateY(0);
+}
+
+/* Khoảng cách giữa hai nút */
+.haven-login-link {
+    margin-left: 5px;
+}
+
+.haven-register-link {
+    margin-left: 3px;
+}
+
+/* ========================================
+   HAVEN FOOTER - GOLD LUXURY
+   ======================================== */
+
+.haven-footer {
+    --footer-gold: #D4A72C;
+    --footer-gold-light: #F5E7B2;
+    --footer-black: #252525;
+    --footer-gray: #BDBDBD;
+
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin-top: 0;
+    padding: 0;
+    background: #252525;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Bố cục bốn cột */
+
+.haven-footer__main {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr 1fr 1.25fr;
+    gap: 45px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 65px 55px 55px;
+}
+
+/* Thương hiệu */
+
+.haven-footer__brand {
+    min-width: 0;
+}
+
+.haven-footer__logo {
+    display: inline-block;
+    color: var(--footer-gold);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    line-height: 1.1;
+    text-decoration: none;
+}
+
+.haven-footer__slogan {
+    margin: 10px 0 0;
+    color: #D5D5D5;
+    font-size: 10px;
+    letter-spacing: 1.1px;
+    line-height: 1.8;
+}
+
+.haven-footer__gold-line {
+    width: 75px;
+    height: 2px;
+    margin: 22px 0;
+    background: linear-gradient(
+        90deg,
+        #D4A72C,
+        #F5E7B2
+    );
+}
+
+.haven-footer__description {
+    max-width: 320px;
+    margin: 0;
+    color: #C5C5C5;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+/* Mạng xã hội */
+
+.haven-footer__socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.haven-footer__socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #555555;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--footer-gold-light);
+    font-size: 17px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.haven-footer__socials a:hover {
+    border-color: var(--footer-gold);
+    background: var(--footer-gold);
+    color: #252525;
+    transform: translateY(-3px);
+}
+
+/* Các cột liên kết */
+
+.haven-footer__column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 17px;
+}
+
+.haven-footer__column h3 {
+    position: relative;
+    margin: 4px 0 12px;
+    padding-bottom: 15px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.haven-footer__column h3::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 38px;
+    height: 2px;
+    background: var(--footer-gold);
+    content: "";
+}
+
+.haven-footer__column > a {
+    color: var(--footer-gray);
+    font-size: 13px;
+    line-height: 1.6;
+    text-decoration: none;
+    transition: color 0.2s, padding-left 0.2s;
+}
+
+.haven-footer__column > a:hover {
+    padding-left: 5px;
+    color: var(--footer-gold-light);
+}
+
+/* Thông tin liên hệ */
+
+.haven-footer__contact > p {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    color: var(--footer-gray);
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.haven-footer__contact-icon {
+    flex: 0 0 18px;
+    color: var(--footer-gold);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Đăng ký nhận tin */
+
+.haven-footer__newsletter {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.haven-footer__newsletter > p {
+    margin: 0 0 12px;
+    color: #D2D2D2;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.haven-footer__newsletter form {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #555555;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #303030;
+}
+
+.haven-footer__newsletter input {
+    width: 0;
+    min-width: 0;
+    flex: 1;
+    padding: 13px 10px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
+.haven-footer__newsletter input::placeholder {
+    color: #AFAFAF;
+}
+
+.haven-footer__newsletter input:focus {
+    box-shadow: inset 0 0 0 1px var(--footer-gold);
+}
+
+.haven-footer__newsletter button {
+    width: 43px;
+    flex: 0 0 43px;
+    border: 0;
+    background: var(--footer-gold);
+    color: #252525;
+    font-size: 23px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.haven-footer__newsletter button:hover {
+    background: var(--footer-gold-light);
+}
+
+/* Dòng bản quyền */
+
+.haven-footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 22px 55px;
+    border-top: 1px solid rgba(212, 167, 44, 0.35);
+}
+
+.haven-footer__bottom p {
+    margin: 0;
+    color: #AFAFAF;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.haven-footer__bottom-slogan {
+    color: var(--footer-gold-light) !important;
+    text-align: right;
+}
+
+/* Máy tính bảng */
+
+@media (max-width: 1050px) {
+    .haven-footer__main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 42px 35px;
+        padding: 50px 35px;
+    }
+
+    .haven-footer__bottom {
+        padding-right: 35px;
+        padding-left: 35px;
+    }
+}
+
+/* Điện thoại */
+
+@media (max-width: 600px) {
+    .haven-footer {
+        margin-top: 35px;
+    }
+
+    .haven-footer__main {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 38px;
+        padding: 38px 24px;
+    }
+
+    .haven-footer__logo {
+        font-size: 42px;
+    }
+
+    .haven-footer__description {
+        max-width: 100%;
+    }
+
+    .haven-footer__bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 20px 24px;
+    }
+
+    .haven-footer__bottom-slogan {
+        text-align: left;
+    }
+}
+
+/* Keep property and project card images proportional at every breakpoint. */
+.haven-property-card__image,
+.haven-project-card__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+
+.haven-property-card__image img,
+.haven-project-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
