@@ -1,0 +1,339 @@
+
+@{
+    ViewData["Title"] = "Mua bán bất động sản";
+}
+
+<main class="haven-sale-page">
+
+    <!-- HERO -->
+    <section class="haven-sale-hero">
+        <div class="haven-sale-hero__content">
+            <span class="haven-sale-eyebrow">HAVEN REAL ESTATE</span>
+            <h1>Tìm nơi bạn muốn<br />gọi là nhà.</h1>
+            <p>Khám phá những bất động sản phù hợp với phong cách sống và kế hoạch đầu tư của bạn.</p>
+        </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="haven-sale-search">
+        <form class="haven-sale-search__form"
+              action="/Home/MuaBan"
+              method="get">
+
+            <div class="haven-sale-search__field">
+                <label for="keyword">Từ khóa</label>
+                <input id="keyword" name="keyword"
+                       value="@Context.Request.Query["keyword"]"
+                       placeholder="Tên dự án, khu vực..." />
+            </div>
+
+            <div class="haven-sale-search__field">
+                <label for="location">Khu vực</label>
+                <select id="location" name="location">
+                    <option value="">Tất cả khu vực</option>
+                    <option value="Ha Noi">Hà Nội</option>
+                    <option value="Ho Chi Minh">TP. Hồ Chí Minh</option>
+                    <option value="Da Nang">Đà Nẵng</option>
+                    <option value="Nghe An">Nghệ An</option>
+                    <option value="Binh Duong">Bình Dương</option>
+                </select>
+            </div>
+
+            <div class="haven-sale-search__field">
+                <label for="type">Loại bất động sản</label>
+                <select id="type" name="type">
+                    <option value="">Tất cả loại hình</option>
+                    <option value="house">Nhà riêng</option>
+                    <option value="villa">Biệt thự</option>
+                    <option value="apartment">Căn hộ</option>
+                    <option value="land">Đất nền</option>
+                    <option value="townhouse">Nhà phố</option>
+                </select>
+            </div>
+
+            <button type="submit" class="haven-sale-search__button">
+                <span aria-hidden="true">⌕</span> Tìm kiếm
+            </button>
+        </form>
+    </section>
+
+    <!-- MAIN LIST -->
+    <section class="haven-sale-listing">
+        <div class="haven-sale-heading">
+            <div>
+                <span class="haven-sale-eyebrow">KHÔNG GIAN SỐNG CỦA BẠN</span>
+                <h2>Bất động sản đang mở bán</h2>
+                <p>Lựa chọn không gian phù hợp cho cuộc sống và đầu tư.</p>
+            </div>
+            <span class="haven-sale-heading__count">Bộ sưu tập HAVEN</span>
+        </div>
+
+        <div class="haven-sale-layout">
+
+            <!-- FILTER SIDEBAR -->
+            <aside class="haven-sale-filter">
+                <h3>Bộ lọc tìm kiếm</h3>
+
+                <form action="/Home/MuaBan" method="get">
+                    <div class="haven-sale-filter__group">
+                        <label for="filterLocation">Tỉnh / thành phố</label>
+                        <select id="filterLocation" name="location">
+                            <option value="">Tất cả khu vực</option>
+                            <option value="Ha Noi">Hà Nội</option>
+                            <option value="Ho Chi Minh">TP. Hồ Chí Minh</option>
+                            <option value="Da Nang">Đà Nẵng</option>
+                            <option value="Nghe An">Nghệ An</option>
+                        </select>
+                    </div>
+
+                    <div class="haven-sale-filter__group">
+                        <label for="minPrice">Giá thấp nhất</label>
+                        <select id="minPrice" name="minPrice">
+                            <option value="">Không giới hạn</option>
+                            <option value="1">1 tỷ VNĐ</option>
+                            <option value="3">3 tỷ VNĐ</option>
+                            <option value="5">5 tỷ VNĐ</option>
+                            <option value="10">10 tỷ VNĐ</option>
+                        </select>
+                    </div>
+
+                    <div class="haven-sale-filter__group">
+                        <label for="maxPrice">Giá cao nhất</label>
+                        <select id="maxPrice" name="maxPrice">
+                            <option value="">Không giới hạn</option>
+                            <option value="3">3 tỷ VNĐ</option>
+                            <option value="5">5 tỷ VNĐ</option>
+                            <option value="10">10 tỷ VNĐ</option>
+                            <option value="20">20 tỷ VNĐ</option>
+                        </select>
+                    </div>
+
+                    <div class="haven-sale-filter__group">
+                        <label for="bedrooms">Số phòng ngủ</label>
+                        <select id="bedrooms" name="bedrooms">
+                            <option value="">Tất cả</option>
+                            <option value="1">1 phòng trở lên</option>
+                            <option value="2">2 phòng trở lên</option>
+                            <option value="3">3 phòng trở lên</option>
+                            <option value="4">4 phòng trở lên</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="haven-sale-filter__submit">
+                        Áp dụng bộ lọc
+                    </button>
+
+                    <a href="/Home/MuaBan" class="haven-sale-filter__reset">
+                        Xóa bộ lọc
+                    </a>
+                </form>
+
+                <div class="haven-sale-filter__note">
+                    <span>✦</span>
+                    <strong>Đồng hành cùng HAVEN</strong>
+                    <p>Tìm kiếm không gian sống phù hợp với nhu cầu của bạn.</p>
+                </div>
+            </aside>
+
+            <!-- PROPERTY CARDS -->
+            <div class="haven-sale-results">
+
+                <div class="haven-sale-toolbar">
+                    <span>Khám phá những lựa chọn nổi bật</span>
+                    <select aria-label="Sắp xếp bất động sản">
+                        <option>Mới nhất</option>
+                        <option>Giá thấp đến cao</option>
+                        <option>Giá cao đến thấp</option>
+                    </select>
+                </div>
+
+                <div class="haven-sale-grid">
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#biet-thu-1">
+                            <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=85"
+                                 alt="Biệt thự hiện đại sang trọng" />
+                            <span class="haven-property-badge">Nổi bật</span>
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">BIỆT THỰ</span>
+                            <h3><a href="#biet-thu-1">Biệt thự hiện đại, không gian xanh</a></h3>
+                            <p class="haven-property-location">⌖ Khu đô thị cao cấp</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 250 m²</span>
+                                <span>♧ 4 PN</span>
+                                <span>♧ 5 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>12,5 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#biet-thu-1" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#can-ho-1">
+                            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=85"
+                                 alt="Căn hộ cao cấp thiết kế hiện đại" />
+                            <span class="haven-property-badge">Cao cấp</span>
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">CĂN HỘ</span>
+                            <h3><a href="#can-ho-1">Căn hộ cao cấp với tầm nhìn thoáng</a></h3>
+                            <p class="haven-property-location">⌖ Trung tâm thành phố</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 95 m²</span>
+                                <span>♧ 3 PN</span>
+                                <span>♧ 2 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>4,2 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#can-ho-1" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#nha-pho-1">
+                            <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=85"
+                                 alt="Nhà phố phong cách tối giản" />
+                            <span class="haven-property-badge">Lựa chọn đẹp</span>
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">NHÀ PHỐ</span>
+                            <h3><a href="#nha-pho-1">Nhà phố thiết kế tinh tế, tiện nghi</a></h3>
+                            <p class="haven-property-location">⌖ Khu dân cư hiện đại</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 110 m²</span>
+                                <span>♧ 3 PN</span>
+                                <span>♧ 3 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>6,8 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#nha-pho-1" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#nha-vuon-1">
+                            <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=900&q=85"
+                                 alt="Nhà vườn có sân rộng" />
+                            <span class="haven-property-badge">Không gian xanh</span>
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">NHÀ VƯỜN</span>
+                            <h3><a href="#nha-vuon-1">Nhà vườn yên bình giữa thiên nhiên</a></h3>
+                            <p class="haven-property-location">⌖ Khu vực ngoại ô</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 320 m²</span>
+                                <span>♧ 3 PN</span>
+                                <span>♧ 2 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>5,6 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#nha-vuon-1" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#can-ho-2">
+                            <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85"
+                                 alt="Không gian căn hộ sang trọng" />
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">CĂN HỘ</span>
+                            <h3><a href="#can-ho-2">Căn hộ hiện đại dành cho gia đình</a></h3>
+                            <p class="haven-property-location">⌖ Khu đô thị mới</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 82 m²</span>
+                                <span>♧ 2 PN</span>
+                                <span>♧ 2 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>3,5 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#can-ho-2" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="haven-property-card">
+                        <a class="haven-property-card__image"
+                           href="#biet-thu-2">
+                            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=85"
+                                 alt="Không gian biệt thự cao cấp" />
+                            <span class="haven-property-badge">Sang trọng</span>
+                            <span class="haven-property-heart" aria-hidden="true">♡</span>
+                        </a>
+                        <div class="haven-property-card__body">
+                            <span class="haven-property-type">BIỆT THỰ</span>
+                            <h3><a href="#biet-thu-2">Biệt thự sang trọng, nội thất cao cấp</a></h3>
+                            <p class="haven-property-location">⌖ Khu dân cư cao cấp</p>
+                            <div class="haven-property-specs">
+                                <span>▧ 280 m²</span>
+                                <span>♧ 4 PN</span>
+                                <span>♧ 4 WC</span>
+                            </div>
+                            <div class="haven-property-card__footer">
+                                <div>
+                                    <small>Giá tham khảo</small>
+                                    <strong>15 tỷ VNĐ</strong>
+                                </div>
+                                <a href="#biet-thu-2" class="haven-property-detail">Chi tiết ↗</a>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="haven-sale-pagination">
+                    <button type="button" disabled>‹</button>
+                    <button type="button" class="is-active">1</button>
+                    <button type="button">2</button>
+                    <button type="button">3</button>
+                    <button type="button">›</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT BANNER -->
+    <section class="haven-sale-contact">
+        <div>
+            <span class="haven-sale-eyebrow">HAVEN - HOME AWAITS</span>
+            <h2>Ngôi nhà lý tưởng bắt đầu từ đây.</h2>
+            <p>Hãy để HAVEN đồng hành cùng bạn trên hành trình tìm kiếm không gian sống.</p>
+        </div>
+        <a href="/Home/Contact" class="haven-sale-contact__button">
+            Liên hệ tư vấn ↗
+        </a>
+    </section>
+
+</main>
