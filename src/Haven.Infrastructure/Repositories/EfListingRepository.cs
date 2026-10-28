@@ -24,6 +24,17 @@ public sealed class EfListingRepository : IListingRepository
                 cancellationToken);
     }
 
+    public Task<Listing?> GetPublicByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Listings
+            .FirstOrDefaultAsync(
+                listing => listing.Id == id &&
+                    listing.Status == ListingStatus.Approved,
+                cancellationToken);
+    }
+
     public async Task AddAsync(
         Listing listing,
         CancellationToken cancellationToken = default)

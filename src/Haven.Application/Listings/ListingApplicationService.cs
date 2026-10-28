@@ -82,6 +82,40 @@ public sealed class ListingApplicationService
         return listing;
     }
 
+    public async Task<PublicListingDetails?> GetPublicDetailsAsync(
+        int listingId,
+        CancellationToken cancellationToken = default)
+    {
+        if (listingId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(listingId));
+        }
+
+        var listing = await _repository.GetPublicByIdAsync(
+            listingId,
+            cancellationToken);
+
+        if (listing is null || listing.Status != ListingStatus.Approved)
+        {
+            return null;
+        }
+
+        return new PublicListingDetails(
+            listing.Id,
+            listing.PropertyTypeId,
+            listing.Title,
+            listing.Description,
+            listing.Purpose,
+            listing.PriceAmount,
+            listing.AreaSqm,
+            listing.Province,
+            listing.District,
+            listing.AddressLine,
+            listing.Bedrooms,
+            listing.Bathrooms,
+            listing.CreatedAtUtc);
+    }
+
     public async Task<Listing?> UpdateAsync(
         string ownerId,
         int listingId,
@@ -146,6 +180,37 @@ public sealed class ListingApplicationService
         return listing;
     }
 
+    public Task<Listing?> ApproveAsync(
+        int listingId,
+        CancellationToken cancellationToken = default)
+    {
+        return ApplyModerationAsync(
+            listingId,
+            listing => listing.Approve(_timeProvider.GetUtcNow()),
+            cancellationToken);
+    }
+
+    public Task<Listing?> RejectAsync(
+        int listingId,
+        string reason,
+        CancellationToken cancellationToken = default)
+    {
+        return ApplyModerationAsync(
+            listingId,
+            listing => listing.Reject(reason, _timeProvider.GetUtcNow()),
+            cancellationToken);
+    }
+
+    public Task<Listing?> HideAsync(
+        int listingId,
+        CancellationToken cancellationToken = default)
+    {
+        return ApplyModerationAsync(
+            listingId,
+            listing => listing.Hide(_timeProvider.GetUtcNow()),
+            cancellationToken);
+    }
+
     public Task<IReadOnlyList<PropertyType>> GetActivePropertyTypesAsync(
         CancellationToken cancellationToken = default)
     {
@@ -166,5 +231,30 @@ public sealed class ListingApplicationService
                 "The selected property type does not exist or is inactive.",
                 nameof(propertyTypeId));
         }
+    }
+
+    private async Task<Listing?> ApplyModerationAsync(
+        int listingId,
+        Action<Listing> applyTransition,
+        CancellationToken cancellationToken)
+    {
+        if (listingId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(listingId));
+        }
+
+        var listing = await _repository.GetByIdAsync(
+            listingId,
+            cancellationToken);
+
+        if (listing is null)
+        {
+            return null;
+        }
+
+        applyTransition(listing);
+        await _repository.SaveChangesAsync(cancellationToken);
+
+        return listing;
     }
 }

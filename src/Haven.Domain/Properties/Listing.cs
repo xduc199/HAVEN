@@ -2,6 +2,14 @@
 
 public sealed class Listing
 {
+    public const int OwnerIdMaxLength = 450;
+    public const int TitleMaxLength = 200;
+    public const int DescriptionMaxLength = 5000;
+    public const int ProvinceMaxLength = 100;
+    public const int DistrictMaxLength = 100;
+    public const int AddressLineMaxLength = 300;
+    public const int RejectionReasonMaxLength = 1000;
+
     private Listing()
     {
     }
@@ -32,7 +40,7 @@ public sealed class Listing
         ValidatePriceAndArea(priceAmount, areaSqm);
         ValidateRooms(bedrooms, bathrooms);
         ValidatePurpose(purpose);
-        ArgumentNullException.ThrowIfNull(description);
+        ValidateDescription(description);
 
         OwnerId = ownerId.Trim();
         PropertyTypeId = propertyTypeId;
@@ -166,8 +174,14 @@ public sealed class Listing
                 nameof(reason));
         }
 
+        var normalizedReason = reason.Trim();
+        ValidateMaxLength(
+            normalizedReason,
+            RejectionReasonMaxLength,
+            nameof(reason));
+
         Status = ListingStatus.Rejected;
-        RejectionReason = reason.Trim();
+        RejectionReason = normalizedReason;
         ApprovedAtUtc = null;
         UpdatedAtUtc = nowUtc;
     }
@@ -215,7 +229,7 @@ public sealed class Listing
         ValidatePriceAndArea(priceAmount, areaSqm);
         ValidateRooms(bedrooms, bathrooms);
         ValidatePurpose(purpose);
-        ArgumentNullException.ThrowIfNull(description);
+        ValidateDescription(description);
 
         PropertyTypeId = propertyTypeId;
         Title = title.Trim();
@@ -301,6 +315,34 @@ public sealed class Listing
             throw new ArgumentException(
                 "Address is required.",
                 nameof(addressLine));
+        }
+
+        ValidateMaxLength(ownerId.Trim(), OwnerIdMaxLength, nameof(ownerId));
+        ValidateMaxLength(title.Trim(), TitleMaxLength, nameof(title));
+        ValidateMaxLength(province.Trim(), ProvinceMaxLength, nameof(province));
+        ValidateMaxLength(district.Trim(), DistrictMaxLength, nameof(district));
+        ValidateMaxLength(addressLine.Trim(), AddressLineMaxLength, nameof(addressLine));
+    }
+
+    private static void ValidateDescription(string description)
+    {
+        ArgumentNullException.ThrowIfNull(description);
+        ValidateMaxLength(
+            description.Trim(),
+            DescriptionMaxLength,
+            nameof(description));
+    }
+
+    private static void ValidateMaxLength(
+        string value,
+        int maxLength,
+        string parameterName)
+    {
+        if (value.Length > maxLength)
+        {
+            throw new ArgumentException(
+                $"{parameterName} cannot exceed {maxLength} characters.",
+                parameterName);
         }
     }
 
