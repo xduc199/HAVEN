@@ -8,6 +8,10 @@ public interface IListingRepository
         int id,
         CancellationToken cancellationToken = default);
 
+    Task<Haven.Application.Listings.ListingSearchResult> SearchPublicAsync(
+        Haven.Application.Listings.ListingSearchCriteria criteria,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(
         Listing listing,
         CancellationToken cancellationToken = default);

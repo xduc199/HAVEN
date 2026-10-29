@@ -82,6 +82,16 @@ public sealed class ListingApplicationService
         return listing;
     }
 
+    public Task<ListingSearchResult> SearchPublicAsync(
+        ListingSearchCriteria criteria,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(criteria);
+
+        var normalized = NormalizeAndValidateSearchCriteria(criteria);
+        return _repository.SearchPublicAsync(normalized, cancellationToken);
+    }
+
     public async Task<Listing?> UpdateAsync(
         string ownerId,
         int listingId,
@@ -166,5 +176,98 @@ public sealed class ListingApplicationService
                 "The selected property type does not exist or is inactive.",
                 nameof(propertyTypeId));
         }
+    }
+
+    private static ListingSearchCriteria NormalizeAndValidateSearchCriteria(
+        ListingSearchCriteria criteria)
+    {
+        if (criteria.Page < 1)
+        {
+            throw new ListingSearchValidationException("Page must be at least 1.");
+        }
+
+        if (criteria.PageSize < 1 ||
+            criteria.PageSize > ListingSearchCriteria.MaximumPageSize)
+        {
+            throw new ListingSearchValidationException(
+                $"PageSize must be between 1 and {ListingSearchCriteria.MaximumPageSize}.");
+        }
+
+        var offset = ((long)criteria.Page - 1) * criteria.PageSize;
+        if (offset > int.MaxValue)
+        {
+            throw new ListingSearchValidationException("Requested page is too large.");
+        }
+
+        if (criteria.PropertyTypeId is <= 0)
+        {
+            throw new ListingSearchValidationException("PropertyTypeId must be greater than 0.");
+        }
+
+        if (criteria.Purpose.HasValue &&
+            !Enum.IsDefined(criteria.Purpose.Value))
+        {
+            throw new ListingSearchValidationException("Purpose is not supported.");
+        }
+
+        ValidateRange(criteria.MinPriceAmount, criteria.MaxPriceAmount, "price");
+        ValidateRange(criteria.MinAreaSqm, criteria.MaxAreaSqm, "area");
+
+        var keyword = NormalizeText(criteria.Keyword);
+        if (keyword?.Length > ListingSearchCriteria.MaximumKeywordLength)
+        {
+            throw new ListingSearchValidationException(
+                $"Keyword cannot exceed {ListingSearchCriteria.MaximumKeywordLength} characters.");
+        }
+
+        ValidateLocationLength(criteria.Province, "Province");
+        ValidateLocationLength(criteria.District, "District");
+
+        var sortBy = string.IsNullOrWhiteSpace(criteria.SortBy)
+            ? ListingSearchQueryBuilder.NewestSort
+            : criteria.SortBy.Trim().ToLowerInvariant();
+
+        if (!ListingSearchQueryBuilder.IsSupportedSort(sortBy))
+        {
+            throw new ListingSearchValidationException(
+                "SortBy must be one of: newest, price_asc, price_desc.");
+        }
+
+        return criteria with
+        {
+            Keyword = keyword,
+            Province = NormalizeText(criteria.Province),
+            District = NormalizeText(criteria.District),
+            SortBy = sortBy
+        };
+    }
+
+    private static void ValidateRange(decimal? minimum, decimal? maximum, string name)
+    {
+        if (minimum < 0 || maximum < 0)
+        {
+            throw new ListingSearchValidationException(
+                $"{name} bounds cannot be negative.");
+        }
+
+        if (minimum.HasValue && maximum.HasValue && minimum.Value > maximum.Value)
+        {
+            throw new ListingSearchValidationException(
+                $"Minimum {name} cannot be greater than maximum {name}.");
+        }
+    }
+
+    private static void ValidateLocationLength(string? value, string name)
+    {
+        if (value?.Trim().Length > 100)
+        {
+            throw new ListingSearchValidationException(
+                $"{name} cannot exceed 100 characters.");
+        }
+    }
+
+    private static string? NormalizeText(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 }
