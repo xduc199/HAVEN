@@ -1,0 +1,45 @@
+@model Haven.Web.ViewModels.Admin.AdminTagPageViewModel
+@{
+    ViewData["Title"] = "Quản lý Tags";
+}
+<section class="page-container">
+    <div class="admin-page-heading">
+        <div><h1>Quản lý Tags</h1><p class="admin-muted">Tag đã dùng được vô hiệu hóa để giữ nguyên liên kết listing.</p></div>
+        <a class="admin-button" asp-action="Create">Tạo Tag</a>
+    </div>
+    <form method="get" class="admin-filter">
+        <label>Tìm kiếm <input type="search" name="search" value="@Model.Search" maxlength="100" /></label>
+        <button class="admin-button" type="submit">Tìm</button>
+    </form>
+    @if (Model.Page.Items.Count == 0)
+    {
+        <p class="admin-empty">Không có tag phù hợp.</p>
+    }
+    else
+    {
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Tên</th><th>Slug</th><th>Trạng thái</th><th>Cập nhật</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var tag in Model.Page.Items)
+                {
+                    <tr>
+                        <td>@tag.Name</td><td>@tag.Slug</td>
+                        <td>@(tag.IsActive ? "Đang hoạt động" : "Đã vô hiệu hóa")</td>
+                        <td>@tag.UpdatedAtUtc.ToLocalTime().ToString("g")</td>
+                        <td><a asp-action="Edit" asp-route-id="@tag.Id">Sửa</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (Model.Page.TotalPages > 1)
+    {
+        <nav class="admin-actions" aria-label="Phân trang tags">
+            @if (Model.Page.Page > 1) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page - 1)">Trước</a> }
+            <span>Trang @Model.Page.Page / @Model.Page.TotalPages</span>
+            @if (Model.Page.Page < Model.Page.TotalPages) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page + 1)">Tiếp theo</a> }
+        </nav>
+    }
+</section>

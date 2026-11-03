@@ -1,0 +1,46 @@
+@model Haven.Application.Consultations.ConsultationPageResult
+@using Haven.Domain.Consultations
+@{
+    ViewData["Title"] = "Quản lý tư vấn";
+    var filter = ViewData["Filter"] as Haven.Web.ViewModels.Admin.AdminConsultationFilterViewModel;
+}
+<section class="page-container">
+    <h1>Yêu cầu tư vấn</h1>
+    <form method="get" class="admin-filter">
+        <label for="search">Tìm kiếm</label>
+        <input id="search" type="search" name="Search" value="@filter?.Search" maxlength="200" />
+        <label for="status">Lọc trạng thái</label>
+        <select id="status" name="status"><option value="">Tất cả</option>
+        @foreach (var status in Enum.GetValues<ConsultationStatus>())
+        {
+            if (filter?.Status == status) { <option value="@status" selected>@status</option> }
+            else { <option value="@status">@status</option> }
+        }
+        </select>
+        <label for="fromDate">Từ ngày</label><input id="fromDate" type="date" name="FromDate" value="@filter?.FromDate?.ToString("yyyy-MM-dd")" />
+        <label for="toDate">Đến ngày</label><input id="toDate" type="date" name="ToDate" value="@filter?.ToDate?.ToString("yyyy-MM-dd")" />
+        <button class="admin-button" type="submit">Lọc</button>
+    </form>
+    @if (!ViewData.ModelState.IsValid) { <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div> }
+    @if (Model.Items.Count == 0)
+    {
+        <p class="admin-empty">Không có yêu cầu tư vấn phù hợp.</p>
+    }
+    else
+    {
+        <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Người gửi</th><th>Email</th><th>Điện thoại</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead><tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr><td>@item.ContactName</td><td>@item.Email</td><td>@item.PhoneNumber</td><td><span class="status-badge">@item.Status</span></td><td>@item.CreatedAtUtc.ToLocalTime().ToString("g")</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
+        }
+        </tbody></table></div>
+    }
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="admin-actions" aria-label="Phân trang yêu cầu">
+            @if (Model.Page > 1) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-status="@filter?.Status" asp-route-search="@filter?.Search" asp-route-fromDate="@filter?.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@filter?.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page - 1)">Trước</a> }
+            <span>Trang @Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-status="@filter?.Status" asp-route-search="@filter?.Search" asp-route-fromDate="@filter?.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@filter?.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page + 1)">Tiếp theo</a> }
+        </nav>
+    }
+</section>

@@ -1,0 +1,87 @@
+@model Haven.Application.Dashboard.AdminAnalyticsReport
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+    var filter = ViewData["Filter"] as Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel
+        ?? new Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel();
+}
+<section class="page-container">
+    <h1>Bảng điều khiển Admin</h1>
+    @if (ViewData["HasActivePropertyTypes"] is false)
+    {
+        <aside class="admin-alert admin-alert--warning" role="status">
+            <strong>Chưa có loại bất động sản đang hoạt động.</strong>
+            <span>Người dùng hiện không thể tạo tin đăng. Thêm hoặc kích hoạt một loại để mở luồng đăng tin.</span>
+            <a class="admin-button admin-button--secondary" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Quản lý loại bất động sản</a>
+        </aside>
+    }
+    <form method="get" class="admin-filter">
+        <label>Kỳ thống kê
+            <select name="Period">
+                <option value="7d" selected="@(filter.Period == "7d")">7 ngày</option>
+                <option value="30d" selected="@(filter.Period == "30d")">30 ngày</option>
+                <option value="90d" selected="@(filter.Period == "90d")">90 ngày</option>
+                <option value="ytd" selected="@(filter.Period == "ytd")">Năm hiện tại</option>
+                <option value="custom" selected="@(filter.Period == "custom")">Tùy chọn</option>
+            </select>
+        </label>
+        <label>Từ ngày <input type="date" name="FromDate" value="@filter.FromDate?.ToString("yyyy-MM-dd")" /></label>
+        <label>Đến ngày <input type="date" name="ToDate" value="@filter.ToDate?.ToString("yyyy-MM-dd")" /></label>
+        <button class="admin-button" type="submit">Áp dụng</button>
+    </form>
+    <p class="admin-muted">Thống kê @Model.DateRange.FromDate.ToString("yyyy-MM-dd") – @Model.DateRange.ToDate.ToString("yyyy-MM-dd"). Tổng người dùng là số hiện có toàn hệ thống.</p>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div>
+    }
+    <div class="stats-grid">
+        <article class="admin-card admin-kpi"><span>Listings</span><strong>@Model.Kpis.TotalListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Draft</span><strong>@Model.DraftListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Pending</span><strong>@Model.Kpis.PendingListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Approved</span><strong>@Model.Kpis.ApprovedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Rejected</span><strong>@Model.RejectedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Hidden</span><strong>@Model.HiddenListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Consultations</span><strong>@Model.TotalConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>New</span><strong>@Model.Kpis.NewConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>In Progress</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Completed</span><strong>@Model.CompletedConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Users</span><strong>@Model.TotalUsers</strong></article>
+    </div>
+    <partial name="_AnalyticsCharts" model="Model" />
+    <div class="admin-grid admin-latest-grid">
+        <section class="admin-card">
+            <h2>Listing mới nhất</h2>
+            @if (Model.LatestListings.Count == 0) { <p class="admin-empty">Không có listing trong kỳ.</p> }
+            else
+            {
+                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Listing</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody>
+                @foreach (var item in Model.LatestListings) { <tr><td><a asp-area="Admin" asp-controller="Listings" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></td><td>@item.PropertyTypeName</td><td>@item.Status</td></tr> }
+                </tbody></table></div>
+            }
+        </section>
+        <section class="admin-card">
+            <h2>Đang chờ duyệt</h2>
+            @if (Model.PendingListings.Count == 0) { <p class="admin-empty">Không có listing chờ duyệt.</p> }
+            else
+            {
+                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Listing</th><th>Loại</th></tr></thead><tbody>
+                @foreach (var item in Model.PendingListings) { <tr><td><a asp-area="Admin" asp-controller="Listings" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></td><td>@item.PropertyTypeName</td></tr> }
+                </tbody></table></div>
+            }
+        </section>
+        <section class="admin-card">
+            <h2>Consultation mới nhất</h2>
+            @if (Model.LatestConsultations.Count == 0) { <p class="admin-empty">Không có consultation trong kỳ.</p> }
+            else
+            {
+                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Người gửi</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead><tbody>
+                @foreach (var item in Model.LatestConsultations) { <tr><td><a asp-area="Admin" asp-controller="Consultations" asp-action="Details" asp-route-id="@item.Id">@item.ContactName</a></td><td>@item.Status</td><td>@item.CreatedAtUtc.ToLocalTime().ToString("g")</td></tr> }
+                </tbody></table></div>
+            }
+        </section>
+    </div>
+    <nav class="form-actions" aria-label="Quản trị">
+        <a class="haven-button-secondary" asp-area="Admin" asp-controller="Listings" asp-action="Index">Quản lý tin</a>
+        <a class="haven-button-secondary" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Loại bất động sản</a>
+        <a class="haven-button-secondary" asp-area="Admin" asp-controller="Consultations" asp-action="Index">Yêu cầu tư vấn</a>
+    </nav>
+</section>

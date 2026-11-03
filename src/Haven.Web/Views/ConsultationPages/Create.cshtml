@@ -1,0 +1,19 @@
+@model Haven.Web.ViewModels.Consultations.CreateConsultationViewModel
+@{
+    ViewData["Title"] = "Gửi yêu cầu tư vấn";
+}
+<section class="page-container">
+    <h1>Gửi yêu cầu tư vấn</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.ListingTitle)){<p>Về tin: <strong>@Model.ListingTitle</strong></p>}
+    <form method="post" class="haven-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" role="alert"></div>
+        <input asp-for="ListingId" type="hidden" />
+        <div class="haven-field"><label asp-for="ContactName">Họ tên</label><input asp-for="ContactName" autocomplete="name" /><span asp-validation-for="ContactName"></span></div>
+        <div class="haven-field"><label asp-for="Email">Email</label><input asp-for="Email" autocomplete="email" /><span asp-validation-for="Email"></span></div>
+        <div class="haven-field"><label asp-for="PhoneNumber">Số điện thoại</label><input asp-for="PhoneNumber" autocomplete="tel" /><span asp-validation-for="PhoneNumber"></span></div>
+        <div class="haven-field"><label asp-for="Message">Lời nhắn (tùy chọn)</label><textarea asp-for="Message"></textarea><span asp-validation-for="Message"></span></div>
+        <button class="haven-button" type="submit">Gửi yêu cầu</button>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

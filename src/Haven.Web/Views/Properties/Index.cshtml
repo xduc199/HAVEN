@@ -1,0 +1,100 @@
+@model Haven.Web.ViewModels.Properties.PropertySearchViewModel
+@using Haven.Application.Listings
+@{
+    ViewData["Title"] = "Tìm bất động sản";
+}
+<section class="page-container">
+    <div class="page-heading">
+        <div>
+            <h1>Tìm bất động sản</h1>
+            <p>@Model.TotalCount tin công khai</p>
+        </div>
+    </div>
+    <form asp-action="Index" method="get" class="haven-form haven-form--filters">
+        <div asp-validation-summary="All"></div>
+        <div class="haven-field">
+            <label asp-for="Keyword">Từ khóa</label>
+            <input asp-for="Keyword" />
+            <span asp-validation-for="Keyword"></span>
+        </div>
+        <div class="haven-field">
+            <label asp-for="PropertyTypeId">Loại bất động sản</label>
+            <select asp-for="PropertyTypeId">
+                <option value="">Tất cả</option>
+                @foreach (var type in Model.PropertyTypes)
+                {
+                    <option value="@type.Id">@type.Name</option>
+                }
+            </select>
+        </div>
+        <div class="haven-field">
+            <label asp-for="Purpose">Mục đích</label>
+            <select asp-for="Purpose" asp-items="Html.GetEnumSelectList<Haven.Domain.Properties.ListingPurpose>()">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
+        <div class="haven-field">
+            <label asp-for="Province">Tỉnh / thành phố</label>
+            <input asp-for="Province" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="District">Quận / huyện</label>
+            <input asp-for="District" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="MinimumPrice">Giá từ</label>
+            <input asp-for="MinimumPrice" type="number" min="0" step="any" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="MaximumPrice">Giá đến</label>
+            <input asp-for="MaximumPrice" type="number" min="0" step="any" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="MinimumAreaSqm">Diện tích từ (m²)</label>
+            <input asp-for="MinimumAreaSqm" type="number" min="0" step="any" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="MaximumAreaSqm">Diện tích đến (m²)</label>
+            <input asp-for="MaximumAreaSqm" type="number" min="0" step="any" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="Bedrooms">Phòng ngủ</label>
+            <input asp-for="Bedrooms" type="number" min="0" />
+        </div>
+        <div class="haven-field">
+            <label asp-for="Sort">Sắp xếp</label>
+            <select asp-for="Sort" asp-items="Html.GetEnumSelectList<ListingSearchSort>()"></select>
+        </div>
+        <div class="form-actions">
+            <button class="haven-button" type="submit">Áp dụng bộ lọc</button>
+            <a class="haven-button-secondary" asp-action="Index">Xóa bộ lọc</a>
+        </div>
+    </form>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <p class="is-error" role="alert">Bộ lọc không hợp lệ. Vui lòng kiểm tra các trường đã nhập.</p>
+    }
+    else if (Model.Items.Count == 0)
+    {
+        <p class="is-empty">Không tìm thấy bất động sản phù hợp.</p>
+    }
+    else
+    {
+        <partial name="_PropertyCards" model="Model.Items" />
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Phân trang" class="form-actions">
+                @if (Model.Page > 1)
+                {
+                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page - 1)">Trước</a>
+                }
+                <span>Trang @Model.Page / @Model.TotalPages</span>
+                @if (Model.Page < Model.TotalPages)
+                {
+                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page + 1)">Tiếp theo</a>
+                }
+            </nav>
+        }
+    }
+</section>

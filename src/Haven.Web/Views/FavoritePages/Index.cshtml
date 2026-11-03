@@ -1,0 +1,37 @@
+@model Haven.Application.Favorites.FavoritePage
+@{
+    ViewData["Title"] = "Yêu thích";
+}
+<section class="page-container">
+    <h1>Bất động sản yêu thích</h1>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="is-empty">Danh sách yêu thích đang trống.</p>
+    }
+    else
+    {
+        <div class="property-grid">
+        @foreach (var item in Model.Items)
+        {
+            <article class="property-card">
+                <h2><a asp-controller="Properties" asp-action="Details" asp-route-id="@item.ListingId">@item.Title</a></h2>
+                <p>@item.PriceAmount.ToString("N0") ₫ · @item.AreaSqm.ToString("N1") m²</p>
+                <p class="muted">@item.District, @item.Province</p>
+                <form asp-controller="FavoritePages" asp-action="Remove" asp-route-listingId="@item.ListingId" method="post" onsubmit="return confirm('Bỏ tin này khỏi danh sách yêu thích?');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                    <button class="haven-button-secondary" type="submit">Bỏ yêu thích</button>
+                </form>
+            </article>
+        }
+        </div>
+    }
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="form-actions" aria-label="Phân trang yêu thích">
+            @if (Model.Page > 1) { <a class="haven-button-secondary" asp-action="Index" asp-route-page="@(Model.Page - 1)">Trước</a> }
+            <span>Trang @Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages) { <a class="haven-button-secondary" asp-action="Index" asp-route-page="@(Model.Page + 1)">Tiếp theo</a> }
+        </nav>
+    }
+</section>

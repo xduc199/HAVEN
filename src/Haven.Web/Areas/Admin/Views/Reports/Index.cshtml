@@ -1,0 +1,38 @@
+@model Haven.Application.Dashboard.AdminAnalyticsReport
+@{
+    ViewData["Title"] = "Reports";
+    var filter = ViewData["Filter"] as Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel
+        ?? new Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel();
+}
+<section class="page-container">
+    <h1>Reports</h1>
+    <form method="get" class="admin-filter">
+        <label>Kỳ báo cáo
+            <select name="Period">
+                <option value="7d" selected="@(filter.Period == "7d")">7 ngày</option>
+                <option value="30d" selected="@(filter.Period == "30d")">30 ngày</option>
+                <option value="90d" selected="@(filter.Period == "90d")">90 ngày</option>
+                <option value="ytd" selected="@(filter.Period == "ytd")">Năm hiện tại</option>
+                <option value="custom" selected="@(filter.Period == "custom")">Tùy chọn</option>
+            </select>
+        </label>
+        <label>Từ ngày <input type="date" name="FromDate" value="@filter.FromDate?.ToString("yyyy-MM-dd")" /></label>
+        <label>Đến ngày <input type="date" name="ToDate" value="@filter.ToDate?.ToString("yyyy-MM-dd")" /></label>
+        <button class="admin-button" type="submit">Áp dụng</button>
+    </form>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div>
+    }
+    <p class="admin-muted">Kỳ báo cáo: @Model.DateRange.FromDate.ToString("yyyy-MM-dd") – @Model.DateRange.ToDate.ToString("yyyy-MM-dd")</p>
+    <div class="admin-grid">
+        <article class="admin-card admin-kpi"><span>Listings trong kỳ</span><strong>@Model.Kpis.TotalListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Pending</span><strong>@Model.Kpis.PendingListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Approved</span><strong>@Model.Kpis.ApprovedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Consultations trong kỳ</span><strong>@Model.TotalConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>New</span><strong>@Model.Kpis.NewConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>In Progress</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Users hiện tại</span><strong>@Model.TotalUsers</strong></article>
+    </div>
+    <partial name="_AnalyticsCharts" model="Model" />
+</section>

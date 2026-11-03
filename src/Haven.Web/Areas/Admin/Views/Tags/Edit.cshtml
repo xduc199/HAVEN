@@ -1,0 +1,19 @@
+@model Haven.Web.ViewModels.Admin.TagFormViewModel
+@{
+    ViewData["Title"] = "Sửa Tag";
+}
+<section class="page-container">
+    <h1>Sửa Tag</h1>
+    <form asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="admin-card admin-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="admin-alert admin-alert--error"></div>
+        <label asp-for="Name">Tên Tag</label>
+        <input asp-for="Name" maxlength="80" />
+        <span asp-validation-for="Name" class="field-validation-error"></span>
+        <label asp-for="Description">Mô tả</label>
+        <textarea asp-for="Description" maxlength="500" rows="3"></textarea>
+        <span asp-validation-for="Description" class="field-validation-error"></span>
+        <label class="admin-checkbox"><input asp-for="IsActive" /> Đang hoạt động</label>
+        <div class="admin-actions"><button class="admin-button" type="submit">Lưu</button><a class="admin-button admin-button--secondary" asp-action="Index">Quay lại</a></div>
+    </form>
+</section>

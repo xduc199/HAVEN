@@ -98,6 +98,11 @@ public sealed class Listing
 
     public string? RejectionReason { get; private set; }
 
+    public ICollection<ListingTag> ListingTags { get; private set; } = new List<ListingTag>();
+
+    public bool CanBeDeletedByOwner =>
+        Status is ListingStatus.Draft or ListingStatus.Rejected;
+
     public static Listing Create(
         string ownerId,
         int propertyTypeId,

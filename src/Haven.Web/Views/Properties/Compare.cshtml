@@ -1,0 +1,47 @@
+@model Haven.Web.ViewModels.Properties.ComparePageViewModel
+@{
+    ViewData["Title"] = "So sánh bất động sản";
+}
+<section class="page-container">
+    <div class="page-heading">
+        <div><h1>So sánh bất động sản</h1><p>Tối đa ba tin công khai, không thêm trùng.</p></div>
+        @if (Model.Listings.Count < 3)
+        {
+            <form asp-controller="Properties" asp-action="Compare" method="get" class="form-actions">
+                <label for="compare-id">Thêm theo mã tin</label>
+                <input id="compare-id" name="ids" type="number" min="1" required />
+                @foreach (var id in Model.ListingIds)
+                {
+                    <input type="hidden" name="ids" value="@id" />
+                }
+                <button class="haven-button" type="submit">Thêm</button>
+            </form>
+        }
+    </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="is-error" role="alert"></div>
+    }
+    @if (Model.Listings.Count == 0)
+    {
+        <p class="is-empty">Chưa có tin để so sánh. Hãy tìm bất động sản và thêm bằng mã tin.</p>
+    }
+    else
+    {
+        <div class="data-table-wrap">
+            <table class="data-table compare-table">
+                <thead><tr><th>Thông tin</th>@foreach (var listing in Model.Listings){<th><a asp-action="Details" asp-route-id="@listing.Id">@listing.Title</a></th>}</tr></thead>
+                <tbody>
+                    <tr><th>Giá</th>@foreach (var listing in Model.Listings){<td>@listing.PriceAmount.ToString("N0") ₫</td>}</tr>
+                    <tr><th>Diện tích</th>@foreach (var listing in Model.Listings){<td>@listing.AreaSqm.ToString("N1") m²</td>}</tr>
+                    <tr><th>Loại</th>@foreach (var listing in Model.Listings){<td>@listing.PropertyTypeName</td>}</tr>
+                    <tr><th>Mục đích</th>@foreach (var listing in Model.Listings){<td>@listing.Purpose</td>}</tr>
+                    <tr><th>Vị trí</th>@foreach (var listing in Model.Listings){<td>@listing.AddressLine, @listing.District, @listing.Province</td>}</tr>
+                    <tr><th>Phòng ngủ</th>@foreach (var listing in Model.Listings){<td>@(listing.Bedrooms?.ToString() ?? "—")</td>}</tr>
+                    <tr><th>Phòng tắm</th>@foreach (var listing in Model.Listings){<td>@(listing.Bathrooms?.ToString() ?? "—")</td>}</tr>
+                    <tr><th></th>@foreach (var listing in Model.Listings){var remaining = Model.ListingIds.Where(id => id != listing.Id);<td><a asp-action="Compare" asp-route-ids="@remaining">Bỏ khỏi so sánh</a></td>}</tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

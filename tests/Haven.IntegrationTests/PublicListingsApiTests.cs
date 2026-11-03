@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.Json;
 using Haven.Application.Abstractions;
+using Haven.Application.Listings;
+using Haven.Application.Tags;
 using Haven.Domain.Properties;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -37,6 +39,8 @@ public sealed class PublicListingsApiTests
         using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         var json = body.RootElement;
         Assert.Equal("Public listing", json.GetProperty("title").GetString());
+        Assert.Equal("House", json.GetProperty("propertyTypeName").GetString());
+        Assert.Equal("Public Owner", json.GetProperty("ownerDisplayName").GetString());
         Assert.False(json.TryGetProperty("ownerId", out _));
         Assert.False(json.TryGetProperty("rejectionReason", out _));
     }
@@ -95,6 +99,9 @@ public sealed class PublicListingsApiTests
                 services.RemoveAll<IListingRepository>();
                 services.AddSingleton<IListingRepository>(
                     new StubListingRepository(listing));
+                services.RemoveAll<IPropertyTypeRepository>();
+                services.AddSingleton<IPropertyTypeRepository>(
+                    new StubPropertyTypeRepository());
             }));
 
         return customizedFactory;
@@ -118,8 +125,90 @@ public sealed class PublicListingsApiTests
             Task.FromResult(
                 listing?.Status == ListingStatus.Approved ? listing : null);
 
+        public Task<string?> GetOwnerDisplayNameAsync(
+            string ownerId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<string?>("Public Owner");
+
+        public Task<ListingSearchPage> SearchApprovedAsync(
+            ListingSearchCriteria criteria,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new ListingSearchPage([], 0));
+
+        public Task<ListingSearchPage> GetForOwnerAsync(
+            string ownerId,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new ListingSearchPage([], 0));
+
+        public Task<IReadOnlyList<Listing>> GetApprovedByIdsAsync(
+            IReadOnlyCollection<int> listingIds,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<Listing>>(
+                listing is not null &&
+                listing.Status == ListingStatus.Approved &&
+                listingIds.Contains(listing.Id)
+                    ? [listing]
+                    : []);
+
+        public Task<TagListingPage> GetApprovedByTagAsync(
+            int tagId,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new TagListingPage([], page, pageSize, 0, 0));
+
+        public Task<ListingSearchPage> GetForAdminAsync(
+            ListingStatus? status,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new ListingSearchPage([], 0));
+
+        public Task<ListingSearchPage> SearchForAdminAsync(
+            AdminListingCriteria criteria,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new ListingSearchPage([], 0));
+
+        public Task<IReadOnlyList<ListingStatusCount>> GetStatusCountsAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<ListingStatusCount>>([]);
+
         public Task AddAsync(
             Listing newListing,
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+
+        public Task RemoveAsync(
+            Listing oldListing,
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+
+        public Task SaveChangesAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+    }
+
+    private sealed class StubPropertyTypeRepository
+        : IPropertyTypeRepository
+    {
+        public Task<PropertyType?> GetByIdAsync(
+            int id,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<PropertyType?>(PropertyType.Create("House"));
+
+        public Task<IReadOnlyList<PropertyType>> GetActiveAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<PropertyType>>(
+                [PropertyType.Create("House")]);
+
+        public Task<IReadOnlyList<PropertyType>> GetAllAsync(
+            CancellationToken cancellationToken = default) =>
+            GetActiveAsync(cancellationToken);
+
+        public Task AddAsync(
+            PropertyType propertyType,
             CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
 

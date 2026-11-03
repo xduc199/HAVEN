@@ -1,0 +1,39 @@
+@model Haven.Application.Listings.OwnedListingPage
+@{
+    ViewData["Title"] = "Tin đăng của tôi";
+}
+<section class="page-container">
+    <div class="page-heading"><div><h1>Tin đăng của tôi</h1><p>@Model.TotalCount tin trên tài khoản của bạn.</p></div><a class="haven-button" asp-action="Create">Tạo tin đăng</a></div>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="is-empty">Bạn chưa có tin đăng nào.</p>
+    }
+    else
+    {
+        <div class="data-table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Giá</th><th>Cập nhật</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var listing in Model.Items)
+                {
+                    <tr>
+                        <td>@listing.Title</td>
+                        <td><span class="status-badge">@listing.Status</span></td>
+                        <td>@listing.PriceAmount.ToString("N0") ₫</td>
+                        <td>@listing.UpdatedAtUtc.ToLocalTime().ToString("g")</td>
+                        <td><a asp-action="Details" asp-route-id="@listing.Id">Xem</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="form-actions" aria-label="Phân trang tin đăng">
+                @if (Model.Page > 1) { <a class="haven-button-secondary" asp-action="Index" asp-route-page="@(Model.Page - 1)">Trước</a> }
+                <span>Trang @Model.Page / @Model.TotalPages</span>
+                @if (Model.Page < Model.TotalPages) { <a class="haven-button-secondary" asp-action="Index" asp-route-page="@(Model.Page + 1)">Tiếp theo</a> }
+            </nav>
+        }
+    }
+</section>

@@ -1,0 +1,23 @@
+@model IReadOnlyList<Haven.Web.ViewModels.Properties.PropertyCardViewModel>
+<div class="property-grid">
+    @foreach (var item in Model)
+    {
+        <article class="property-card">
+            <p class="muted">@item.PropertyTypeName · @(item.Purpose == Haven.Domain.Properties.ListingPurpose.Sale ? "Mua bán" : "Cho thuê")</p>
+            <h2><a asp-controller="Properties" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2>
+            <p><strong>@item.PriceAmount.ToString("N0") ₫</strong> · @item.AreaSqm.ToString("N1") m²</p>
+            <p class="property-card__meta">@item.District, @item.Province@(item.Bedrooms is null ? "" : $" · {item.Bedrooms} phòng ngủ")</p>
+            <div class="property-card__actions">
+                <a class="haven-button-secondary" asp-controller="Properties" asp-action="Details" asp-route-id="@item.Id">Chi tiết</a>
+                <a class="haven-button-secondary" asp-controller="Properties" asp-action="Compare" asp-route-ids="@item.Id">So sánh</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-controller="FavoritePages" asp-action="Add" asp-route-listingId="@item.Id" method="post" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <button class="haven-button-secondary" type="submit">Yêu thích</button>
+                    </form>
+                }
+            </div>
+        </article>
+    }
+</div>

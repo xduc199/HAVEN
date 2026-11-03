@@ -1,0 +1,33 @@
+@model Haven.Application.Listings.OwnedListingDetails
+@{
+    ViewData["Title"] = Model.Title;
+}
+<section class="page-container">
+    <div class="page-heading"><div><h1>@Model.Title</h1><p><span class="status-badge">@Model.Status</span> · Cập nhật @Model.UpdatedAtUtc.ToLocalTime().ToString("g")</p></div><a class="haven-button-secondary" asp-action="Index">Danh sách tin</a></div>
+    <article class="content-card">
+        <p>@Model.Purpose · @Model.PriceAmount.ToString("N0") ₫ · @Model.AreaSqm.ToString("N1") m²</p>
+        <p>@Model.AddressLine, @Model.District, @Model.Province</p>
+        <p>@Model.Description</p>
+        @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+        {
+            <p class="is-error">Lý do từ chối: @Model.RejectionReason</p>
+        }
+        <div class="form-actions">
+            @if (Model.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected or Haven.Domain.Properties.ListingStatus.Approved)
+            {
+                <a class="haven-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Chỉnh sửa</a>
+            }
+            @if (Model.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected)
+            {
+                <form asp-action="Submit" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Gửi tin đăng này để kiểm duyệt?');">
+                    @Html.AntiForgeryToken()
+                    <button class="haven-button" type="submit">Gửi duyệt</button>
+                </form>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Xóa tin đăng này?');">
+                    @Html.AntiForgeryToken()
+                    <button class="haven-button-danger" type="submit">Xóa</button>
+                </form>
+            }
+        </div>
+    </article>
+</section>

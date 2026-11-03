@@ -1,0 +1,99 @@
+@model Haven.Web.ViewModels.Listings.ListingFormViewModel
+@{
+    ViewData["Title"] = ViewContext.RouteData.Values["id"] is null ? "Tạo tin đăng" : "Sửa tin đăng";
+}
+<section class="page-container">
+    <h1>@ViewData["Title"]</h1>
+    <form method="post" class="haven-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" role="alert"></div>
+        @if (Model.PropertyTypes.Count == 0)
+        {
+            <div class="app-alert app-alert--warning" role="status">
+                <strong>Chưa thể tạo tin đăng.</strong>
+                <span>Hiện chưa có loại bất động sản đang hoạt động. Vui lòng liên hệ Admin hoặc quay lại sau.</span>
+            </div>
+        }
+        <fieldset class="listing-form-section">
+            <legend>Thông tin cơ bản</legend>
+            <div class="haven-field">
+                <label asp-for="Title">Tiêu đề</label>
+                <input asp-for="Title" autocomplete="off" />
+                <span asp-validation-for="Title"></span>
+            </div>
+            <div class="haven-field">
+                <label asp-for="Description">Mô tả</label>
+                <textarea asp-for="Description" rows="5"></textarea>
+                <span asp-validation-for="Description"></span>
+            </div>
+            <div class="listing-form-grid">
+                <div class="haven-field">
+                    <label asp-for="PropertyTypeId">Loại bất động sản</label>
+                    <select asp-for="PropertyTypeId" disabled="@(Model.PropertyTypes.Count == 0)">
+                        <option value="">Chọn loại</option>
+                        @foreach (var type in Model.PropertyTypes)
+                        {
+                            <option value="@type.Id">@type.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="PropertyTypeId"></span>
+                </div>
+                <div class="haven-field">
+                    <label asp-for="Purpose">Mục đích</label>
+                    <select asp-for="Purpose" asp-items="Html.GetEnumSelectList<Haven.Domain.Properties.ListingPurpose>()"></select>
+                    <span asp-validation-for="Purpose"></span>
+                </div>
+                <div class="haven-field">
+                    <label asp-for="PriceAmount">Giá (VND)</label>
+                    <input asp-for="PriceAmount" type="number" min="0.01" step="any" inputmode="decimal" />
+                    <span asp-validation-for="PriceAmount"></span>
+                </div>
+                <div class="haven-field">
+                    <label asp-for="AreaSqm">Diện tích (m²)</label>
+                    <input asp-for="AreaSqm" type="number" min="0.01" step="any" inputmode="decimal" />
+                    <span asp-validation-for="AreaSqm"></span>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="listing-form-section">
+            <legend>Vị trí</legend>
+            <div class="listing-form-grid">
+                <div class="haven-field">
+                    <label asp-for="Province">Tỉnh / thành phố</label>
+                    <input asp-for="Province" autocomplete="address-level1" />
+                    <span asp-validation-for="Province"></span>
+                </div>
+                <div class="haven-field">
+                    <label asp-for="District">Quận / huyện</label>
+                    <input asp-for="District" autocomplete="address-level2" />
+                    <span asp-validation-for="District"></span>
+                </div>
+                <div class="haven-field listing-form-grid__wide">
+                    <label asp-for="AddressLine">Địa chỉ</label>
+                    <input asp-for="AddressLine" autocomplete="street-address" />
+                    <span asp-validation-for="AddressLine"></span>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="listing-form-section">
+            <legend>Thông tin thêm</legend>
+            <div class="listing-form-grid">
+                <div class="haven-field">
+                    <label asp-for="Bedrooms">Phòng ngủ</label>
+                    <input asp-for="Bedrooms" type="number" min="0" inputmode="numeric" />
+                    <span asp-validation-for="Bedrooms"></span>
+                </div>
+                <div class="haven-field">
+                    <label asp-for="Bathrooms">Phòng tắm</label>
+                    <input asp-for="Bathrooms" type="number" min="0" inputmode="numeric" />
+                    <span asp-validation-for="Bathrooms"></span>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button class="haven-button" type="submit" disabled="@(Model.PropertyTypes.Count == 0)">Lưu tin nháp</button>
+            <a class="haven-button-secondary" asp-action="Index">Hủy</a>
+        </div>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

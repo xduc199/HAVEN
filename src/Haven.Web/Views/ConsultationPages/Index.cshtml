@@ -1,0 +1,20 @@
+@model Haven.Application.Consultations.ConsultationPageResult
+@{
+    ViewData["Title"] = "Yêu cầu tư vấn";
+}
+<section class="page-container">
+    <div class="page-heading"><div><h1>Yêu cầu tư vấn của tôi</h1><p>Chỉ bạn mới có thể xem các yêu cầu này.</p></div><a class="haven-button" asp-action="Create">Gửi yêu cầu</a></div>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="is-empty">Bạn chưa gửi yêu cầu tư vấn nào.</p>
+    }
+    else
+    {
+        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Ngày gửi</th><th>Trạng thái</th><th>Tin đăng</th><th></th></tr></thead><tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr><td>@item.CreatedAtUtc.ToLocalTime().ToString("g")</td><td><span class="status-badge">@item.Status</span></td><td>@(item.ListingId?.ToString() ?? "Không gắn tin đăng")</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
+        }
+        </tbody></table></div>
+    }
+</section>

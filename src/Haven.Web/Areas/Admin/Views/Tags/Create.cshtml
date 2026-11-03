@@ -1,0 +1,18 @@
+@model Haven.Web.ViewModels.Admin.TagFormViewModel
+@{
+    ViewData["Title"] = "Tạo Tag";
+}
+<section class="page-container">
+    <h1>Tạo Tag</h1>
+    <form asp-action="Create" method="post" class="admin-card admin-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="admin-alert admin-alert--error"></div>
+        <label asp-for="Name">Tên Tag</label>
+        <input asp-for="Name" maxlength="80" />
+        <span asp-validation-for="Name" class="field-validation-error"></span>
+        <label asp-for="Description">Mô tả</label>
+        <textarea asp-for="Description" maxlength="500" rows="3"></textarea>
+        <span asp-validation-for="Description" class="field-validation-error"></span>
+        <div class="admin-actions"><button class="admin-button" type="submit">Tạo Tag</button><a class="admin-button admin-button--secondary" asp-action="Index">Hủy</a></div>
+    </form>
+</section>

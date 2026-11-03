@@ -34,4 +34,29 @@ public sealed class EfPropertyTypeRepository : IPropertyTypeRepository
             .ThenBy(propertyType => propertyType.Name)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<PropertyType>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.PropertyTypes
+            .AsNoTracking()
+            .OrderBy(propertyType => propertyType.SortOrder)
+            .ThenBy(propertyType => propertyType.Name)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(
+        PropertyType propertyType,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(propertyType);
+
+        await _dbContext.PropertyTypes.AddAsync(propertyType, cancellationToken);
+    }
+
+    public Task SaveChangesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }
