@@ -1,0 +1,17 @@
+@model Haven.Application.Consultations.ConsultationDetails
+@{
+    ViewData["Title"] = "Chi tiết yêu cầu tư vấn";
+}
+<section class="page-container">
+    <h1>Yêu cầu tư vấn #@Model.Id</h1>
+    <article class="content-card">
+        <p>Trạng thái: <span class="status-badge">@Model.Status</span></p>
+        <p>Thời gian gửi: @Model.CreatedAtUtc.ToLocalTime().ToString("g")</p>
+        <p>Họ tên: @Model.ContactName</p>
+        <p>Email: @Model.Email</p>
+        <p>Điện thoại: @Model.PhoneNumber</p>
+        <p>Tin đăng: @(Model.ListingId?.ToString() ?? "Không gắn tin đăng")</p>
+        <p>Lời nhắn: @(Model.Message ?? "Không có")</p>
+    </article>
+    <p><a asp-action="Index">Quay lại lịch sử</a></p>
+</section>

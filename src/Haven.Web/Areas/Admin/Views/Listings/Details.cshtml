@@ -1,0 +1,72 @@
+@model Haven.Application.Listings.ModerationListingDetails
+@using Haven.Domain.Properties
+@{
+    ViewData["Title"] = "Chi tiết kiểm duyệt";
+    var listingTags = ViewData["ListingTags"] as IReadOnlyList<Tag> ?? [];
+    var availableTags = ViewData["AvailableTags"] as IReadOnlyList<Tag> ?? [];
+    var assignableTags = availableTags.Where(tag => listingTags.All(existing => existing.Id != tag.Id)).ToArray();
+}
+<section class="page-container">
+    <h1>@Model.Title</h1>
+    <article class="content-card">
+        <p>Trạng thái: <span class="status-badge">@Model.Status</span></p>
+        <p>Owner ID: @Model.OwnerId</p>
+        <p>@Model.Purpose · @Model.PriceAmount.ToString("N0") ₫ · @Model.AreaSqm.ToString("N1") m²</p>
+        <p>@Model.AddressLine, @Model.District, @Model.Province</p>
+        <p>@Model.Description</p>
+        <section class="admin-card">
+            <h2>Tags</h2>
+            @if (listingTags.Count == 0)
+            {
+                <p class="admin-empty">Listing chưa có tag.</p>
+            }
+            else
+            {
+                <ul class="admin-tag-list">
+                @foreach (var tag in listingTags)
+                {
+                    <li>
+                        <span>@tag.Name</span>
+                        <form asp-action="RemoveTag" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Gỡ tag này khỏi listing?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="tagId" value="@tag.Id" />
+                            <button class="admin-button admin-button--danger" type="submit">Gỡ</button>
+                        </form>
+                    </li>
+                }
+                </ul>
+            }
+            @if (assignableTags.Length > 0)
+            {
+                <form asp-action="AssignTag" asp-route-id="@Model.Id" method="post" class="admin-filter">
+                    @Html.AntiForgeryToken()
+                    <label for="tagId">Gắn Tag</label>
+                    <select id="tagId" name="TagId">
+                        @foreach (var tag in assignableTags)
+                        {
+                            <option value="@tag.Id">@tag.Name</option>
+                        }
+                    </select>
+                    <button class="admin-button" type="submit">Gắn</button>
+                </form>
+            }
+            else
+            {
+                <p class="admin-muted">Không còn tag đang hoạt động để gắn.</p>
+            }
+        </section>
+        @if (Model.Status == Haven.Domain.Properties.ListingStatus.Pending)
+        {
+            <div class="form-actions">
+                <form asp-action="Approve" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Duyệt tin đăng này?');">@Html.AntiForgeryToken()<button class="haven-button" type="submit">Duyệt</button></form>
+                <a class="haven-button-secondary" asp-action="Reject" asp-route-id="@Model.Id">Từ chối</a>
+            </div>
+        }
+        @if (Model.Status == Haven.Domain.Properties.ListingStatus.Approved)
+        {
+            <form asp-action="Hide" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Ẩn tin này khỏi kết quả công khai?');">@Html.AntiForgeryToken()<button class="haven-button-danger" type="submit">Ẩn tin</button></form>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.RejectionReason)){<p class="is-error">Lý do từ chối: @Model.RejectionReason</p>}
+    </article>
+    <p><a asp-action="Index">Quay lại</a></p>
+</section>

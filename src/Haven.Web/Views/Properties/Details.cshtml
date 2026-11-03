@@ -1,0 +1,47 @@
+@model Haven.Web.ViewModels.Properties.PropertyDetailsViewModel
+@{
+    ViewData["Title"] = Model.Listing.Title;
+    var listing = Model.Listing;
+}
+<section class="page-container">
+    <p><a asp-action="Index">Tìm bất động sản</a> / Chi tiết</p>
+    <article class="content-card">
+        <p class="muted">@listing.PropertyTypeName · @(listing.Purpose == Haven.Domain.Properties.ListingPurpose.Sale ? "Mua bán" : "Cho thuê")</p>
+        <h1>@listing.Title</h1>
+        <h2>@listing.PriceAmount.ToString("N0") ₫</h2>
+        <p>@listing.AreaSqm.ToString("N1") m² · @listing.District, @listing.Province</p>
+        <p>@listing.AddressLine</p>
+        @if (listing.Bedrooms is not null || listing.Bathrooms is not null)
+        {
+            <p>@(listing.Bedrooms?.ToString() ?? "—") phòng ngủ · @(listing.Bathrooms?.ToString() ?? "—") phòng tắm</p>
+        }
+        <h2>Mô tả</h2>
+        <p>@listing.Description</p>
+        <p class="muted">Người đăng: @(listing.OwnerDisplayName ?? "Thành viên HAVEN")</p>
+        <div class="property-card__actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                if (Model.IsFavorite)
+                {
+                    <form asp-controller="FavoritePages" asp-action="Remove" asp-route-listingId="@listing.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="haven-button-secondary" type="submit">Bỏ yêu thích</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="FavoritePages" asp-action="Add" asp-route-listingId="@listing.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="haven-button-secondary" type="submit">Thêm yêu thích</button>
+                    </form>
+                }
+            }
+            else
+            {
+                <a class="haven-button-secondary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">Đăng nhập để yêu thích</a>
+            }
+            <a class="haven-button-secondary" asp-controller="Properties" asp-action="Compare" asp-route-ids="@listing.Id">So sánh</a>
+            <a class="haven-button" asp-controller="ConsultationPages" asp-action="Create" asp-route-listingId="@listing.Id">Yêu cầu tư vấn</a>
+        </div>
+    </article>
+</section>

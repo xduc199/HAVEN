@@ -1,0 +1,14 @@
+@model Haven.Web.ViewModels.Admin.RejectListingViewModel
+@{
+    ViewData["Title"] = "Từ chối tin đăng";
+}
+<section class="page-container">
+    <h1>Từ chối: @ViewData["ListingTitle"]</h1>
+    <form method="post" class="haven-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" role="alert"></div>
+        <div class="haven-field"><label asp-for="Reason">Lý do từ chối (bắt buộc)</label><textarea asp-for="Reason"></textarea><span asp-validation-for="Reason"></span></div>
+        <button class="haven-button-danger" type="submit">Xác nhận từ chối</button>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -5,6 +5,7 @@ namespace Haven.Application.Listings;
 public sealed record PublicListingDetails(
     int Id,
     int PropertyTypeId,
+    string PropertyTypeName,
     string Title,
     string Description,
     ListingPurpose Purpose,
@@ -15,4 +16,5 @@ public sealed record PublicListingDetails(
     string AddressLine,
     int? Bedrooms,
     int? Bathrooms,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    string? OwnerDisplayName);

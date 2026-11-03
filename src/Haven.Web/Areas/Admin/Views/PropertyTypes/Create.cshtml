@@ -1,0 +1,16 @@
+@model Haven.Web.ViewModels.Admin.PropertyTypeFormViewModel
+@{
+    ViewData["Title"] = "Thêm loại bất động sản";
+}
+<section class="page-container">
+    <h1>Thêm loại bất động sản</h1>
+    <form method="post" class="haven-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" role="alert"></div>
+        <div class="haven-field"><label asp-for="Name">Tên</label><input asp-for="Name" /><span asp-validation-for="Name"></span></div>
+        <div class="haven-field"><label asp-for="SortOrder">Thứ tự</label><input asp-for="SortOrder" type="number" min="0" /><span asp-validation-for="SortOrder"></span></div>
+        <div class="haven-field"><label><input asp-for="IsActive" /> Đang hoạt động</label></div>
+        <button class="haven-button" type="submit">Lưu</button>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

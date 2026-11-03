@@ -1,0 +1,23 @@
+@model Haven.Application.Consultations.ConsultationDetails
+@{
+    ViewData["Title"] = "Chi tiết tư vấn";
+}
+<section class="page-container">
+    <h1>Yêu cầu tư vấn #@Model.Id</h1>
+    <article class="content-card">
+        <p>Họ tên: @Model.ContactName</p>
+        <p>Email: @Model.Email</p>
+        <p>Điện thoại: @Model.PhoneNumber</p>
+        <p>Tin đăng: @(Model.ListingId?.ToString() ?? "Không gắn tin đăng")</p>
+        <p>Lời nhắn: @(Model.Message ?? "Không có")</p>
+        <p>Ngày tạo: @Model.CreatedAtUtc.ToLocalTime().ToString("g")</p>
+        <p>Trạng thái hiện tại: <span class="status-badge">@Model.Status</span></p>
+        <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post" class="form-actions">
+            @Html.AntiForgeryToken()
+            <label for="Status">Trạng thái mới</label>
+            <select id="Status" name="Status" asp-items="Html.GetEnumSelectList<Haven.Domain.Consultations.ConsultationStatus>()"></select>
+            <button class="haven-button" type="submit">Cập nhật trạng thái</button>
+        </form>
+    </article>
+    <p><a asp-action="Index">Quay lại danh sách</a></p>
+</section>

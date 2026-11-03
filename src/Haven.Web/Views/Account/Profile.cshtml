@@ -1,0 +1,17 @@
+@model Haven.Web.ViewModels.Account.ProfileViewModel
+@{
+    ViewData["Title"] = "Hồ sơ";
+}
+<section class="page-container">
+    <h1>Hồ sơ của tôi</h1>
+    <form method="post" class="haven-form" data-api-action="profile">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" role="alert"></div>
+        <div class="api-form-message" data-api-message hidden></div>
+        <div class="haven-field"><label asp-for="Email">Email</label><input asp-for="Email" readonly /></div>
+        <div class="haven-field"><label asp-for="DisplayName">Tên hiển thị</label><input asp-for="DisplayName" autocomplete="name" /><span asp-validation-for="DisplayName"></span></div>
+        <button class="haven-button" type="submit">Lưu hồ sơ</button>
+    </form>
+    <p class="form-actions"><a class="haven-button-secondary" asp-action="ChangePassword">Đổi mật khẩu</a><a class="haven-button-secondary" asp-controller="MyListings" asp-action="Index">Quản lý tin đăng</a></p>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,67 @@
+@model Haven.Application.Listings.ModerationListingPage
+@using Haven.Domain.Properties
+@{
+    ViewData["Title"] = "Quản lý tin đăng";
+    var filter = ViewData["Filter"] as Haven.Web.ViewModels.Admin.AdminListingFilterViewModel;
+    var propertyTypes = ViewData["PropertyTypes"] as IReadOnlyList<PropertyType> ?? [];
+    var tags = ViewData["Tags"] as IReadOnlyList<Tag> ?? [];
+}
+<section class="page-container">
+    <h1>Quản lý tin đăng</h1>
+    <form method="get" class="admin-filter">
+        <label for="search">Tìm kiếm</label>
+        <input id="search" name="Search" value="@filter?.Search" maxlength="200" />
+        <label for="status">Trạng thái</label>
+        <select id="status" name="status">
+            <option value="">Tất cả</option>
+            @foreach (var status in Enum.GetValues<ListingStatus>())
+            {
+                if (filter?.Status == status) { <option value="@status" selected>@status</option> }
+                else { <option value="@status">@status</option> }
+            }
+        </select>
+        <label for="propertyType">Property Type</label>
+        <select id="propertyType" name="PropertyTypeId">
+            <option value="">Tất cả</option>
+            @foreach (var propertyType in propertyTypes)
+            {
+                if (filter?.PropertyTypeId == propertyType.Id) { <option value="@propertyType.Id" selected>@propertyType.Name</option> }
+                else { <option value="@propertyType.Id">@propertyType.Name</option> }
+            }
+        </select>
+        <label for="tag">Tag</label>
+        <select id="tag" name="TagId">
+            <option value="">Tất cả</option>
+            @foreach (var tag in tags)
+            {
+                if (filter?.TagId == tag.Id) { <option value="@tag.Id" selected>@tag.Name</option> }
+                else { <option value="@tag.Id">@tag.Name</option> }
+            }
+        </select>
+        <label for="fromDate">Từ ngày</label><input id="fromDate" type="date" name="FromDate" value="@filter?.FromDate?.ToString("yyyy-MM-dd")" />
+        <label for="toDate">Đến ngày</label><input id="toDate" type="date" name="ToDate" value="@filter?.ToDate?.ToString("yyyy-MM-dd")" />
+        <button class="admin-button" type="submit">Lọc</button>
+    </form>
+    @if (!ViewData.ModelState.IsValid) { <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div> }
+    @if (Model.Items.Count == 0)
+    {
+        <p class="admin-empty">Không có tin đăng phù hợp với bộ lọc.</p>
+    }
+    else
+    {
+        <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Tin đăng</th><th>Chủ sở hữu</th><th>Trạng thái</th><th>Gửi duyệt</th><th></th></tr></thead><tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr><td>@item.Title</td><td>@item.OwnerId</td><td><span class="status-badge">@item.Status</span></td><td>@item.SubmittedAtUtc?.ToLocalTime().ToString("g")</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
+        }
+        </tbody></table></div>
+    }
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="admin-actions" aria-label="Phân trang kiểm duyệt">
+            @if (Model.Page > 1) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-status="@filter?.Status" asp-route-search="@filter?.Search" asp-route-propertyTypeId="@filter?.PropertyTypeId" asp-route-tagId="@filter?.TagId" asp-route-fromDate="@filter?.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@filter?.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page - 1)">Trước</a> }
+            <span>Trang @Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-status="@filter?.Status" asp-route-search="@filter?.Search" asp-route-propertyTypeId="@filter?.PropertyTypeId" asp-route-tagId="@filter?.TagId" asp-route-fromDate="@filter?.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@filter?.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page + 1)">Tiếp theo</a> }
+        </nav>
+    }
+</section>

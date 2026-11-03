@@ -104,11 +104,15 @@ public sealed class ListingApplicationServiceTests
         _listingRepository
             .Setup(x => x.GetPublicByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(listing);
+        _propertyTypeRepository
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(PropertyType.Create("House"));
 
         var result = await _service.GetPublicDetailsAsync(1);
 
         Assert.NotNull(result);
         Assert.Equal("Listing title", result.Title);
+        Assert.Equal("House", result.PropertyTypeName);
         Assert.Equal(ListingPurpose.Sale, result.Purpose);
         Assert.DoesNotContain("OwnerId", typeof(PublicListingDetails)
             .GetProperties().Select(property => property.Name));
@@ -343,6 +347,39 @@ public sealed class ListingApplicationServiceTests
         _listingRepository.Verify(
             x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task SearchForAdminAsync_PassesAllFiltersAndCalculatesPages()
+    {
+        var criteria = new AdminListingCriteria(
+            "  town house ",
+            ListingStatus.Pending,
+            3,
+            9,
+            Now.AddDays(-7),
+            Now,
+            2,
+            20);
+        _listingRepository
+            .Setup(repository => repository.SearchForAdminAsync(
+                It.Is<AdminListingCriteria>(value =>
+                    value.Search == "town house" &&
+                    value.Status == criteria.Status &&
+                    value.PropertyTypeId == criteria.PropertyTypeId &&
+                    value.TagId == criteria.TagId &&
+                    value.FromUtc == criteria.FromUtc &&
+                    value.ToUtcExclusive == criteria.ToUtcExclusive &&
+                    value.Page == criteria.Page &&
+                    value.PageSize == criteria.PageSize),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ListingSearchPage([], 41));
+
+        var result = await _service.SearchForAdminAsync(criteria);
+
+        Assert.Equal(2, result.Page);
+        Assert.Equal(3, result.TotalPages);
+        Assert.Equal(41, result.TotalCount);
     }
 
     private void SetupListing(Listing listing, int id = 1)
