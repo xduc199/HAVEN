@@ -1,12 +1,19 @@
+using Haven.Infrastructure.Context;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Haven.IntegrationTests;
 
-public sealed class ApplicationSmokeTests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class ApplicationSmokeTests : IClassFixture<SmokeTestWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public ApplicationSmokeTests(WebApplicationFactory<Program> factory)
+    public ApplicationSmokeTests(SmokeTestWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }
@@ -38,5 +45,21 @@ public sealed class ApplicationSmokeTests : IClassFixture<WebApplicationFactory<
 
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("text/html", response.Content.Headers.ContentType?.MediaType);
+    }
+}
+
+public sealed class SmokeTestWebApplicationFactory : WebApplicationFactory<Program>
+{
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<
+                IDbContextOptionsConfiguration<ApplicationDbContext>>();
+            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            services.RemoveAll<ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseInMemoryDatabase("Haven.ApplicationSmokeTests"));
+        });
     }
 }
