@@ -16,11 +16,11 @@
             <option value="">Tất cả</option>
             @foreach (var status in Enum.GetValues<ListingStatus>())
             {
-                if (filter?.Status == status) { <option value="@status" selected>@status</option> }
-                else { <option value="@status">@status</option> }
+                if (filter?.Status == status) { <option value="@status" selected>@status.GetDisplayName()</option> }
+                else { <option value="@status">@status.GetDisplayName()</option> }
             }
         </select>
-        <label for="propertyType">Property Type</label>
+        <label for="propertyType">Loại bất động sản</label>
         <select id="propertyType" name="PropertyTypeId">
             <option value="">Tất cả</option>
             @foreach (var propertyType in propertyTypes)
@@ -29,7 +29,7 @@
                 else { <option value="@propertyType.Id">@propertyType.Name</option> }
             }
         </select>
-        <label for="tag">Tag</label>
+        <label for="tag">Nhãn</label>
         <select id="tag" name="TagId">
             <option value="">Tất cả</option>
             @foreach (var tag in tags)
@@ -52,7 +52,7 @@
         <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Tin đăng</th><th>Chủ sở hữu</th><th>Trạng thái</th><th>Gửi duyệt</th><th></th></tr></thead><tbody>
         @foreach (var item in Model.Items)
         {
-            <tr><td>@item.Title</td><td>@item.OwnerId</td><td><span class="status-badge">@item.Status</span></td><td>@item.SubmittedAtUtc?.ToLocalTime().ToString("g")</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
+            <tr><td>@item.Title</td><td>@item.OwnerId</td><td><span class="status-badge">@item.Status.GetDisplayName()</span></td><td>@(item.SubmittedAtUtc?.ToVietnamDateTime())</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
         }
         </tbody></table></div>
     }

@@ -3,6 +3,14 @@
     @foreach (var item in Model)
     {
         <article class="property-card">
+            @if (item.PrimaryImageId is { } imageId)
+            {
+                <img class="property-card__image" src="/listing-images/@imageId" alt="Ảnh @item.Title" loading="lazy" />
+            }
+            else
+            {
+                <div class="property-card__image property-card__image--empty" role="img" aria-label="Tin đăng chưa có ảnh">Chưa có ảnh</div>
+            }
             <p class="muted">@item.PropertyTypeName · @(item.Purpose == Haven.Domain.Properties.ListingPurpose.Sale ? "Mua bán" : "Cho thuê")</p>
             <h2><a asp-controller="Properties" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2>
             <p><strong>@item.PriceAmount.ToString("N0") ₫</strong> · @item.AreaSqm.ToString("N1") m²</p>

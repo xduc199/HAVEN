@@ -1,7 +1,9 @@
 ﻿namespace Haven.Domain.Properties;
 
+using System.ComponentModel.DataAnnotations;
+
 public enum ListingPurpose
 {
-    Sale = 1,
-    Rent = 2
+    [Display(Name = "Mua bán")] Sale = 1,
+    [Display(Name = "Cho thuê")] Rent = 2
 }

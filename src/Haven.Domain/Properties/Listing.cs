@@ -27,7 +27,9 @@ public sealed class Listing
         string addressLine,
         DateTimeOffset nowUtc,
         int? bedrooms,
-        int? bathrooms)
+        int? bathrooms,
+        string? provinceCode,
+        string? wardCode)
     {
         ValidateRequiredFields(
             ownerId,
@@ -52,6 +54,7 @@ public sealed class Listing
         Province = province.Trim();
         District = district.Trim();
         AddressLine = addressLine.Trim();
+        SetLocationCodes(provinceCode, wardCode);
         Bedrooms = bedrooms;
         Bathrooms = bathrooms;
 
@@ -80,6 +83,10 @@ public sealed class Listing
 
     public string District { get; private set; } = string.Empty;
 
+    public string? ProvinceCode { get; private set; }
+
+    public string? WardCode { get; private set; }
+
     public string AddressLine { get; private set; } = string.Empty;
 
     public int? Bedrooms { get; private set; }
@@ -100,6 +107,10 @@ public sealed class Listing
 
     public ICollection<ListingTag> ListingTags { get; private set; } = new List<ListingTag>();
 
+    public ICollection<ListingImage> Images { get; private set; } = new List<ListingImage>();
+
+    public ICollection<ListingVideo> Videos { get; private set; } = new List<ListingVideo>();
+
     public bool CanBeDeletedByOwner =>
         Status is ListingStatus.Draft or ListingStatus.Rejected;
 
@@ -116,7 +127,9 @@ public sealed class Listing
         string addressLine,
         DateTimeOffset nowUtc,
         int? bedrooms = null,
-        int? bathrooms = null)
+        int? bathrooms = null,
+        string? provinceCode = null,
+        string? wardCode = null)
     {
         return new Listing(
             ownerId,
@@ -131,7 +144,9 @@ public sealed class Listing
             addressLine,
             nowUtc,
             bedrooms,
-            bathrooms);
+            bathrooms,
+            provinceCode,
+            wardCode);
     }
 
     public void SubmitForReview(DateTimeOffset nowUtc)
@@ -215,7 +230,9 @@ public sealed class Listing
         string addressLine,
         DateTimeOffset nowUtc,
         int? bedrooms = null,
-        int? bathrooms = null)
+        int? bathrooms = null,
+        string? provinceCode = null,
+        string? wardCode = null)
     {
         if (Status is ListingStatus.Pending or ListingStatus.Hidden)
         {
@@ -245,6 +262,12 @@ public sealed class Listing
         Province = province.Trim();
         District = district.Trim();
         AddressLine = addressLine.Trim();
+        if (provinceCode is null && wardCode is null)
+        {
+            ProvinceCode = null;
+            WardCode = null;
+        }
+        else SetLocationCodes(provinceCode, wardCode);
         Bedrooms = bedrooms;
         Bathrooms = bathrooms;
 
@@ -271,6 +294,15 @@ public sealed class Listing
         {
             throw new ArgumentOutOfRangeException(nameof(purpose));
         }
+    }
+
+    private void SetLocationCodes(string? provinceCode, string? wardCode)
+    {
+        if (provinceCode is null && wardCode is null) return;
+        if (provinceCode is null || provinceCode.Length != 2 || !provinceCode.All(char.IsAsciiDigit)) throw new ArgumentException("Tỉnh/thành phố không hợp lệ.", nameof(provinceCode));
+        if (wardCode is null || wardCode.Length != 5 || !wardCode.All(char.IsAsciiDigit)) throw new ArgumentException("Xã/phường không hợp lệ.", nameof(wardCode));
+        ProvinceCode = provinceCode;
+        WardCode = wardCode;
     }
 
     private static void ValidateRequiredFields(

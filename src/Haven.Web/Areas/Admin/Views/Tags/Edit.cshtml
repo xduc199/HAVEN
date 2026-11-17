@@ -1,13 +1,13 @@
 @model Haven.Web.ViewModels.Admin.TagFormViewModel
 @{
-    ViewData["Title"] = "Sửa Tag";
+    ViewData["Title"] = "Sửa nhãn";
 }
 <section class="page-container">
-    <h1>Sửa Tag</h1>
+    <h1>Sửa nhãn</h1>
     <form asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="admin-card admin-form">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="admin-alert admin-alert--error"></div>
-        <label asp-for="Name">Tên Tag</label>
+        <label asp-for="Name">Tên nhãn</label>
         <input asp-for="Name" maxlength="80" />
         <span asp-validation-for="Name" class="field-validation-error"></span>
         <label asp-for="Description">Mô tả</label>

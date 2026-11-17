@@ -77,7 +77,7 @@ public sealed class FavoritesController : ControllerBase
             AddFavoriteResult.Added => StatusCode(StatusCodes.Status201Created),
             AddFavoriteResult.AlreadyExists => Conflict(new ProblemDetails
             {
-                Title = "The listing is already in favorites.",
+                Title = "Tin đăng đã có trong danh sách yêu thích.",
                 Status = StatusCodes.Status409Conflict
             }),
             _ => NotFound()

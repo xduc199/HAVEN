@@ -1,11 +1,11 @@
 @model Haven.Web.ViewModels.Admin.AdminTagPageViewModel
 @{
-    ViewData["Title"] = "Quản lý Tags";
+    ViewData["Title"] = "Quản lý nhãn";
 }
 <section class="page-container">
     <div class="admin-page-heading">
-        <div><h1>Quản lý Tags</h1><p class="admin-muted">Tag đã dùng được vô hiệu hóa để giữ nguyên liên kết listing.</p></div>
-        <a class="admin-button" asp-action="Create">Tạo Tag</a>
+        <div><h1>Quản lý nhãn</h1><p class="admin-muted">Nhãn đã được gắn vào tin sẽ được vô hiệu hóa để giữ nguyên liên kết.</p></div>
+        <a class="admin-button" asp-action="Create">Tạo nhãn</a>
     </div>
     <form method="get" class="admin-filter">
         <label>Tìm kiếm <input type="search" name="search" value="@Model.Search" maxlength="100" /></label>
@@ -13,20 +13,20 @@
     </form>
     @if (Model.Page.Items.Count == 0)
     {
-        <p class="admin-empty">Không có tag phù hợp.</p>
+        <p class="admin-empty">Không có nhãn phù hợp.</p>
     }
     else
     {
         <div class="admin-table-wrap">
             <table class="admin-table">
-                <thead><tr><th>Tên</th><th>Slug</th><th>Trạng thái</th><th>Cập nhật</th><th></th></tr></thead>
+                <thead><tr><th>Tên</th><th>Đường dẫn</th><th>Trạng thái</th><th>Cập nhật</th><th></th></tr></thead>
                 <tbody>
                 @foreach (var tag in Model.Page.Items)
                 {
                     <tr>
                         <td>@tag.Name</td><td>@tag.Slug</td>
                         <td>@(tag.IsActive ? "Đang hoạt động" : "Đã vô hiệu hóa")</td>
-                        <td>@tag.UpdatedAtUtc.ToLocalTime().ToString("g")</td>
+                        <td>@tag.UpdatedAtUtc.ToVietnamDateTime()</td>
                         <td><a asp-action="Edit" asp-route-id="@tag.Id">Sửa</a></td>
                     </tr>
                 }
@@ -36,7 +36,7 @@
     }
     @if (Model.Page.TotalPages > 1)
     {
-        <nav class="admin-actions" aria-label="Phân trang tags">
+        <nav class="admin-actions" aria-label="Phân trang nhãn">
             @if (Model.Page.Page > 1) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page - 1)">Trước</a> }
             <span>Trang @Model.Page.Page / @Model.Page.TotalPages</span>
             @if (Model.Page.Page < Model.Page.TotalPages) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page + 1)">Tiếp theo</a> }

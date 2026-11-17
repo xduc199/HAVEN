@@ -1,0 +1,56 @@
+@model Haven.Web.ViewModels.Admin.AdminUserPageViewModel
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+<section class="page-container">
+    <div class="admin-page-heading">
+        <div><h1>Quản lý người dùng</h1><p class="admin-muted">Tìm tài khoản và quản lý quyền truy cập. Tài khoản quản trị được bảo vệ khỏi thao tác khóa.</p></div>
+    </div>
+    <form method="get" class="admin-filter">
+        <label for="user-search">Tìm theo tên hoặc email</label>
+        <input id="user-search" type="search" name="search" value="@Model.Search" maxlength="200" />
+        <button class="admin-button" type="submit">Tìm kiếm</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search)) { <a asp-action="Index">Xóa bộ lọc</a> }
+    </form>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="admin-empty">Không tìm thấy tài khoản phù hợp.</p>
+    }
+    else
+    {
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Người dùng</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                @foreach (var user in Model.Items)
+                {
+                    <tr>
+                        <td>@user.DisplayName</td><td>@user.Email</td><td>@user.Roles</td>
+                        <td>@(user.IsLocked ? "Đã khóa" : "Đang hoạt động")</td>
+                        <td>
+                            @if (!user.IsAdmin)
+                            {
+                                <form asp-action="SetLockout" method="post" class="admin-inline-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <input type="hidden" name="locked" value="@(!user.IsLocked)" />
+                                    <button class="admin-button admin-button--secondary" type="submit">@(user.IsLocked ? "Mở khóa" : "Khóa tài khoản")</button>
+                                </form>
+                            }
+                            else { <span class="admin-muted">Được bảo vệ</span> }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="admin-actions" aria-label="Phân trang người dùng">
+            @if (Model.Page > 1) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)">Trước</a> }
+            <span>Trang @Model.Page / @Model.TotalPages · @Model.TotalCount tài khoản</span>
+            @if (Model.Page < Model.TotalPages) { <a class="admin-button admin-button--secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)">Tiếp theo</a> }
+        </nav>
+    }
+</section>

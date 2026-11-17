@@ -14,7 +14,7 @@ HAVEN là dự án web hướng tới việc hỗ trợ người dùng khám ph�
 - **Kiến trúc solution hiện tại:** Web, Application, Domain, Infrastructure và các project kiểm thử.
 - **CI:** GitHub Actions tự động restore, build và chạy test khi push hoặc tạo Pull Request vào `main` / `develop`.
 
-> Public, User và Admin workflows hiện được triển khai bằng MVC/Razor và nối trực tiếp với Application services. Home/search/detail chỉ hiển thị listing đã Approved từ Backend; không sử dụng listing mẫu tĩnh. Xem giới hạn dữ liệu và kiểm thử trong các tài liệu Frontend bên dưới.
+> Public, User và Admin workflows được triển khai bằng MVC/Razor và nối trực tiếp với Application services. Home/search/detail chỉ hiển thị listing đã Approved. Chủ tin có thể quản lý ảnh và video MP4/WebM; địa điểm mới dùng mã tỉnh/xã chính thức, còn địa chỉ cũ được giữ nguyên nếu chưa ánh xạ chắc chắn.
 
 ## 🧰 Công nghệ
 
@@ -28,14 +28,14 @@ HAVEN là dự án web hướng tới việc hỗ trợ người dùng khám ph�
 
 ## 🖥️ Frontend
 
-Frontend sử dụng ASP.NET Core MVC và Razor Views, không tạo SPA và không gọi HTTP loopback đến chính ứng dụng. Các trang gọi Application services trong cùng tiến trình; mọi thao tác thay đổi dữ liệu dùng antiforgery. Admin có layout riêng với dashboard analytics, Reports, Listing moderation/Tag assignment, Property Types và Consultations. Xem:
+Frontend sử dụng ASP.NET Core MVC và Razor Views, không tạo SPA và không gọi HTTP loopback đến chính ứng dụng. Mặc định giao diện dùng `vi-VN`; ngày, số và trạng thái được hiển thị theo tiếng Việt. Khu quản trị có tổng quan, báo cáo, quản lý người dùng, kiểm duyệt tin, loại bất động sản, nhãn, tư vấn và yêu cầu quyền riêng tư.
 
 - [API Contract](docs/frontend/API_CONTRACT.md) — route, request/response, auth và role hiện có.
 - [Frontend Architecture](docs/frontend/FRONTEND_ARCHITECTURE.md) — phân lớp MVC và quy tắc tích hợp.
 - [Implementation Plan](docs/frontend/FRONTEND_IMPLEMENTATION_PLAN.md) — trạng thái, tiêu chí và phụ thuộc từng phase.
 - [Frontend Test Report](docs/frontend/FRONTEND_TEST_REPORT.md) — kiểm tra đã chạy và các giới hạn hiện tại.
 
-Các nhóm route chính: Public (`/`, `/properties`, `/properties/{id}`, `/compare`, `/Home/Contact`, `/Home/Privacy`, `/api/tags`); Account (`/account/register`, `/account/login`, `/account/profile`, `/account/change-password`); User (`/profile/listings`, `/favorites`, `/consultations`); Admin (`/Admin/Dashboard`, `/Admin/Listings`, `/Admin/PropertyTypes`, `/Admin/Tags`, `/Admin/Consultations`, `/Admin/Reports`). `Home/MuaBan` và `Home/ChoThue` chuyển hướng sang search có lọc; `/Property` chuyển hướng sang `/properties`.
+Các nhóm route chính: Public (`/`, `/properties`, `/properties/{id}`, `/compare`, `/Privacy`, `/Terms`, `/PostingRules`, `/Complaints`, `/CookiePolicy`, `/About`); Account (`/account/register`, `/account/login`, `/account/profile`, `/account/change-password`, `/Account/Privacy`); User (`/profile/listings`, `/favorites`, `/consultations`); Admin (`/Admin/Dashboard`, `/Admin/Listings`, `/Admin/Users`, `/Admin/PropertyTypes`, `/Admin/Tags`, `/Admin/Consultations`, `/Admin/Reports`, `/Admin/PrivacyRequests`). `/Admin/Users` hỗ trợ tìm kiếm và khóa/mở khóa tài khoản User; không cho khóa tài khoản Admin hoặc tài khoản đang đăng nhập. `Home/MuaBan` và `Home/ChoThue` chuyển hướng sang tìm kiếm có lọc; `/Property` chuyển hướng sang `/properties`.
 
 ## 🗂️ Cấu trúc repository
 
@@ -139,7 +139,23 @@ dotnet ef database update --project src/Haven.Infrastructure/Haven.Infrastructur
 
 Lệnh này chỉ nên chạy trên database phát triển mà bạn chủ động chọn; không tự động áp dụng migration vào production.
 
-Các migration hiện có bao gồm `AddListings`, `AddPropertyTypes`, `AddIdentity`, `AddFavorites`, `AddProfileAndConsultations` và `AddTags`. `AddTags` tạo bảng `Tags` và `ListingTags`; migration đã được sinh nhưng **chưa được áp dụng lên database**. Dùng `dotnet ef migrations list` và xác minh database đích trước khi cập nhật schema.
+Migration mới nhất `AddPolicyConsentAndPrivacyRequests` tạo lịch sử đồng ý chính sách và hàng đợi yêu cầu quyền riêng tư. Migration `AddListingVideosAndAdministrativeLocations` bổ sung metadata video, danh mục tỉnh/xã và hai mã địa điểm nullable cho tin đăng. Các cột văn bản Province/District hiện có không bị đổi hoặc backfill. Migration chỉ được tạo trong repository, chưa áp dụng vào bất kỳ database nào. Chỉ áp dụng lên database phát triển đã chọn bằng lệnh ở trên; ứng dụng không tự động chạy migration khi khởi động.
+
+### Chính sách và quyền riêng tư
+
+Các tài liệu công khai hiện ở phiên bản `1.0.0`, hiệu lực ngày `17/11/2026`: `/Privacy`, `/Terms`, `/PostingRules`, `/Complaints` và `/CookiePolicy`. Nội dung được tổ chức theo phiên bản; khi thay đổi, hãy thêm edition mới và giữ nguyên nội dung phiên bản đã công bố. Form đăng ký yêu cầu hai xác nhận riêng và lưu phiên bản, thời điểm UTC, hành động và nguồn ghi nhận. Người dùng xem lịch sử/yêu cầu tại `/Account/Privacy`; quản trị viên xử lý tại `/Admin/PrivacyRequests`.
+
+Trước khi phát hành, điền tên đơn vị, email, điện thoại và địa chỉ thật trong `Haven:Legal:OperatorName`, `Haven:Legal:SupportEmail`, `Haven:Legal:SupportPhone`, `Haven:Legal:SupportAddress` qua cấu hình an toàn của môi trường. Mã nguồn để trống các trường này và giao diện đánh dấu chưa cấu hình; không dùng dữ liệu minh họa làm thông tin vận hành. Nội dung chính sách mô tả website đăng/tìm tin và gửi yêu cầu tư vấn theo source hiện tại; website chưa xử lý thanh toán hay ký kết. Chủ thể vận hành cần xác nhận phân loại, nghĩa vụ áp dụng và nhờ chuyên gia pháp lý rà soát trước khi công bố.
+
+Văn bản chính thức dùng để định hướng nội dung: [Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15](https://vanban.chinhphu.vn/?docid=214590&pageid=27160) và [Nghị định 356/2025/NĐ-CP](https://vanban.chinhphu.vn/?classid=1&docid=216387&pageid=27160); [Luật Bảo vệ quyền lợi người tiêu dùng 19/2023/QH15](https://vanban.chinhphu.vn/?classid=1&docid=208363&orggroupid=1&pageid=27160); [Luật Thương mại điện tử 122/2025/QH15](https://vanban.chinhphu.vn/?clas-=&docid=216503&pageid=27160) và [Nghị định 248/2026/NĐ-CP](https://vanban.chinhphu.vn/?classid=1&docid=218747&pageid=27160&typegroupid=4); [Luật Giao dịch điện tử 20/2023/QH15](https://vanban.chinhphu.vn/?docid=208421&pageid=27160). Việc có trang chính sách không tự xác nhận HAVEN tuân thủ đầy đủ các nghĩa vụ pháp luật.
+
+Ảnh và video nằm trong cùng kho local ngoài webroot, mặc định `src/Haven.Web/App_Data/ListingImages` (được Git bỏ qua). Có thể chọn đường dẫn bằng `Haven:Media:StoragePath`; khóa lưu trữ là UUID do server tạo. Tất cả máy chạy HAVEN cần cùng vùng media bền vững hoặc cơ chế đồng bộ tệp phù hợp.
+
+Tin đăng hỗ trợ tối đa 10 ảnh (10 MB mỗi ảnh) và tối đa 3 video MP4/WebM (mặc định 100 MiB mỗi video). Giới hạn video đặt tại `Haven:ListingVideos:MaximumVideosPerListing` và `Haven:ListingVideos:MaximumFileLengthBytes`; giới hạn an toàn tối đa là 3 video và 100 MiB mỗi tệp. Upload kiểm tra extension, MIME, chữ ký container và kích thước; video công khai chỉ được phát khi tin Approved và hỗ trợ HTTP Range. Chủ tin thay đổi media của tin Approved sẽ đưa tin về Pending.
+
+Danh mục địa giới nằm tại `src/Haven.Infrastructure/Data/Locations/vietnam-administrative-units-2025-07-01.json`: 34 tỉnh/thành, 3.321 xã/phường/đặc khu, hiện hành theo mã đang có hiệu lực ngày 17/11/2026. Nguồn dữ liệu là [Cục Thống kê, danh mục mã cấp xã](https://www.nso.gov.vn/wp-content/uploads/2025/06/Danh-sach-va-ma-so-cac-don-vi-hanh-chinh-cap-xa.pdf); cơ sở pháp lý là [Quyết định 19/2025/QĐ-TTg](https://vanban.chinhphu.vn/?classid=0&docid=214409&pageid=27160), hiệu lực từ 01/07/2025. Số lượng hiện hành 34 tỉnh và 3.321 xã/phường cũng được [nguồn thống kê nhà nước công bố năm 2026](https://www.nso.gov.vn/default/2026/01/bo-tai-chinh-di-dau-trong-chuyen-doi-so-kien-tao-chinh-phu-so-va-kinh-te-so/). [Thông tin chính thức tháng 11/2026](https://baochinhphu.vn/thong-qua-de-an-dieu-chinh-dia-gioi-don-vi-hanh-chinh-giua-thanh-pho-ha-noi-va-tinh-phu-tho-102261107172713294.htm) nêu đề án điều chỉnh ranh giới Hà Nội–Phú Thọ đang được trình Quốc hội, dự kiến hiệu lực 01/01/2027; danh mục hiện tại chưa áp dụng thay đổi tương lai này và cần được rà soát trước thời điểm hiệu lực. Sau khi migration được áp dụng, seeder idempotent nạp danh mục nếu database trống; seeder dừng nếu dữ liệu hiện có thiếu hoặc khác mã/quan hệ nguồn, không ghi đè. API đọc danh mục: `GET /api/locations/provinces` và `GET /api/locations/provinces/{provinceCode}/wards`.
+
+Form tạo/sửa tin và trang chi tiết tin của chủ sở hữu hỗ trợ tải tối đa 10 ảnh, 10 MB mỗi ảnh (JPEG, PNG, WebP), preview, chọn ảnh đại diện và xóa ảnh. Admin có cùng thao tác tại chi tiết kiểm duyệt. Ảnh lưu với tên ngẫu nhiên ngoài webroot; trang công khai chỉ phân phối ảnh của tin Approved. Thay đổi ảnh của tin Approved do chủ sở hữu thực hiện sẽ đưa tin về Pending để kiểm duyệt lại.
 
 Để cấp quyền quản trị ban đầu, triển khai với hai secret cấu hình:
 
@@ -155,7 +171,7 @@ Tính năng bootstrap sẽ được bật khi cả hai giá trị được cấu
 | Method | Route | Yêu cầu | Kết quả |
 |---|---|---|---|
 | `GET` | `/api/auth/antiforgery` | Public | Trả `requestToken` và đặt cookie antiforgery; gửi token ở header `RequestVerificationToken` cho mọi request thay đổi dữ liệu |
-| `POST` | `/api/auth/register` | `displayName`, `email`, `password` | `201 Created`, tạo session cookie và trả tài khoản/roles |
+| `POST` | `/api/auth/register` | `displayName`, `email`, `password`, `acceptedTerms`, `consentedPersonalDataProcessing`, `termsVersion`, `privacyVersion` | `201 Created`, tạo session cookie, lưu hai bản ghi chấp thuận và trả tài khoản/roles |
 | `POST` | `/api/auth/login` | `email`, `password`, tùy chọn `rememberMe` | `200 OK` hoặc `401 Unauthorized` |
 | `POST` | `/api/auth/logout` | Đã đăng nhập | `204 No Content` |
 | `POST` | `/api/auth/change-password` | Đã đăng nhập, `currentPassword`, `newPassword` | `204 No Content` |
@@ -202,7 +218,7 @@ Request tạo/cập nhật gồm `propertyTypeId`, `title`, `description`, `purp
 
 Các route quản trị yêu cầu role `Admin`; việc ẩn action ở client không thay thế authorization phía server. Loại bất động sản được lưu trữ bằng trạng thái active/inactive để listing hiện có vẫn giữ quan hệ; không có thao tác xóa cứng.
 
-Search nhận các query `keyword`, `propertyTypeId`, `purpose`, `province`, `district`, `minimumPrice`, `maximumPrice`, `minimumAreaSqm`, `maximumAreaSqm`, `bedrooms`, `sort`, `page` và `pageSize`. Sort hỗ trợ `Newest`, `Oldest`, `PriceAscending`, `PriceDescending`, `AreaAscending`, `AreaDescending`; `pageSize` tối đa 100. Search áp dụng lọc, sort và pagination ở EF Core/database và luôn loại listing chưa `Approved`.
+Search nhận các query `keyword`, `propertyTypeId`, `purpose`, `province`, `district`, `minimumPrice`, `maximumPrice`, `minimumAreaSqm`, `maximumAreaSqm`, `bedrooms`, `sort`, `page` và `pageSize`. Sort hỗ trợ `Newest`, `Oldest`, `PriceAscending`, `PriceDescending`, `AreaAscending`, `AreaDescending`; `pageSize` tối đa 100. Search áp dụng lọc, sort và pagination ở EF Core/database và luôn loại listing chưa `Approved`. MVC search còn nhận `provinceCode`/`wardCode` và giữ mã khi chuyển trang. Tin cũ không có mã tiếp tục khớp tên địa điểm tương ứng; API tin đăng giữ hợp đồng chuỗi Province/District hiện có.
 
 Consultation yêu cầu họ tên, email và số điện thoại; ListingId và lời nhắn là tùy chọn. Requester chỉ xem dữ liệu do mình tạo; Admin xem và cập nhật trạng thái. Owner tin không được xem consultation. Thông tin liên hệ không xuất hiện trong API công khai và không có thao tác xóa tự động hoặc thủ công trong API MVP.
 

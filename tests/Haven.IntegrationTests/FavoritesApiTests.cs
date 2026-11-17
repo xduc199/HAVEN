@@ -141,7 +141,7 @@ public sealed class FavoritesApiTests
                 displayName = email.Split('@')[0],
                 email,
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 

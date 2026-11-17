@@ -80,13 +80,46 @@ public sealed class EfListingRepository : IListingRepository
             query = query.Where(listing => listing.Purpose == purpose);
         }
 
-        if (!string.IsNullOrWhiteSpace(criteria.Province))
+        if (!string.IsNullOrWhiteSpace(criteria.ProvinceCode))
+        {
+            var provinceCode = criteria.ProvinceCode;
+            var provinceName = await _dbContext.AdministrativeProvinces.AsNoTracking()
+                .Where(province => province.Code == provinceCode).Select(province => province.Name)
+                .SingleOrDefaultAsync(cancellationToken);
+            var provinceNames = provinceName is null ? [] : new[]
+            {
+                provinceName, $"Tỉnh {provinceName}", $"Thành phố {provinceName}",
+                $"TP {provinceName}", $"TP. {provinceName}"
+            };
+            query = query.Where(listing => listing.ProvinceCode == provinceCode ||
+                (listing.ProvinceCode == null && provinceNames.Contains(listing.Province)));
+        }
+        else if (!string.IsNullOrWhiteSpace(criteria.Province))
         {
             query = query.Where(
                 listing => listing.Province == criteria.Province);
         }
 
-        if (!string.IsNullOrWhiteSpace(criteria.District))
+        if (!string.IsNullOrWhiteSpace(criteria.WardCode))
+        {
+            var wardCode = criteria.WardCode;
+            var ward = await _dbContext.AdministrativeWards.AsNoTracking()
+                .Where(item => item.Code == wardCode)
+                .Select(item => new { item.Name, item.Type, item.ProvinceCode, ProvinceName = item.Province.Name })
+                .SingleOrDefaultAsync(cancellationToken);
+            if (ward is null)
+            {
+                query = query.Where(_ => false);
+            }
+            else
+            {
+                var wardNames = new[] { ward.Name, ward.Name.StartsWith(ward.Type + " ") ? ward.Name[(ward.Type.Length + 1)..] : ward.Name };
+                var provinceNames = new[] { ward.ProvinceName, $"Tỉnh {ward.ProvinceName}", $"Thành phố {ward.ProvinceName}", $"TP {ward.ProvinceName}", $"TP. {ward.ProvinceName}" };
+                query = query.Where(listing => listing.WardCode == wardCode ||
+                    (listing.WardCode == null && wardNames.Contains(listing.District) && listing.ProvinceCode == null && provinceNames.Contains(listing.Province)));
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(criteria.District))
         {
             query = query.Where(
                 listing => listing.District == criteria.District);

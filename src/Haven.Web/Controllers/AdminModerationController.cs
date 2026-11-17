@@ -133,7 +133,7 @@ public sealed class AdminModerationController : ControllerBase
     private ConflictObjectResult StateConflict(string message) =>
         Conflict(new ProblemDetails
         {
-            Title = "The listing cannot be moderated in its current state.",
+            Title = "Tin đăng hiện không ở trạng thái phù hợp để kiểm duyệt.",
             Detail = message,
             Status = StatusCodes.Status409Conflict
         });

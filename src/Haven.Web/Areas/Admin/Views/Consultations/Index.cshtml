@@ -13,8 +13,8 @@
         <select id="status" name="status"><option value="">Tất cả</option>
         @foreach (var status in Enum.GetValues<ConsultationStatus>())
         {
-            if (filter?.Status == status) { <option value="@status" selected>@status</option> }
-            else { <option value="@status">@status</option> }
+            if (filter?.Status == status) { <option value="@status" selected>@status.GetDisplayName()</option> }
+            else { <option value="@status">@status.GetDisplayName()</option> }
         }
         </select>
         <label for="fromDate">Từ ngày</label><input id="fromDate" type="date" name="FromDate" value="@filter?.FromDate?.ToString("yyyy-MM-dd")" />
@@ -31,7 +31,7 @@
         <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Người gửi</th><th>Email</th><th>Điện thoại</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead><tbody>
         @foreach (var item in Model.Items)
         {
-            <tr><td>@item.ContactName</td><td>@item.Email</td><td>@item.PhoneNumber</td><td><span class="status-badge">@item.Status</span></td><td>@item.CreatedAtUtc.ToLocalTime().ToString("g")</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
+            <tr><td>@item.ContactName</td><td>@item.Email</td><td>@item.PhoneNumber</td><td><span class="status-badge">@item.Status.GetDisplayName()</span></td><td>@item.CreatedAtUtc.ToVietnamDateTime()</td><td><a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a></td></tr>
         }
         </tbody></table></div>
     }
