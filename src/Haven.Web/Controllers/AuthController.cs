@@ -1,9 +1,13 @@
 using Haven.Infrastructure.Identity;
+using Haven.Infrastructure.Context;
+using Haven.Domain.Privacy;
+using Haven.Web.Services;
 using Haven.Web.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haven.Web.Controllers;
 
@@ -18,17 +22,23 @@ public sealed class AuthController : ControllerBase
     private readonly SignInManager<HavenUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AuthController> _logger;
+    private readonly ApplicationDbContext _db;
+    private readonly TimeProvider _clock;
 
     public AuthController(
         UserManager<HavenUser> userManager,
         SignInManager<HavenUser> signInManager,
         RoleManager<IdentityRole> roleManager,
-        ILogger<AuthController> logger)
+        ILogger<AuthController> logger,
+        ApplicationDbContext db,
+        TimeProvider clock)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _db = db;
+        _clock = clock;
     }
 
     [AllowAnonymous]
@@ -47,11 +57,17 @@ public sealed class AuthController : ControllerBase
     public async Task<ActionResult<AccountResponse>> Register(
         RegisterRequest request)
     {
+        if (!request.AcceptedTerms || !request.ConsentedPersonalDataProcessing ||
+            request.TermsVersion != PolicyVersions.Terms || request.PrivacyVersion != PolicyVersions.Privacy)
+        {
+            ModelState.AddModelError("consent", "Hãy đồng ý với Điều khoản sử dụng và xác nhận việc xử lý dữ liệu cá nhân theo chính sách hiện hành.");
+            return ValidationProblem(ModelState);
+        }
         var rolesReady = await EnsureRolesAsync();
         if (!rolesReady)
         {
             return Problem(
-                title: "Account registration is temporarily unavailable.",
+                title: "Đăng ký hiện chưa khả dụng. Vui lòng thử lại sau.",
                 statusCode: StatusCodes.Status500InternalServerError);
         }
 
@@ -61,6 +77,9 @@ public sealed class AuthController : ControllerBase
             Email = request.Email.Trim(),
             DisplayName = request.DisplayName.Trim()
         };
+        await using var registrationTransaction = _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync()
+            : null;
 
         var createResult = await _userManager.CreateAsync(user, request.Password);
         if (!createResult.Succeeded)
@@ -72,17 +91,47 @@ public sealed class AuthController : ControllerBase
         var roleResult = await _userManager.AddToRoleAsync(user, UserRole);
         if (!roleResult.Succeeded)
         {
-            var deleteResult = await _userManager.DeleteAsync(user);
+            var rollbackSucceeded = true;
+            if (registrationTransaction is not null)
+                await registrationTransaction.RollbackAsync();
+            else
+                rollbackSucceeded = (await _userManager.DeleteAsync(user)).Succeeded;
             _logger.LogError(
                 "Could not assign the default role to a newly registered account. " +
                 "Account rollback succeeded: {RollbackSucceeded}. Identity error codes: {ErrorCodes}",
-                deleteResult.Succeeded,
+                rollbackSucceeded,
                 string.Join(", ", roleResult.Errors.Select(error => error.Code)));
 
             return Problem(
-                title: "Account registration is temporarily unavailable.",
+                title: "Đăng ký hiện chưa khả dụng. Vui lòng thử lại sau.",
                 statusCode: StatusCodes.Status500InternalServerError);
         }
+
+        try
+        {
+            var now = _clock.GetUtcNow();
+            _db.PolicyConsents.AddRange(
+                PolicyConsent.Record(user.Id, "Terms", PolicyVersions.Terms, PolicyConsentAction.Granted, "Registration", now),
+                PolicyConsent.Record(user.Id, "Privacy", PolicyVersions.Privacy, PolicyConsentAction.Granted, "Registration", now));
+            await _db.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+            var rollbackSucceeded = true;
+            if (registrationTransaction is not null)
+                await registrationTransaction.RollbackAsync();
+            else
+            {
+                foreach (var entry in _db.ChangeTracker.Entries<PolicyConsent>().Where(entry => entry.State == EntityState.Added).ToArray())
+                    entry.State = EntityState.Detached;
+                rollbackSucceeded = (await _userManager.DeleteAsync(user)).Succeeded;
+            }
+            _logger.LogError(exception, "Could not record required policy consent. Account rollback succeeded: {RollbackSucceeded}", rollbackSucceeded);
+            return Problem(title: "Không thể hoàn tất đăng ký. Vui lòng thử lại sau.", statusCode: StatusCodes.Status500InternalServerError);
+        }
+
+        if (registrationTransaction is not null)
+            await registrationTransaction.CommitAsync();
 
         await _signInManager.SignInAsync(user, isPersistent: false);
 

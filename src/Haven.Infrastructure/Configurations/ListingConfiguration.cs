@@ -53,6 +53,13 @@ public sealed class ListingConfiguration
             .IsRequired()
             .HasMaxLength(Listing.DistrictMaxLength);
 
+        builder.Property(x => x.ProvinceCode).HasMaxLength(2);
+        builder.Property(x => x.WardCode).HasMaxLength(5);
+        builder.HasOne<Haven.Domain.Locations.AdministrativeProvince>().WithMany().HasForeignKey(x => x.ProvinceCode).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Haven.Domain.Locations.AdministrativeWard>().WithMany().HasForeignKey(x => new { x.WardCode, x.ProvinceCode })
+            .HasPrincipalKey(x => new { x.Code, x.ProvinceCode }).OnDelete(DeleteBehavior.Restrict);
+        builder.HasIndex(x => x.ProvinceCode);
+
         builder.Property(x => x.AddressLine)
             .IsRequired()
             .HasMaxLength(Listing.AddressLineMaxLength);

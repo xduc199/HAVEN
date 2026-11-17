@@ -11,13 +11,16 @@ public class HomeController : Controller
 {
     private readonly ListingApplicationService _listingService;
     private readonly PropertyTypeApplicationService _propertyTypeService;
+    private readonly ListingImageApplicationService _imageService;
 
     public HomeController(
         ListingApplicationService listingService,
-        PropertyTypeApplicationService propertyTypeService)
+        PropertyTypeApplicationService propertyTypeService,
+        ListingImageApplicationService imageService)
     {
         _listingService = listingService;
         _propertyTypeService = propertyTypeService;
+        _imageService = imageService;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -32,6 +35,7 @@ public class HomeController : Controller
             .Select(type => new PropertyTypeOptionViewModel(type.Id, type.Name))
             .ToArray();
         var names = options.ToDictionary(type => type.Id, type => type.Name);
+        var imageIds = await _imageService.GetPrimaryImageIdsAsync(results.Items.Select(item => item.Id).ToArray(), cancellationToken);
         var cards = results.Items.Select(item => new PropertyCardViewModel(
             item.Id,
             item.Title,
@@ -41,15 +45,13 @@ public class HomeController : Controller
             names.GetValueOrDefault(item.PropertyTypeId, "Bất động sản"),
             item.Province,
             item.District,
-            item.Bedrooms)).ToArray();
+            item.Bedrooms,
+            imageIds.TryGetValue(item.Id, out var imageId) ? imageId : null)).ToArray();
 
         return View(new HomePageViewModel(cards, options));
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    public IActionResult Privacy() => RedirectToAction("Privacy", "Policies");
 
     public IActionResult Contact() => View();
 

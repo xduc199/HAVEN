@@ -77,6 +77,142 @@ namespace Haven.Infrastructure.Migrations
                     b.ToTable("ConsultationRequests", (string)null);
                 });
 
+            modelBuilder.Entity("Haven.Domain.Locations.AdministrativeProvince", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AdministrativeProvinces", (string)null);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Locations.AdministrativeWard", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("ProvinceCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("ProvinceCode", "Name");
+
+                    b.ToTable("AdministrativeWards", (string)null);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Privacy.PolicyConsent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DocumentKey")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("DocumentVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTimeOffset>("OccurredAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "OccurredAtUtc");
+
+                    b.ToTable("PolicyConsents", (string)null);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Privacy.PrivacyRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId");
+
+                    b.HasIndex("Status", "CreatedAtUtc");
+
+                    b.HasIndex("UserId", "CreatedAtUtc");
+
+                    b.ToTable("PrivacyRequests", (string)null);
+                });
+
             modelBuilder.Entity("Haven.Domain.Properties.Favorite", b =>
                 {
                     b.Property<string>("UserId")
@@ -154,6 +290,10 @@ namespace Haven.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("ProvinceCode")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
                     b.Property<int>("Purpose")
                         .HasColumnType("int");
 
@@ -175,15 +315,68 @@ namespace Haven.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("UpdatedAtUtc")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("WardCode")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("PropertyTypeId");
 
+                    b.HasIndex("ProvinceCode");
+
                     b.HasIndex("Status", "CreatedAtUtc");
 
+                    b.HasIndex("WardCode", "ProvinceCode");
+
                     b.ToTable("Listings", (string)null);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Properties.ListingImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("Length")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique();
+
+                    b.HasIndex("ListingId", "IsPrimary");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("ListingImages", (string)null);
                 });
 
             modelBuilder.Entity("Haven.Domain.Properties.ListingTag", b =>
@@ -199,6 +392,46 @@ namespace Haven.Infrastructure.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("ListingTags", (string)null);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Properties.ListingVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long>("Length")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique();
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("ListingVideos", (string)null);
                 });
 
             modelBuilder.Entity("Haven.Domain.Properties.PropertyType", b =>
@@ -496,6 +729,40 @@ namespace Haven.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Haven.Domain.Locations.AdministrativeWard", b =>
+                {
+                    b.HasOne("Haven.Domain.Locations.AdministrativeProvince", "Province")
+                        .WithMany()
+                        .HasForeignKey("ProvinceCode")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Province");
+                });
+
+            modelBuilder.Entity("Haven.Domain.Privacy.PolicyConsent", b =>
+                {
+                    b.HasOne("Haven.Infrastructure.Identity.HavenUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Haven.Domain.Privacy.PrivacyRequest", b =>
+                {
+                    b.HasOne("Haven.Domain.Properties.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Haven.Infrastructure.Identity.HavenUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Haven.Domain.Properties.Favorite", b =>
                 {
                     b.HasOne("Haven.Domain.Properties.Listing", null)
@@ -512,6 +779,28 @@ namespace Haven.Infrastructure.Migrations
                         .HasForeignKey("PropertyTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Haven.Domain.Locations.AdministrativeProvince", null)
+                        .WithMany()
+                        .HasForeignKey("ProvinceCode")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Haven.Domain.Locations.AdministrativeWard", null)
+                        .WithMany()
+                        .HasForeignKey("WardCode", "ProvinceCode")
+                        .HasPrincipalKey("Code", "ProvinceCode")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Haven.Domain.Properties.ListingImage", b =>
+                {
+                    b.HasOne("Haven.Domain.Properties.Listing", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("Haven.Domain.Properties.ListingTag", b =>
@@ -531,6 +820,17 @@ namespace Haven.Infrastructure.Migrations
                     b.Navigation("Listing");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("Haven.Domain.Properties.ListingVideo", b =>
+                {
+                    b.HasOne("Haven.Domain.Properties.Listing", "Listing")
+                        .WithMany("Videos")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -586,7 +886,11 @@ namespace Haven.Infrastructure.Migrations
 
             modelBuilder.Entity("Haven.Domain.Properties.Listing", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("ListingTags");
+
+                    b.Navigation("Videos");
                 });
 
             modelBuilder.Entity("Haven.Domain.Properties.Tag", b =>

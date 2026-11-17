@@ -35,7 +35,7 @@
                     <tr><th>Giá</th>@foreach (var listing in Model.Listings){<td>@listing.PriceAmount.ToString("N0") ₫</td>}</tr>
                     <tr><th>Diện tích</th>@foreach (var listing in Model.Listings){<td>@listing.AreaSqm.ToString("N1") m²</td>}</tr>
                     <tr><th>Loại</th>@foreach (var listing in Model.Listings){<td>@listing.PropertyTypeName</td>}</tr>
-                    <tr><th>Mục đích</th>@foreach (var listing in Model.Listings){<td>@listing.Purpose</td>}</tr>
+                    <tr><th>Mục đích</th>@foreach (var listing in Model.Listings){<td>@listing.Purpose.GetDisplayName()</td>}</tr>
                     <tr><th>Vị trí</th>@foreach (var listing in Model.Listings){<td>@listing.AddressLine, @listing.District, @listing.Province</td>}</tr>
                     <tr><th>Phòng ngủ</th>@foreach (var listing in Model.Listings){<td>@(listing.Bedrooms?.ToString() ?? "—")</td>}</tr>
                     <tr><th>Phòng tắm</th>@foreach (var listing in Model.Listings){<td>@(listing.Bathrooms?.ToString() ?? "—")</td>}</tr>

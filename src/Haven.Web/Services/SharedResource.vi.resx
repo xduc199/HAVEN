@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredAttribute_ValidationError" xml:space="preserve"><value>Trường {0} là bắt buộc.</value></data>
+  <data name="StringLengthAttribute_ValidationError" xml:space="preserve"><value>Trường {0} không được vượt quá {1} ký tự.</value></data>
+  <data name="StringLengthAttribute_ValidationErrorIncludingMinimum" xml:space="preserve"><value>Trường {0} phải có từ {2} đến {1} ký tự.</value></data>
+  <data name="MaxLengthAttribute_ValidationError" xml:space="preserve"><value>Trường {0} không được vượt quá {1} ký tự.</value></data>
+  <data name="MinLengthAttribute_ValidationError" xml:space="preserve"><value>Trường {0} phải có ít nhất {1} ký tự.</value></data>
+  <data name="RangeAttribute_ValidationError" xml:space="preserve"><value>Trường {0} phải nằm trong khoảng {1} đến {2}.</value></data>
+  <data name="CompareAttribute_ValidationError" xml:space="preserve"><value>Trường {0} không khớp với trường xác nhận.</value></data>
+  <data name="EmailAddressAttribute_ValidationError" xml:space="preserve"><value>Trường {0} chưa đúng định dạng email.</value></data>
+  <data name="PhoneAttribute_ValidationError" xml:space="preserve"><value>Trường {0} chưa đúng định dạng số điện thoại.</value></data>
+  <data name="RegularExpressionAttribute_ValidationError" xml:space="preserve"><value>Trường {0} chưa đúng định dạng.</value></data>
+</root>

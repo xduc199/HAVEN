@@ -5,8 +5,8 @@
 <section class="page-container">
     <h1>Yêu cầu tư vấn #@Model.Id</h1>
     <article class="content-card">
-        <p>Trạng thái: <span class="status-badge">@Model.Status</span></p>
-        <p>Thời gian gửi: @Model.CreatedAtUtc.ToLocalTime().ToString("g")</p>
+        <p>Trạng thái: <span class="status-badge">@Model.Status.GetDisplayName()</span></p>
+        <p>Thời gian gửi: @Model.CreatedAtUtc.ToVietnamDateTime()</p>
         <p>Họ tên: @Model.ContactName</p>
         <p>Email: @Model.Email</p>
         <p>Điện thoại: @Model.PhoneNumber</p>

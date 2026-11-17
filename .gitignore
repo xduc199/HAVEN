@@ -5,6 +5,7 @@
 
 # Build outputs
 **/bin/
+**/bin-verify/
 **/obj/
 .vs/
 # Visual Studio
@@ -15,6 +16,7 @@ TestResults/
 # Logs
 *.log
 # Local databases and user files
+src/Haven.Web/App_Data/ListingImages/
 *.mdf
 *.ldf
 *.sqlite

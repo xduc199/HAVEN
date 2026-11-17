@@ -73,7 +73,10 @@
         }
 
         if (payload && (payload.detail || payload.title)) {
-            return payload.detail || payload.title;
+            const message = payload.detail || payload.title;
+            if (/[À-ỹ]/.test(message)) {
+                return message;
+            }
         }
 
         return `Yêu cầu thất bại (HTTP ${status}). Vui lòng thử lại.`;
@@ -148,7 +151,11 @@
                 request = sendJson("/api/auth/register", "POST", {
                     displayName: field(formData, "DisplayName"),
                     email: field(formData, "Email"),
-                    password: field(formData, "Password")
+                    password: field(formData, "Password"),
+                    acceptedTerms: field(formData, "AcceptedTerms").toLowerCase() === "true",
+                    consentedPersonalDataProcessing: field(formData, "ConsentedPersonalDataProcessing").toLowerCase() === "true",
+                    termsVersion: field(formData, "TermsVersion"),
+                    privacyVersion: field(formData, "PrivacyVersion")
                 }).then(() => { redirectTo = "/"; });
                 break;
             case "profile":

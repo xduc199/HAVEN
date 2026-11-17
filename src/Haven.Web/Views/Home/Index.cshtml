@@ -1,56 +1,101 @@
 @model Haven.Web.ViewModels.Properties.HomePageViewModel
 @{
-    ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = "Không gian sống, lựa chọn xứng tầm";
+    ViewData["MetaDescription"] = "Khám phá bất động sản trên HAVEN. Tìm kiếm, lưu lại, so sánh các lựa chọn và kết nối theo nhu cầu của bạn.";
+    ViewData["PageShell"] = "app-shell--home";
 }
 
-<section class="page-container">
-    <div class="content-card">
-        <p class="muted">HAVEN · BẤT ĐỘNG SẢN</p>
-        <h1>Tìm không gian sống phù hợp với bạn</h1>
-        <p class="muted">Tìm kiếm các tin đang được duyệt và công khai trên HAVEN.</p>
-        <form asp-controller="Properties" asp-action="Index" method="get" class="haven-form haven-form--filters">
-            <div class="haven-field">
-                <label for="keyword">Từ khóa</label>
-                <input id="keyword" name="keyword" maxlength="100" />
-            </div>
-            <div class="haven-field">
-                <label for="purpose">Mục đích</label>
-                <select id="purpose" name="purpose">
-                    <option value="">Tất cả</option>
-                    <option value="Sale">Mua bán</option>
-                    <option value="Rent">Cho thuê</option>
-                </select>
-            </div>
-            <div class="haven-field">
-                <label for="propertyTypeId">Loại bất động sản</label>
-                <select id="propertyTypeId" name="propertyTypeId">
-                    <option value="">Tất cả</option>
-                    @foreach (var type in Model.PropertyTypes)
-                    {
-                        <option value="@type.Id">@type.Name</option>
-                    }
-                </select>
-            </div>
-            <div class="form-actions">
-                <button class="haven-button" type="submit">Tìm kiếm</button>
-            </div>
-        </form>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
 
-    <div class="page-heading" style="margin-top:2rem">
-        <div>
-            <h2>Tin đăng mới nhất</h2>
-            <p>Chỉ hiển thị bất động sản đã được duyệt.</p>
+<div class="haven-home">
+    <section class="haven-home__hero" aria-labelledby="home-title">
+        <img class="haven-home__hero-image" src="~/image/haven-hero.jpg" asp-append-version="true"
+             alt="Khu nhà ở bên sông trong ánh sáng cuối ngày" width="1000" height="563" fetchpriority="high" data-home-image />
+        <div class="haven-home__hero-shade" aria-hidden="true"></div>
+        <div class="haven-home__hero-content">
+            <p class="haven-home__eyebrow"><span>HAVEN / 01</span> Khám phá không gian sống</p>
+            <h1 id="home-title">Tìm một nơi chốn.<br /><em>Tìm một cách sống.</em></h1>
+            <p>Khám phá bất động sản, xem xét các lựa chọn và tìm không gian phù hợp với nhu cầu sống của bạn.</p>
+            <div class="haven-home__hero-links">
+                <a class="haven-home__hero-primary" href="#tim-kiem">Bắt đầu tìm kiếm <span aria-hidden="true">↘</span></a>
+                <a asp-controller="Policies" asp-action="About">HAVEN là gì?</a>
+            </div>
         </div>
-        <a asp-controller="Properties" asp-action="Index">Xem tất cả</a>
-    </div>
+        <p class="haven-home__hero-caption">Kiến trúc ven sông <span>Không gian cho những nhịp sống khác nhau</span></p>
+    </section>
 
-    @if (Model.LatestListings.Count == 0)
-    {
-        <p class="is-empty">Hiện chưa có bất động sản công khai phù hợp.</p>
-    }
-    else
-    {
-        <partial name="_PropertyCards" model="Model.LatestListings" />
-    }
-</section>
+    <section class="haven-home__search" id="tim-kiem" aria-labelledby="search-title">
+        <div class="haven-home__search-title"><span>02 / Tìm kiếm</span><h2 id="search-title">Bạn đang tìm điều gì?</h2></div>
+        <form asp-controller="Properties" asp-action="Index" method="get" class="haven-home__search-form">
+            <label class="haven-home__field"><span>Nhu cầu</span><select name="purpose"><option value="">Mua bán &amp; cho thuê</option><option value="Sale">Mua bán</option><option value="Rent">Cho thuê</option></select></label>
+            <label class="haven-home__field haven-home__field--keyword"><span>Khu vực hoặc từ khóa</span><input name="keyword" maxlength="100" placeholder="Thành phố, khu vực, tên bất động sản" /></label>
+            <label class="haven-home__field"><span>Loại bất động sản</span><select name="propertyTypeId"><option value="">Tất cả loại hình</option>@foreach (var type in Model.PropertyTypes) { <option value="@type.Id">@type.Name</option> }</select></label>
+            <label class="haven-home__field"><span>Ngân sách tối đa</span><select name="maximumPrice"><option value="">Không giới hạn</option><option value="2000000000">Dưới 2 tỷ</option><option value="5000000000">Dưới 5 tỷ</option><option value="10000000000">Dưới 10 tỷ</option><option value="20000000000">Dưới 20 tỷ</option></select></label>
+            <button type="submit" aria-label="Tìm kiếm bất động sản">Tìm kiếm <span aria-hidden="true">↗</span></button>
+        </form>
+    </section>
+
+    <section class="haven-home__manifesto" aria-labelledby="manifesto-title">
+        <div class="haven-home__manifesto-index"><span>03</span><span>HAVEN / Nền tảng khám phá bất động sản</span></div>
+        <div class="haven-home__manifesto-body">
+            <h2 id="manifesto-title">Không chỉ tìm một bất động sản. <em>Tìm nơi phù hợp với cuộc sống của bạn.</em></h2>
+            <div class="haven-home__manifesto-detail">
+                <p>HAVEN đưa việc tìm nhà về một hành trình dễ theo dõi hơn. Tìm theo nhu cầu và địa điểm, xem giá, diện tích cùng hình ảnh, rồi lưu hoặc đặt các lựa chọn cạnh nhau để cân nhắc.</p>
+                <p>Khi muốn tìm hiểu thêm, bạn có thể gửi yêu cầu tư vấn gắn với tin đăng. Nếu đang có bất động sản cần giới thiệu, tài khoản HAVEN giúp bạn tạo tin, quản lý hình ảnh và theo dõi trạng thái kiểm duyệt.</p>
+            </div>
+            <div class="haven-home__manifesto-tools"><span>Tìm kiếm có tiêu chí</span><span>Lưu &amp; so sánh lựa chọn</span><span>Quản lý tin đăng</span></div>
+        </div>
+    </section>
+
+    <section class="haven-home__collection" aria-labelledby="listings-title">
+        <div class="haven-home__collection-heading"><div><p class="haven-home__eyebrow haven-home__eyebrow--dark">04 / Từ danh sách công khai</p><h2 id="listings-title">Những nơi chốn<br /><em>đang được giới thiệu.</em></h2></div><p>Đây là những tin mới nhất đã được duyệt và đang hiển thị trên HAVEN. Hãy mở từng tin để xem thông tin và hình ảnh do người đăng cung cấp.</p></div>
+        @if (Model.LatestListings.Count == 0)
+        {
+            <div class="haven-home__empty"><span>Chưa có tin công khai</span><p>Khi có tin đăng được duyệt, danh sách sẽ xuất hiện tại đây. Trong lúc này, bạn vẫn có thể tìm theo loại hình hoặc nhu cầu.</p><a asp-controller="Properties" asp-action="Index">Mở trang khám phá ↗</a></div>
+        }
+        else
+        {
+            <div class="haven-home__listing-grid"><partial name="_PropertyCards" model="Model.LatestListings" /></div>
+        }
+        <a class="haven-home__all-listings" asp-controller="Properties" asp-action="Index">Xem tất cả bất động sản <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="haven-home__categories" aria-labelledby="categories-title">
+        <div class="haven-home__categories-lead"><p class="haven-home__eyebrow haven-home__eyebrow--dark">05 / Chọn điểm bắt đầu</p><h2 id="categories-title">Mỗi nhu cầu,<br /><em>một kiểu không gian.</em></h2><p>Chọn loại hình để thu hẹp danh sách. Bạn có thể kết hợp bộ lọc này với nhu cầu và khu vực trong trang tìm kiếm.</p></div>
+        @if (Model.PropertyTypes.Count == 0)
+        {
+            <p class="haven-home__category-empty">Danh mục sẽ xuất hiện tại đây khi được kích hoạt trong hệ thống.</p>
+        }
+        else
+        {
+            <div class="haven-home__category-list">@for (var index = 0; index < Model.PropertyTypes.Count; index++) { var type = Model.PropertyTypes[index]; <a asp-controller="Properties" asp-action="Index" asp-route-propertyTypeId="@type.Id"><span>@((index + 1).ToString("00"))</span><strong>@type.Name</strong><span aria-hidden="true">↗</span></a> }</div>
+        }
+    </section>
+
+    <section class="haven-home__editorial" aria-labelledby="editorial-title">
+        <div class="haven-home__editorial-number">06 <span>Góc nhìn</span></div>
+        <div class="haven-home__editorial-copy"><p class="haven-home__eyebrow haven-home__eyebrow--dark">Không gian sống / Ghi chú</p><h2 id="editorial-title">Một nơi ở tốt bắt đầu từ những điều bạn <em>thực sự cần.</em></h2></div>
+        <div class="haven-home__editorial-aside"><p>Một căn hộ gần nơi làm việc. Một ngôi nhà có thêm khoảng riêng. Hay một mảnh đất cho kế hoạch lâu dài. Trước khi chọn nơi chốn, hãy nghĩ về nhịp sống, khoảng di chuyển và điều khiến bạn thấy thoải mái mỗi ngày.</p><a asp-controller="Properties" asp-action="Index">Khám phá theo tiêu chí của bạn <span aria-hidden="true">↗</span></a></div>
+        <div class="haven-home__editorial-rule" aria-hidden="true"></div>
+    </section>
+
+    <section class="haven-home__journeys" aria-labelledby="journeys-title">
+        <div class="haven-home__journeys-heading"><p class="haven-home__eyebrow haven-home__eyebrow--dark">07 / Hai hành trình</p><h2 id="journeys-title">Từ tìm kiếm đến<br /><em>kết nối rõ ràng.</em></h2></div>
+        <article class="haven-home__journey"><span class="haven-home__journey-label">01 — Dành cho người tìm nhà</span><ol><li><b>01</b><div><h3>Tìm theo điều bạn cần</h3><p>Lọc danh sách theo từ khóa, khu vực, loại hình, nhu cầu và khoảng giá.</p></div></li><li><b>02</b><div><h3>Xem kỹ từng lựa chọn</h3><p>Đọc thông tin, xem ảnh, lưu tin yêu thích hoặc so sánh tối đa ba bất động sản.</p></div></li><li><b>03</b><div><h3>Gửi yêu cầu tư vấn</h3><p>Liên hệ về tin đăng bạn quan tâm để người phụ trách có thể phản hồi.</p></div></li></ol></article>
+        <article class="haven-home__journey"><span class="haven-home__journey-label">02 — Dành cho người đăng tin</span><ol><li><b>01</b><div><h3>Tạo tin trong tài khoản</h3><p>Nhập thông tin bất động sản và chọn loại hình, vị trí phù hợp.</p></div></li><li><b>02</b><div><h3>Bổ sung hình ảnh</h3><p>Sắp xếp nội dung và ảnh để người xem có cơ sở tìm hiểu tin đăng.</p></div></li><li><b>03</b><div><h3>Theo dõi trạng thái</h3><p>Gửi tin chờ kiểm duyệt, xem kết quả và cập nhật khi cần thiết.</p></div></li></ol></article>
+    </section>
+
+    <section class="haven-home__clarity" aria-label="Lưu ý khi tìm hiểu tin đăng"><span>08 / Minh bạch thông tin</span><p>Thông tin trong tin đăng do người đăng cung cấp và có thể qua bước kiểm duyệt nội dung. HAVEN hỗ trợ khám phá và kết nối; hãy chủ động kiểm tra thông tin, giấy tờ liên quan trước khi đưa ra quyết định giao dịch.</p><a asp-controller="Policies" asp-action="PostingRules">Xem quy chế đăng tin ↗</a></section>
+
+    <section class="haven-home__faq" aria-labelledby="faq-title"><div><p class="haven-home__eyebrow haven-home__eyebrow--dark">09 / Câu hỏi thường gặp</p><h2 id="faq-title">Bắt đầu sử dụng HAVEN</h2></div><div class="haven-home__faq-list">
+        <details><summary>Tôi có thể lọc bất động sản theo những tiêu chí nào?</summary><p>Trang tìm kiếm hỗ trợ từ khóa, nhu cầu mua bán hoặc cho thuê, loại bất động sản, khoảng giá, diện tích và địa điểm theo các bộ lọc hiện có.</p></details>
+        <details><summary>Làm thế nào để lưu hoặc so sánh một tin?</summary><p>Đăng nhập để lưu tin yêu thích. Từ trang chi tiết hoặc danh sách, bạn có thể đưa tin vào trang so sánh; công cụ hỗ trợ tối đa ba lựa chọn cùng lúc.</p></details>
+        <details><summary>Tin đăng mới có hiển thị công khai ngay không?</summary><p>Tin được gửi qua quy trình kiểm duyệt. Bạn có thể theo dõi trạng thái trong mục tin đăng của mình; chỉ tin được duyệt và đang hiển thị mới xuất hiện trong khu vực công khai.</p></details>
+    </div></section>
+
+    <section class="haven-home__cta" aria-labelledby="cta-title"><div><p class="haven-home__eyebrow">10 / Dành cho người đăng tin</p><h2 id="cta-title">Không gian của bạn<br /><em>xứng đáng được khám phá.</em></h2><p>Đăng thông tin bất động sản trên HAVEN, quản lý hình ảnh và theo dõi trạng thái tin trong tài khoản của bạn.</p></div><a asp-controller="MyListings" asp-action="Create">Đăng tin bất động sản <span aria-hidden="true">↗</span></a><span class="haven-home__cta-mark" aria-hidden="true">H</span></section>
+</div>
+
+@section Scripts { <script src="~/js/home.js" asp-append-version="true" defer></script> }

@@ -17,6 +17,70 @@ namespace Haven.IntegrationTests;
 public sealed class MvcWorkflowTests
 {
     [Fact]
+    public async Task AdminLockoutBlocksNewLoginAndRevokesAnExistingCookieAfterStampValidation()
+    {
+        var clock = new MutableTimeProvider(DateTimeOffset.UtcNow);
+        using var factory = CreateFactory(clock, provisionAdmin: true);
+        using var owner = AntiforgeryTestClient.Create(factory);
+        using var admin = AntiforgeryTestClient.Create(factory);
+        using var ownerRegistration = await owner.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["DisplayName"] = "Lock Target", ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, ownerRegistration.StatusCode);
+        using var adminLogin = await admin.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "lock.admin@example.com", ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, adminLogin.StatusCode);
+        using var activeSession = await owner.GetAsync("/profile/listings");
+        Assert.Equal(HttpStatusCode.OK, activeSession.StatusCode);
+
+        string userId;
+        string? oldStamp;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var target = await userManager.FindByEmailAsync("lock.target@example.com");
+            Assert.NotNull(target);
+            userId = target!.Id;
+            oldStamp = target.SecurityStamp;
+        }
+        using var lockUser = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId, ["locked"] = "true"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, lockUser.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var target = await userManager.FindByIdAsync(userId);
+            Assert.True(await userManager.IsLockedOutAsync(target!));
+            Assert.NotEqual(oldStamp, target!.SecurityStamp);
+        }
+
+        clock.Advance(TimeSpan.FromMinutes(2));
+        using var expiredSession = await owner.GetAsync("/profile/listings");
+        Assert.Equal(HttpStatusCode.Redirect, expiredSession.StatusCode);
+        using var lockedLogin = await owner.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.OK, lockedLogin.StatusCode);
+
+        using var unlock = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId, ["locked"] = "false"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, unlock.StatusCode);
+        using var restoredLogin = await owner.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, restoredLogin.StatusCode);
+        Assert.Equal("/", restoredLogin.Headers.Location?.OriginalString);
+    }
+    [Fact]
     public async Task LegacyAndInformationRoutesResolve()
     {
         using var factory = CreateFactory();
@@ -26,7 +90,11 @@ public sealed class MvcWorkflowTests
         using var contact = await client.GetAsync("/Home/Contact");
         using var projects = await client.GetAsync("/Home/DuAn");
         using var privacy = await client.GetAsync("/Home/Privacy");
+        using var privacyPage = privacy.StatusCode == HttpStatusCode.Redirect && privacy.Headers.Location is not null
+            ? await client.GetAsync(privacy.Headers.Location)
+            : privacy;
         using var home = await client.GetAsync("/");
+        var homeMarkup = await home.Content.ReadAsStringAsync();
         using var search = await client.GetAsync("/properties");
         using var compare = await client.GetAsync("/compare");
 
@@ -34,8 +102,17 @@ public sealed class MvcWorkflowTests
         Assert.StartsWith("/properties?province=Hanoi", legacy.Headers.Location?.OriginalString);
         Assert.Equal(HttpStatusCode.OK, contact.StatusCode);
         Assert.Equal(HttpStatusCode.OK, projects.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, privacy.StatusCode);
+        Assert.Equal(HttpStatusCode.Redirect, privacy.StatusCode);
+        Assert.Equal("/Privacy", privacy.Headers.Location?.OriginalString);
+        Assert.Equal(HttpStatusCode.OK, privacyPage.StatusCode);
         Assert.Equal(HttpStatusCode.OK, home.StatusCode);
+        Assert.Contains("Tìm một nơi chốn.", homeMarkup);
+        Assert.Contains("name=\"keyword\"", homeMarkup);
+        Assert.Contains("name=\"purpose\"", homeMarkup);
+        Assert.Contains("name=\"propertyTypeId\"", homeMarkup);
+        Assert.Contains("Những không gian đáng để khám phá.", homeMarkup);
+        Assert.Contains("/profile/listings/create", homeMarkup);
+        Assert.Contains("Chính sách quyền riêng tư", homeMarkup);
         Assert.True(
             search.StatusCode == HttpStatusCode.OK,
             $"Search returned {(int)search.StatusCode}: {await search.Content.ReadAsStringAsync()}");
@@ -73,7 +150,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "MVC User",
                 ["Email"] = "mvc.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -116,6 +193,9 @@ public sealed class MvcWorkflowTests
     {
         using var factory = CreateFactory();
         using var registrationClient = AntiforgeryTestClient.Create(factory);
+        string? adminId = null;
+        string? peerAdminId = null;
+        string? userId = null;
 
         using var registration = await registrationClient.PostAsync(
             "/account/register",
@@ -124,7 +204,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "MVC Admin",
                 ["Email"] = "mvc.admin@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -142,8 +222,33 @@ public sealed class MvcWorkflowTests
 
             var admin = await userManager.FindByEmailAsync("mvc.admin@example.com");
             Assert.NotNull(admin);
+            adminId = admin!.Id;
             var assignment = await userManager.AddToRoleAsync(admin!, "Admin");
             Assert.True(assignment.Succeeded);
+
+            var regularUser = new HavenUser
+            {
+                UserName = "managed.user@example.com",
+                Email = "managed.user@example.com",
+                DisplayName = "Managed User",
+                EmailConfirmed = true
+            };
+            var userCreation = await userManager.CreateAsync(regularUser, "StrongPassword123!");
+            Assert.True(userCreation.Succeeded);
+            userId = regularUser.Id;
+
+            var peerAdmin = new HavenUser
+            {
+                UserName = "peer.admin@example.com",
+                Email = "peer.admin@example.com",
+                DisplayName = "Peer Admin",
+                EmailConfirmed = true
+            };
+            var peerCreation = await userManager.CreateAsync(peerAdmin, "StrongPassword123!");
+            Assert.True(peerCreation.Succeeded);
+            var peerAssignment = await userManager.AddToRoleAsync(peerAdmin, "Admin");
+            Assert.True(peerAssignment.Succeeded);
+            peerAdminId = peerAdmin.Id;
         }
 
         using var adminClient = AntiforgeryTestClient.Create(factory);
@@ -163,6 +268,7 @@ public sealed class MvcWorkflowTests
             "/Admin",
             "/Admin/Dashboard",
             "/Admin/Listings",
+            "/Admin/Users",
             "/Admin/PropertyTypes",
             "/Admin/PropertyTypes/Create",
             "/Admin/Consultations",
@@ -203,6 +309,37 @@ public sealed class MvcWorkflowTests
             }
         }
 
+        using var userPage = await adminClient.GetAsync("/Admin/Users?search=managed.user");
+        Assert.Equal(HttpStatusCode.OK, userPage.StatusCode);
+        Assert.Contains("managed.user@example.com", await userPage.Content.ReadAsStringAsync());
+        using var oversizedPage = await adminClient.GetAsync("/Admin/Users?page=2147483647");
+        Assert.Equal(HttpStatusCode.OK, oversizedPage.StatusCode);
+
+        using var lockUser = await adminClient.PostAsync("/Admin/Users/SetLockout",
+            new FormUrlEncodedContent(new Dictionary<string, string> { ["id"] = userId!, ["locked"] = "true" }));
+        Assert.Equal(HttpStatusCode.Redirect, lockUser.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            Assert.True((await userManager.FindByIdAsync(userId!))!.LockoutEnd > DateTimeOffset.UtcNow);
+        }
+        using var unlockUser = await adminClient.PostAsync("/Admin/Users/SetLockout",
+            new FormUrlEncodedContent(new Dictionary<string, string> { ["id"] = userId!, ["locked"] = "false" }));
+        Assert.Equal(HttpStatusCode.Redirect, unlockUser.StatusCode);
+        using var preventSelfLock = await adminClient.PostAsync("/Admin/Users/SetLockout",
+            new FormUrlEncodedContent(new Dictionary<string, string> { ["id"] = adminId!, ["locked"] = "true" }));
+        Assert.Equal(HttpStatusCode.Redirect, preventSelfLock.StatusCode);
+        using var preventPeerAdminLock = await adminClient.PostAsync("/Admin/Users/SetLockout",
+            new FormUrlEncodedContent(new Dictionary<string, string> { ["id"] = peerAdminId!, ["locked"] = "true" }));
+        Assert.Equal(HttpStatusCode.Redirect, preventPeerAdminLock.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            Assert.Null((await userManager.FindByIdAsync(userId!))!.LockoutEnd);
+            Assert.Null((await userManager.FindByIdAsync(adminId!))!.LockoutEnd);
+            Assert.Null((await userManager.FindByIdAsync(peerAdminId!))!.LockoutEnd);
+        }
+
         using var createPropertyType = await adminClient.PostAsync(
             "/Admin/PropertyTypes/Create",
             new FormUrlEncodedContent(new Dictionary<string, string>
@@ -241,7 +378,7 @@ public sealed class MvcWorkflowTests
                 displayName = "Antiforgery Listing User",
                 email = "antiforgery.listing@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, registration.StatusCode);
         client.DefaultRequestHeaders.Remove("RequestVerificationToken");
 
@@ -279,7 +416,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "Listing Owner",
                 ["Email"] = "listing.owner@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -313,6 +450,8 @@ public sealed class MvcWorkflowTests
                 ["AreaSqm"] = "80.5",
                 ["Province"] = "Hà Nội",
                 ["District"] = "Cầu Giấy",
+                ["ProvinceCode"] = "01",
+                ["WardCode"] = "00166",
                 ["AddressLine"] = "12 Test Street",
                 ["Bedrooms"] = "3",
                 ["Bathrooms"] = "2",
@@ -369,7 +508,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "No Type User",
                 ["Email"] = "no.type.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -392,6 +531,8 @@ public sealed class MvcWorkflowTests
                 ["AreaSqm"] = "50",
                 ["Province"] = "Hà Nội",
                 ["District"] = "Ba Đình",
+                ["ProvinceCode"] = "01",
+                ["WardCode"] = "00004",
                 ["AddressLine"] = "1 Test Street"
             }));
 
@@ -416,7 +557,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "Login User",
                 ["Email"] = "login.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -451,7 +592,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "No Token",
                 ["Email"] = "no-token@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
             }));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -470,6 +611,7 @@ public sealed class MvcWorkflowTests
         "/Admin",
         "/Admin/Dashboard",
         "/Admin/Listings",
+        "/Admin/Users",
         "/Admin/PropertyTypes",
         "/Admin/PropertyTypes/Create",
         "/Admin/Tags",
@@ -491,13 +633,21 @@ public sealed class MvcWorkflowTests
             ["AreaSqm"] = "50",
             ["Province"] = "Hà Nội",
             ["District"] = "Ba Đình",
+            ["ProvinceCode"] = "01",
+            ["WardCode"] = "00004",
             ["AddressLine"] = "1 Test Street"
         });
 
-    private static WebApplicationFactory<Program> CreateFactory()
+    private static WebApplicationFactory<Program> CreateFactory(TimeProvider? clock = null, bool provisionAdmin = false)
     {
         var databaseName = Guid.NewGuid().ToString();
         return new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+        {
+            if (provisionAdmin)
+            {
+                builder.UseSetting("Haven:AdminBootstrap:Email", "lock.admin@example.com");
+                builder.UseSetting("Haven:AdminBootstrap:Password", "StrongPassword123!");
+            }
             builder.ConfigureTestServices(services =>
             {
                 services.RemoveAll<
@@ -506,6 +656,19 @@ public sealed class MvcWorkflowTests
                 services.RemoveAll<ApplicationDbContext>();
                 services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseInMemoryDatabase(databaseName));
-            }));
+                if (clock is not null)
+                {
+                    services.RemoveAll<TimeProvider>();
+                    services.AddSingleton(clock);
+                }
+            });
+        });
+    }
+
+    private sealed class MutableTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        private DateTimeOffset _now = now;
+        public override DateTimeOffset GetUtcNow() => _now;
+        public void Advance(TimeSpan amount) => _now += amount;
     }
 }

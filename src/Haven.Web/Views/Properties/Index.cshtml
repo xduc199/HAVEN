@@ -34,13 +34,15 @@
             </select>
         </div>
         <div class="haven-field">
-            <label asp-for="Province">Tỉnh / thành phố</label>
-            <input asp-for="Province" />
+            <label asp-for="ProvinceCode">Tỉnh / thành phố</label>
+            <select asp-for="ProvinceCode" data-location-province><option value="">Tất cả tỉnh/thành phố</option>@foreach (var province in Model.Provinces) { <option value="@province.Code">@province.Name</option> }</select>
         </div>
         <div class="haven-field">
-            <label asp-for="District">Quận / huyện</label>
-            <input asp-for="District" />
+            <label asp-for="WardCode">Xã / phường / đặc khu</label>
+            <select asp-for="WardCode" data-location-ward data-selected="@Model.WardCode" disabled="@(Model.Wards.Count == 0)"><option value="">Tất cả xã/phường</option>@foreach (var ward in Model.Wards) { <option value="@ward.Code">@ward.Name</option> }</select>
         </div>
+        <input asp-for="Province" type="hidden" />
+        <input asp-for="District" type="hidden" />
         <div class="haven-field">
             <label asp-for="MinimumPrice">Giá từ</label>
             <input asp-for="MinimumPrice" type="number" min="0" step="any" />
@@ -87,12 +89,12 @@
             <nav aria-label="Phân trang" class="form-actions">
                 @if (Model.Page > 1)
                 {
-                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page - 1)">Trước</a>
+                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-provinceCode="@Model.ProvinceCode" asp-route-wardCode="@Model.WardCode" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page - 1)">Trước</a>
                 }
                 <span>Trang @Model.Page / @Model.TotalPages</span>
                 @if (Model.Page < Model.TotalPages)
                 {
-                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page + 1)">Tiếp theo</a>
+                    <a class="haven-button-secondary" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-propertyTypeId="@Model.PropertyTypeId" asp-route-purpose="@Model.Purpose" asp-route-province="@Model.Province" asp-route-district="@Model.District" asp-route-provinceCode="@Model.ProvinceCode" asp-route-wardCode="@Model.WardCode" asp-route-minimumPrice="@Model.MinimumPrice" asp-route-maximumPrice="@Model.MaximumPrice" asp-route-minimumAreaSqm="@Model.MinimumAreaSqm" asp-route-maximumAreaSqm="@Model.MaximumAreaSqm" asp-route-bedrooms="@Model.Bedrooms" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page + 1)">Tiếp theo</a>
                 }
             </nav>
         }

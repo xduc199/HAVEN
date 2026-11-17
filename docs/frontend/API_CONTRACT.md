@@ -12,7 +12,10 @@ This contract was checked against the current controllers, request models, appli
 - JSON enum values currently map as follows: `ListingPurpose` is `1` (`Sale`) or `2` (`Rent`); `ConsultationStatus` is `0` (`New`), `1` (`InProgress`), `2` (`Completed`), or `3` (`Cancelled`). `ListingStatus` query values are the declared names (`Draft`, `Pending`, `Approved`, `Rejected`, `Hidden`).
 - Dates are serialized as ISO-8601 date-time strings. Decimal fields are JSON numbers.
 - Every unsafe request (`POST`, `PUT`, `DELETE`) to MVC or `/api` requires antiforgery validation. First call `GET /api/auth/antiforgery`, retain the `Haven.Antiforgery` cookie, then send the returned `requestToken` in the `RequestVerificationToken` header. Same-origin browser requests send the cookie automatically.
-- There is no image/media field in the current public listing contract.
+- The public JSON listing DTO does not embed image bytes or image URLs. MVC pages read approved image metadata separately and render images through `GET /listing-images/{id}`; owner/Admin authorization also permits private moderation views.
+- Listing media is managed by antiforgery-protected MVC forms, not JSON API endpoints. Approved videos stream through `GET /listing-videos/{id}` with byte-range support; owners and Admins may access media for listings they can manage.
+- Location pickers use public `GET /api/locations/provinces` and `GET /api/locations/provinces/{provinceCode}/wards`; the latter returns `400` for malformed codes and `404` for an unknown province.
+- Admin account locking is available only through the Admin MVC user-management page. Locking sets Identity's lockout end and changes the security stamp; active cookies are revalidated within the configured one-minute interval.
 - Authentication forms call the same-origin `/api/auth` endpoints from `wwwroot/js/api-forms.js`, sending the antiforgery token and cookie. If JavaScript is unavailable, the MVC form handlers remain the fallback.
 - Listing, search, favorites, consultation, and Admin Razor pages currently use Application services in-process. The API contract is available to external JSON clients, but those Razor workflows are not yet API-backed.
 
@@ -21,7 +24,7 @@ This contract was checked against the current controllers, request models, appli
 | Feature | Method | Endpoint | Request | Response | Authentication | Role |
 |---|---|---|---|---|---|---|
 | Antiforgery | GET | `/api/auth/antiforgery` | No body | `200 { "requestToken": "…" }`; sets antiforgery cookie. | Public | — |
-| Authentication | POST | `/api/auth/register` | JSON: `{ "displayName": "…", "email": "…", "password": "…" }` | `201`; `AccountResponse`; sets sign-in cookie. `400` validation; `500` if role setup fails. | Public | — |
+| Authentication | POST | `/api/auth/register` | JSON: `{ "displayName": "…", "email": "…", "password": "…", "acceptedTerms": true, "consentedPersonalDataProcessing": true, "termsVersion": "1.0.0", "privacyVersion": "1.0.0" }` | Requires both explicit consents and exact current document versions; `201` stores separate Terms/Privacy consent evidence and sets sign-in cookie; `400` validation or stale/absent consent; `500` if account/consent setup fails and account rollback is attempted. | Public | — |
 | Authentication | POST | `/api/auth/login` | JSON: `{ "email": "…", "password": "…", "rememberMe": false }` | `200 AccountResponse`; sets cookie. `401` invalid/locked-out credentials. | Public | — |
 | Authentication | POST | `/api/auth/logout` | No body | `204`; `401` if unauthenticated. | Required | Any |
 | Profile | GET | `/api/auth/me` | — | `200 AccountResponse`; `401`. | Required | Any |
@@ -31,6 +34,8 @@ This contract was checked against the current controllers, request models, appli
 | Property details | GET | `/api/listings/{id}` | Positive integer `id` | `200 PublicListingDetails`; `400` invalid id; `404` missing/non-Approved. Includes `ownerDisplayName` only; no owner ID/email/phone. | Public | — |
 | Compare | GET | `/api/listings/compare?ids=1&ids=2` | Repeated `ids` query parameter; 1–3 positive, unique IDs | `200` ordered array of `PublicListingDetails`; `400` invalid/duplicate/count; `404` if any requested listing is missing or not Approved. | Public | — |
 | PropertyType | GET | `/api/property-types` | — | `200 PropertyTypeResponse[]`; active types only. | Public | — |
+| Locations | GET | `/api/locations/provinces` | — | `200 AdministrativeLocationOption[]`; official seeded provinces in code order. | Public | — |
+| Locations | GET | `/api/locations/provinces/{provinceCode}/wards` | Two-digit province code | `200 AdministrativeLocationOption[]`; `400` malformed code; `404` unknown province. | Public | — |
 | Tags | GET | `/api/tags` | Query: `page` (default 1), `pageSize` (default 50, max 100) | `200 TagPageResponse`; active tags associated with at least one Approved listing only; `400` invalid paging. | Public | — |
 | Tagged listings | GET | `/api/tags/{slug}/listings` | Query: `page` (default 1), `pageSize` (default 20, max 100) | `200 PublicTagListingPageResponse`; Approved listings only; `404` inactive/unknown/non-public tag; `400` invalid paging. | Public | — |
 | Owned listings | POST | `/api/my/listings` | `ListingWriteRequest` JSON below; no `ownerId` | `201 OwnedListingDetails`; `400`; `401`. Creates Draft; owner is principal-derived. | Required | Any |
@@ -69,6 +74,8 @@ This contract was checked against the current controllers, request models, appli
 
 ## Request and response shapes
 
+Policy pages are public at `/Privacy`, `/Terms`, `/PostingRules`, `/Complaints` and `/CookiePolicy`; optional `version` query selects a retained edition. Signed-in users read their own consent/request history at `/Account/Privacy`. Admin moderation of privacy requests is the MVC route `/Admin/PrivacyRequests` and requires the `Admin` role.
+
 All unsafe API methods require the antiforgery cookie and `RequestVerificationToken` header described above. MVC forms include antiforgery tokens automatically.
 
 ### ListingWriteRequest
@@ -98,7 +105,7 @@ All unsafe API methods require the antiforgery cookie and `RequestVerificationTo
 ## Current integration limits
 
 1. Compare selections are carried in the page URL and are not persisted between sessions or devices.
-2. Listing images/media are not represented in the current domain or API, so the UI does not fabricate them.
+2. Listing image media is persisted in `ListingImages`; the JSON DTO remains metadata-free while the MVC application serves image content through the protected image route.
 3. Consultation submission requires authentication; the MVC page pre-fills the signed-in user's name and email and lets them enter a phone number and optional message.
 4. Registration creates only the `User` role. Admin provisioning is configuration-controlled; there is no public Admin registration path.
 5. Registration/profile workflows use ASP.NET Core Identity from the Web layer. MVC and API controllers currently own their respective HTTP workflows; do not add loopback HTTP calls between them.

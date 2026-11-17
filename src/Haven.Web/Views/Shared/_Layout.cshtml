@@ -3,8 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#17324d" />
+    <meta name="theme-color" content="#183b35" />
     <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN" : "HAVEN")</title>
+    <meta name="description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
+    <meta property="og:title" content="@(ViewData["Title"] is string pageTitle ? $"{pageTitle} | HAVEN" : "HAVEN")" />
+    <meta property="og:description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
     <link rel="icon" type="image/png" href="~/image/logo3.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -12,7 +15,7 @@
     <link rel="stylesheet" href="~/Haven.Web.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="app-shell">
+<body class="app-shell @(ViewData["PageShell"] as string)">
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <header class="app-header">
         <div class="app-header__inner">
@@ -21,20 +24,45 @@
                 <span class="app-brand__mark" aria-hidden="true">H</span>
                 <span class="app-brand__text">
                     <span class="app-brand__name">HAVEN</span>
-                    <span class="app-brand__tagline">Home awaits, vision empowers navigation</span>
+                    <span class="app-brand__tagline">Không gian sống, lựa chọn xứng tầm</span>
                 </span>
             </a>
 
             <nav class="app-nav" aria-label="Điều hướng chính">
-                <a class="app-nav__link" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                <a class="app-nav__link" asp-controller="Properties" asp-action="Index">Tìm bất động sản</a>
+                <a class="app-nav__link" asp-controller="Properties" asp-action="Index">Khám phá</a>
+                <a class="app-nav__link" asp-controller="Home" asp-action="MuaBan">Mua bán</a>
+                <a class="app-nav__link" asp-controller="Home" asp-action="ChoThue">Cho thuê</a>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a class="app-nav__link" asp-controller="MyListings" asp-action="Index">Tin của tôi</a>
                     <a class="app-nav__link" asp-controller="FavoritePages" asp-action="Index">Yêu thích</a>
                     <a class="app-nav__link" asp-controller="ConsultationPages" asp-action="Index">Tư vấn</a>
+                    <a class="app-nav__link" asp-controller="PrivacyCenter" asp-action="Index">Quyền riêng tư</a>
                 }
             </nav>
+
+            <details class="app-mobile-menu">
+                <summary aria-label="Mở điều hướng">Menu <span aria-hidden="true">☰</span></summary>
+                <nav aria-label="Điều hướng trên điện thoại">
+                    <a asp-controller="Properties" asp-action="Index">Khám phá bất động sản</a>
+                    <a asp-controller="Home" asp-action="MuaBan">Mua bán</a>
+                    <a asp-controller="Home" asp-action="ChoThue">Cho thuê</a>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="MyListings" asp-action="Index">Tin đăng của tôi</a>
+                        <a asp-controller="FavoritePages" asp-action="Index">Tin yêu thích</a>
+                        <a asp-controller="ConsultationPages" asp-action="Index">Yêu cầu tư vấn</a>
+                        <a asp-controller="PrivacyCenter" asp-action="Index">Quyền riêng tư</a>
+                        <a asp-controller="Account" asp-action="Profile">Tài khoản</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                        <a asp-controller="Account" asp-action="Register">Đăng ký</a>
+                    }
+                    @if (User.IsInRole("Admin")) { <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Khu vực quản trị</a> }
+                </nav>
+            </details>
 
             <div class="app-header__actions">
                 @if (User.IsInRole("Admin"))
@@ -43,7 +71,8 @@
                 }
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a class="app-header__cta" asp-controller="Account" asp-action="Profile">Tài khoản</a>
+                    <a class="app-header__cta" asp-controller="MyListings" asp-action="Create">Đăng tin</a>
+                    <a class="app-nav__link app-header__profile" asp-controller="Account" asp-action="Profile">Tài khoản</a>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="app-logout-form" data-api-action="logout">
                         @Html.AntiForgeryToken()
                         <div class="api-form-message" data-api-message hidden></div>
@@ -53,7 +82,7 @@
                 else
                 {
                     <a class="app-nav__link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                    <a class="app-header__cta" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                    <a class="app-header__cta" asp-controller="MyListings" asp-action="Create">Đăng tin</a>
                 }
             </div>
         </div>
@@ -68,11 +97,34 @@
 
     <footer class="app-footer">
         <div class="app-footer__inner">
-            <a class="app-footer__brand" asp-controller="Home" asp-action="Index">HAVEN</a>
-            <p>Khám phá không gian sống phù hợp với bạn.</p>
-            <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
-            <a asp-controller="Home" asp-action="Privacy">Chính sách riêng tư</a>
-            <span class="app-footer__copyright">&copy; @DateTime.Now.Year HAVEN</span>
+            <div class="app-footer__about">
+                <a class="app-footer__brand" asp-controller="Home" asp-action="Index">HAVEN</a>
+                <p>Không gian sống, lựa chọn xứng tầm.</p>
+                <span>Khám phá và tìm kiếm bất động sản theo cách của bạn.</span>
+            </div>
+            <nav aria-label="Khám phá bất động sản" class="app-footer__group">
+                <strong>Khám phá</strong>
+                <a asp-controller="Properties" asp-action="Index">Tất cả bất động sản</a>
+                <a asp-controller="Home" asp-action="MuaBan">Mua bán</a>
+                <a asp-controller="Home" asp-action="ChoThue">Cho thuê</a>
+            </nav>
+            <nav aria-label="Công cụ người dùng" class="app-footer__group">
+                <strong>Dành cho bạn</strong>
+                <a asp-controller="MyListings" asp-action="Create">Đăng tin bất động sản</a>
+                <a asp-controller="MyListings" asp-action="Index">Tin đăng của tôi</a>
+                <a asp-controller="FavoritePages" asp-action="Index">Tin yêu thích</a>
+                <a asp-controller="Properties" asp-action="Compare">So sánh bất động sản</a>
+            </nav>
+            <nav aria-label="Thông tin và chính sách" class="app-footer__group">
+                <strong>Thông tin</strong>
+                <a asp-controller="Policies" asp-action="About">Giới thiệu HAVEN</a>
+                <a asp-controller="Policies" asp-action="Terms">Điều khoản sử dụng</a>
+                <a asp-controller="Policies" asp-action="Privacy">Chính sách quyền riêng tư</a>
+                <a asp-controller="Policies" asp-action="PostingRules">Quy chế đăng tin</a>
+                <a asp-controller="Policies" asp-action="Complaints">Phản ánh và khiếu nại</a>
+                <a asp-controller="Policies" asp-action="CookiePolicy">Chính sách cookie</a>
+            </nav>
+            <div class="app-footer__bottom"><span>&copy; @DateTime.Now.Year HAVEN</span><span>Được xây dựng để giúp bạn tìm thấy nơi chốn phù hợp.</span></div>
         </div>
     </footer>
 

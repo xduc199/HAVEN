@@ -51,22 +51,21 @@ public sealed class ArchitectureTests
 
     private static string FindRepositoryFile(string relativePath)
     {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null)
+        var configuredRoot = Environment.GetEnvironmentVariable("HAVEN_REPOSITORY_ROOT");
+        var startPaths = new[] { configuredRoot, AppContext.BaseDirectory, Directory.GetCurrentDirectory() }
+            .OfType<string>()
+            .Where(path => !string.IsNullOrWhiteSpace(path));
+        foreach (var startPath in startPaths)
         {
-            var solutionPath = Path.Combine(
-                directory.FullName, "HAVEN.slnx");
-
-            var targetPath = Path.Combine(
-                directory.FullName, relativePath);
-
-            if (File.Exists(solutionPath) && File.Exists(targetPath))
+            var directory = new DirectoryInfo(startPath);
+            while (directory is not null)
             {
-                return targetPath;
-            }
+                var solutionPath = Path.Combine(directory.FullName, "HAVEN.slnx");
+                var targetPath = Path.Combine(directory.FullName, relativePath);
 
-            directory = directory.Parent;
+                if (File.Exists(solutionPath) && File.Exists(targetPath)) return targetPath;
+                directory = directory.Parent;
+            }
         }
 
         throw new FileNotFoundException(

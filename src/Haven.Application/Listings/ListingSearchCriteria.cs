@@ -26,7 +26,9 @@ public sealed record ListingSearchCriteria(
     ListingSearchSort Sort,
     int Page,
     int PageSize,
-    int? TagId = null);
+    int? TagId = null,
+    string? ProvinceCode = null,
+    string? WardCode = null);
 
 public sealed record ListingSearchPage(
     IReadOnlyList<Listing> Listings,

@@ -28,7 +28,7 @@ public sealed class AuthenticationApiTests
                 displayName = "New User",
                 email = "new.user@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
 
         Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
         Assert.NotNull(registerResponse.Headers.Location);
@@ -103,7 +103,7 @@ public sealed class AuthenticationApiTests
                 displayName = "Logout User",
                 email = "logout.user@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
 
         using var logoutResponse = await client.PostAsync(
@@ -128,7 +128,7 @@ public sealed class AuthenticationApiTests
                 displayName = "Password Change",
                 email = "password.change@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
 
         using var changeResponse = await client.PostAsJsonAsync(
@@ -172,7 +172,7 @@ public sealed class AuthenticationApiTests
                 displayName = "Weak Password",
                 email = "weak.password@example.com",
                 password = "weak"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -216,7 +216,7 @@ public sealed class AuthenticationApiTests
                 displayName = "Original Name",
                 email = "profile.owner@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
 
         using var updateResponse = await client.PutAsJsonAsync(

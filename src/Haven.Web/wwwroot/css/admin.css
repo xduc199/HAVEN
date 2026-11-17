@@ -96,6 +96,13 @@ body.admin-shell {
 .api-form-message { margin: .75rem 0; padding: .75rem .9rem; border-radius: .5rem; }
 .api-form-message--error { background: #fff0ef; color: #842e2a; }
 .api-form-message--success { background: #eaf7ef; color: #24633d; }
+.listing-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 1rem; margin: 1rem 0; }
+.listing-gallery__item { min-width: 0; padding: .65rem; border: 1px solid var(--admin-border); border-radius: .55rem; background: #fff; }
+.listing-gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: .4rem; }
+.listing-image-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: .75rem; }
+.listing-image-preview figure { min-width: 0; margin: 0; }
+.listing-image-preview img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.listing-image-preview figcaption { overflow-wrap: anywhere; color: var(--admin-muted); font-size: .78rem; }
 [data-api-action][aria-busy="true"] button[type="submit"] { cursor: wait; opacity: .7; }
 
 @media (max-width: 800px) {

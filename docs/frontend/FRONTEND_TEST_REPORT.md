@@ -46,8 +46,57 @@ The local browser served `/account/register` and `/` on port 5104. The registrat
 1. Reproduce the user's authenticated Admin page failures in the local browser; current-source TestServer route tests pass, but authenticated SQL Server-backed Admin pages were not manually verified.
 2. Verify creating and editing listings against SQL Server after an Admin creates/activates a PropertyType; the current local database has none.
 3. Perform keyboard/screen-reader review across the full Home, Search, User and Admin experience.
-4. Compare selections are URL-based and not persisted. Listing images/media and email confirmation are unsupported by the current model.
+4. Compare selections are URL-based and not persisted. Email confirmation is unsupported. Location remains free-text because no verified administrative-boundary dataset is included in the repository.
 
 ## Database state
 
 The local SQL Express `HavenDb` has all six migrations recorded, including `20261103142053_AddTags`. That migration was applied to this local development database only. The database currently contains zero PropertyTypes, zero Listings, zero Tags and zero ListingTags; integration tests use EF Core InMemory and do not verify SQL Server-backed MVC behavior.
+
+## Verification on 2026-11-17
+
+The current checkout was revalidated on branch `develop` at HEAD `a3baab7f01cc9ddd1ffb708ff03e5dcbca772aa9`:
+
+| Exact command | Result |
+|---|---|
+| `dotnet restore HAVEN.slnx` | **PASS** — all projects were up to date. |
+| `dotnet build HAVEN.slnx --no-restore` | **PASS** — 0 warnings, 0 errors. |
+| `dotnet test HAVEN.slnx --no-build` | **PASS** — 74 unit tests and 52 integration tests; 126 passed, 0 failed, 0 skipped. |
+| `dotnet build HAVEN.slnx --configuration Release` | **PASS** — 0 warnings, 0 errors. |
+| `dotnet test HAVEN.slnx --configuration Release --no-build` | **PASS** — 126 passed, 0 failed, 0 skipped. |
+| `dotnet ef migrations list --project src/Haven.Infrastructure/Haven.Infrastructure.csproj --startup-project src/Haven.Web/Haven.Web.csproj` | **PASS** — connected to the configured SQL Server and listed all six migrations as applied. This was read-only; no migration was applied. |
+| `git diff --check` | **PASS** — no whitespace errors. |
+
+The GitHub Actions workflow was reviewed locally, but no remote workflow run was triggered or inspected. The automated integration tests still use EF Core InMemory, so SQL Server connection and migration history are verified while SQL-backed application workflows are not.
+
+## Verification after media implementation (2026-11-17)
+
+| Exact command / check | Result |
+|---|---|
+| `dotnet build HAVEN.slnx --configuration Debug --no-restore -p:BaseOutputPath="$env:TEMP\haven-solution-debug-final\"` | **PASS** â€” all six projects compiled with 0 warnings/errors. Temporary output avoids the running app's locked default Debug assemblies. |
+| `dotnet build HAVEN.slnx --configuration Release --no-restore -p:BaseOutputPath="$env:TEMP\haven-solution-release-final\"` | **PASS** â€” all six projects compiled with 0 warnings/errors. |
+| `dotnet test tests/Haven.UnitTests/Haven.UnitTests.csproj --configuration Debug --no-restore` | **PASS** â€” 74 passed, 0 failed, 0 skipped. |
+| `dotnet test tests/Haven.UnitTests/Haven.UnitTests.csproj --configuration Release --no-restore` | **PASS** â€” 74 passed, 0 failed, 0 skipped. |
+| `dotnet test HAVEN.slnx --configuration Debug --no-build --no-restore` | **PASS** â€” 74 unit tests and 60 integration tests; 134 passed, 0 failed, 0 skipped. |
+| `dotnet test HAVEN.slnx --configuration Release --no-build --no-restore` | **PASS** â€” 74 unit tests and 60 integration tests; 134 passed, 0 failed, 0 skipped. |
+| `dotnet ef migrations list ... --no-build` | **PARTIAL** â€” all seven migration definitions, including `20261117093013_AddListingImages`, were listed. SQL Server was unreachable at the time, so EF could not determine applied/pending status. The migration update had returned success earlier in this task, but applied state could not be rechecked. |
+| `git diff --check` | **PASS** â€” no whitespace errors. |
+
+The integration suite uses EF Core InMemory and temporary local file storage, not SQL Server. It covers valid/invalid image uploads, size and count limits, ownership, public access, choosing and deleting a primary image, failed file/metadata persistence cleanup, admin media management, and gallery/card rendering. Test image payloads exercise format signatures and MVC flows; they do not prove full raster decoding by a browser. A local browser showed the home page at a narrow viewport, but authenticated routes and media upload were not manually exercised in the browser. No remote GitHub Actions run was started. The whole-solution build with default output was blocked by a running app's locked files, so the final successful builds used temporary `BaseOutputPath` directories.
+
+The Admin users page is part of the current route coverage. Its integration scenario searches for a User, locks and unlocks the account, verifies state persistence, clamps an extreme page value, and confirms an Admin cannot lock their own or another Admin account. The server enforces these rules independently of the UI.
+
+## Verification after video, lockout and location completion (2026-11-17)
+
+Latest verification supersedes earlier totals and the earlier note that location remained free text:
+
+| Exact command / check | Result |
+|---|---|
+| `dotnet restore HAVEN.slnx` | **PASS** — all projects were up to date. |
+| `dotnet build HAVEN.slnx --configuration Debug --no-restore -p:BaseOutputPath="$env:TEMP\haven-final-debug\"` | **PASS** — all six projects, 0 warnings and 0 errors. |
+| `dotnet build HAVEN.slnx --configuration Release --no-restore -p:BaseOutputPath="$env:TEMP\haven-final-release\"` | **PASS** — all six projects, 0 warnings and 0 errors. |
+| `$env:HAVEN_REPOSITORY_ROOT='D:\Study\ĐỒ ÁN\LAPTRINHWEB\HAVEN'; dotnet test HAVEN.slnx --configuration Debug --no-build --no-restore -p:BaseOutputPath="$env:TEMP\haven-final-debug\"` | **PASS** — 74 unit + 72 integration; 146 passed, 0 failed, 0 skipped. |
+| `$env:HAVEN_REPOSITORY_ROOT='D:\Study\ĐỒ ÁN\LAPTRINHWEB\HAVEN'; dotnet test HAVEN.slnx --configuration Release --no-build --no-restore -p:BaseOutputPath="$env:TEMP\haven-final-release\"` | **PASS** — 74 unit + 72 integration; 146 passed, 0 failed, 0 skipped. |
+| `dotnet ef migrations has-pending-model-changes --project src/Haven.Infrastructure/Haven.Infrastructure.csproj --startup-project src/Haven.Web/Haven.Web.csproj --no-build` | **PASS** — EF reports no model changes after the latest migration. Read-only; migration was not applied. |
+| `git diff --check` | **PASS** — no whitespace errors. |
+
+All integration tests use EF Core InMemory plus temporary local media storage; they are not SQL Server integration tests. The current migration was not applied to any SQL Server database, so SQL Server schema upgrade and SQL-backed workflows remain unverified. Full browser-based visual testing was not performed in this pass. Video tests verify MP4 `ftyp` and WebM EBML signatures, empty files, missing stored files, routing, authorization, cleanup, simulated storage/metadata failures, Admin upload/delete, form redisplay and byte ranges; they do not decode codecs or prove playback for every browser/device. App binaries were built under the system temporary directory to avoid overwriting files held by a running local app. The integration fixture for Public Listings was corrected to use InMemory, preventing accidental use of the configured SQL Server.

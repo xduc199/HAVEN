@@ -4,6 +4,7 @@ using Haven.Domain.Properties;
 using Haven.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haven.Web.Areas.Admin.Controllers;
 
@@ -13,13 +14,19 @@ public sealed class ListingsController : Controller
 {
     private readonly ListingApplicationService _listingService;
     private readonly TagApplicationService _tagService;
+    private readonly ListingImageApplicationService _imageService;
+    private readonly ListingVideoApplicationService _videoService;
 
     public ListingsController(
         ListingApplicationService listingService,
-        TagApplicationService tagService)
+        TagApplicationService tagService,
+        ListingImageApplicationService imageService,
+        ListingVideoApplicationService videoService)
     {
         _listingService = listingService;
         _tagService = tagService;
+        _imageService = imageService;
+        _videoService = videoService;
     }
 
     public async Task<IActionResult> Index(
@@ -109,7 +116,77 @@ public sealed class ListingsController : Controller
             null, 1, 100, cancellationToken)).Items
             .Where(tag => tag.IsActive)
             .ToArray();
+        ViewData["ListingImages"] = await _imageService.GetImagesForAdminAsync(id, cancellationToken);
+        ViewData["ListingVideos"] = await _videoService.GetVideosForAdminAsync(id, cancellationToken);
         return View(listing);
+    }
+
+    [HttpPost]
+    [RequestSizeLimit(105_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 105_000_000)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadImages(int id, List<IFormFile> images, CancellationToken cancellationToken)
+    {
+        if (images.Count == 0)
+        {
+            TempData["ErrorMessage"] = "Chọn ít nhất một ảnh để tải lên.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+        try
+        {
+            await _imageService.UploadAsync("admin", id, images.Select(file => new ListingImageUpload(file.OpenReadStream(), file.Length, file.FileName, file.ContentType)).ToArray(), isAdmin: true, cancellationToken: cancellationToken);
+            TempData["SuccessMessage"] = "Ảnh đã được tải lên.";
+        }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (Exception exception) when (exception is ArgumentException or IOException or DbUpdateException) { TempData["ErrorMessage"] = exception is DbUpdateException ? "Không thể lưu thông tin ảnh. Vui lòng thử lại." : exception.Message; }
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteImage(int id, int imageId, CancellationToken cancellationToken)
+    {
+        if (!await _imageService.DeleteAsync("admin", id, imageId, isAdmin: true, cancellationToken)) return NotFound();
+        TempData["SuccessMessage"] = "Ảnh đã được xóa.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [RequestSizeLimit(315_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 315_000_000)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadVideos(int id, List<IFormFile> videos, CancellationToken cancellationToken)
+    {
+        if (videos.Count == 0) TempData["ErrorMessage"] = "Chọn ít nhất một video để tải lên.";
+        else
+        {
+            try
+            {
+                await _videoService.UploadAsync("admin", id, videos.Select(file => new ListingVideoUpload(file.OpenReadStream(), file.Length, file.FileName, file.ContentType)).ToArray(), isAdmin: true, cancellationToken: cancellationToken);
+                TempData["SuccessMessage"] = "Video đã được tải lên.";
+            }
+            catch (KeyNotFoundException) { return NotFound(); }
+            catch (Exception exception) when (exception is ArgumentException or IOException or DbUpdateException) { TempData["ErrorMessage"] = exception is DbUpdateException ? "Không thể lưu thông tin video. Vui lòng thử lại." : exception.Message; }
+        }
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteVideo(int id, int videoId, CancellationToken cancellationToken)
+    {
+        if (!await _videoService.DeleteAsync("admin", id, videoId, isAdmin: true, cancellationToken)) return NotFound();
+        TempData["SuccessMessage"] = "Video đã được xóa.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetPrimaryImage(int id, int imageId, CancellationToken cancellationToken)
+    {
+        if (!await _imageService.SetPrimaryAsync("admin", id, imageId, isAdmin: true, cancellationToken)) return NotFound();
+        TempData["SuccessMessage"] = "Đã cập nhật ảnh đại diện.";
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpPost]

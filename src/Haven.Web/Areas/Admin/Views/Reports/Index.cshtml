@@ -1,11 +1,11 @@
 @model Haven.Application.Dashboard.AdminAnalyticsReport
 @{
-    ViewData["Title"] = "Reports";
+    ViewData["Title"] = "Báo cáo";
     var filter = ViewData["Filter"] as Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel
         ?? new Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel();
 }
 <section class="page-container">
-    <h1>Reports</h1>
+    <h1>Báo cáo</h1>
     <form method="get" class="admin-filter">
         <label>Kỳ báo cáo
             <select name="Period">
@@ -24,15 +24,15 @@
     {
         <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div>
     }
-    <p class="admin-muted">Kỳ báo cáo: @Model.DateRange.FromDate.ToString("yyyy-MM-dd") – @Model.DateRange.ToDate.ToString("yyyy-MM-dd")</p>
+    <p class="admin-muted">Kỳ báo cáo: @Model.DateRange.FromDate.ToString("dd/MM/yyyy") – @Model.DateRange.ToDate.ToString("dd/MM/yyyy")</p>
     <div class="admin-grid">
-        <article class="admin-card admin-kpi"><span>Listings trong kỳ</span><strong>@Model.Kpis.TotalListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Pending</span><strong>@Model.Kpis.PendingListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Approved</span><strong>@Model.Kpis.ApprovedListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Consultations trong kỳ</span><strong>@Model.TotalConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>New</span><strong>@Model.Kpis.NewConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>In Progress</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>Users hiện tại</span><strong>@Model.TotalUsers</strong></article>
+        <article class="admin-card admin-kpi"><span>Tin đăng trong kỳ</span><strong>@Model.Kpis.TotalListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Chờ duyệt</span><strong>@Model.Kpis.PendingListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Đã duyệt</span><strong>@Model.Kpis.ApprovedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Yêu cầu tư vấn trong kỳ</span><strong>@Model.TotalConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Mới tiếp nhận</span><strong>@Model.Kpis.NewConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Đang xử lý</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Người dùng hiện tại</span><strong>@Model.TotalUsers</strong></article>
     </div>
     <partial name="_AnalyticsCharts" model="Model" />
 </section>

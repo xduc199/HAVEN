@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Haven.Application.Listings;
+using Haven.Application.Abstractions;
 using Haven.Domain.Properties;
 using Haven.Web.Models.Validation;
 
@@ -21,6 +22,10 @@ public sealed class PropertySearchViewModel
 
     [StringLength(100)]
     public string? District { get; set; }
+
+    public string? ProvinceCode { get; set; }
+
+    public string? WardCode { get; set; }
 
     [DecimalRange("0", "9999999999999999.99")]
     public decimal? MinimumPrice { get; set; }
@@ -44,6 +49,8 @@ public sealed class PropertySearchViewModel
     public int Page { get; set; } = 1;
 
     public IReadOnlyList<PropertyTypeOptionViewModel> PropertyTypes { get; set; } = [];
+    public IReadOnlyList<AdministrativeLocationOption> Provinces { get; set; } = [];
+    public IReadOnlyList<AdministrativeLocationOption> Wards { get; set; } = [];
     public IReadOnlyList<PropertyCardViewModel> Items { get; set; } = [];
     public long TotalCount { get; set; }
     public long TotalPages { get; set; }
@@ -60,12 +67,20 @@ public sealed record PropertyCardViewModel(
     string PropertyTypeName,
     string Province,
     string District,
-    int? Bedrooms);
+    int? Bedrooms,
+    int? PrimaryImageId = null);
 
 public sealed record PropertyDetailsViewModel(
     PublicListingDetails Listing,
     bool IsFavorite,
-    IReadOnlyList<PropertyTypeOptionViewModel> PropertyTypes);
+    IReadOnlyList<PropertyTypeOptionViewModel> PropertyTypes,
+    IReadOnlyList<Haven.Application.Listings.ListingImageInfo> Images,
+    IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> Videos);
+
+public sealed record OwnedListingDetailsPage(
+    Haven.Application.Listings.OwnedListingDetails Listing,
+    IReadOnlyList<Haven.Application.Listings.ListingImageInfo> Images,
+    IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> Videos);
 
 public sealed record HomePageViewModel(
     IReadOnlyList<PropertyCardViewModel> LatestListings,

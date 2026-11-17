@@ -1,0 +1,22 @@
+@model IReadOnlyList<Haven.Web.ViewModels.Privacy.AdminPrivacyRequestListItem>
+@using Haven.Domain.Privacy
+@using Haven.Web.Services
+@{
+    ViewData["Title"] = "Yêu cầu quyền riêng tư";
+    Layout = "_AdminLayout";
+}
+<section class="admin-page">
+    <h1>Yêu cầu quyền riêng tư và phản ánh</h1>
+    <p>Hiển thị tối đa 100 yêu cầu gần nhất. Nội dung chỉ dành cho quản trị viên được phân quyền.</p>
+    @if (Model.Count == 0) { <p>Chưa có yêu cầu cần xử lý.</p> }
+    <div class="table-responsive"><table class="table"><thead><tr><th>Mã</th><th>Người gửi</th><th>Loại</th><th>Tin</th><th>Nội dung</th><th>Trạng thái</th><th>Ngày gửi</th><th>Cập nhật</th></tr></thead><tbody>
+    @foreach (var item in Model)
+    {
+        <tr><td>@item.Id</td><td>@item.UserName<br /><small>@item.Email</small></td><td>@item.Type.GetDisplayName()</td><td>@item.ListingId</td><td>@item.Message</td><td>@item.Status.GetDisplayName()</td><td>@item.CreatedAtUtc.ToVietnamDateTime()</td>
+            <td><form asp-action="Update" method="post" class="admin-inline-form"><input type="hidden" name="Id" value="@item.Id" />
+                <select name="Status" aria-label="Trạng thái yêu cầu @item.Id"><option value="2">Đang xử lý</option><option value="3">Đã hoàn tất</option><option value="4">Không thể thực hiện</option></select>
+                <input name="Resolution" maxlength="1500" placeholder="Kết quả xử lý" aria-label="Kết quả xử lý yêu cầu @item.Id" />
+                <button type="submit" class="btn btn-primary">Lưu</button></form></td></tr>
+    }
+    </tbody></table></div>
+</section>

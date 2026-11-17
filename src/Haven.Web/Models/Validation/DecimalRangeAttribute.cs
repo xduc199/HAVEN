@@ -34,5 +34,5 @@ public sealed class DecimalRangeAttribute : ValidationAttribute
     }
 
     public override string FormatErrorMessage(string name) =>
-        $"{name} must be between {_minimum.ToString(CultureInfo.InvariantCulture)} and {_maximum.ToString(CultureInfo.InvariantCulture)}.";
+        $"{name} phải nằm trong khoảng {_minimum.ToString(CultureInfo.InvariantCulture)} đến {_maximum.ToString(CultureInfo.InvariantCulture)}.";
 }
