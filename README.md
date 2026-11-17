@@ -61,85 +61,136 @@ HAVEN/
 
 ## ⚙️ Yêu cầu môi trường
 
-Cài đặt các công cụ sau trên máy phát triển:
+Yêu cầu chung:
 
 1. Git.
-2. .NET SDK 10.0.401 hoặc phiên bản tương thích theo `global.json`.
-3. Docker Desktop (đã khởi động Docker Engine).
-4. Trình soạn thảo phù hợp, khuyến nghị Visual Studio hoặc Visual Studio Code.
+2. .NET SDK `10.0.401` hoặc SDK tương thích theo `global.json` (`rollForward: latestFeature`).
+3. PowerShell để chạy các lệnh bên dưới. Visual Studio hoặc Visual Studio Code là tùy chọn.
+
+Chọn **một** cách chạy database:
+
+- **SQL Server Express:** Windows có cài và đang chạy instance SQL Server Express tên `SQLEXPRESS`; ứng dụng kết nối bằng Windows Authentication. Không cần Docker.
+- **Docker Compose:** Docker Desktop/Engine đang chạy và có Docker Compose v2. Đây là SQL Server 2022 Developer trong container; không cần cài SQL Server Express.
+- SSMS hoặc một SQL client tương đương là tùy chọn, hữu ích để kiểm tra server/database trước khi chạy migration.
 
 Kiểm tra cài đặt:
 
 ```powershell
 git --version
 dotnet --version
+# Chỉ cần nếu chọn Docker Compose
 docker --version
 docker compose version
 ```
 
-## 🚀 Cài đặt và chạy local
+## 🚀 Thiết lập và chạy local
 
-### 1. Clone repository
+### 1. Clone repository và restore
 
 ```powershell
 git clone https://github.com/xduc199/HAVEN.git
-cd HAVEN
+Set-Location HAVEN
+git switch develop
+git pull origin develop
+dotnet restore HAVEN.slnx
 ```
 
-### 2. Tạo file cấu hình môi trường
+Các lệnh còn lại chạy từ thư mục gốc `HAVEN`.
 
-Tạo file `.env` từ file mẫu:
+### 2. Chọn và cấu hình database local
+
+Mỗi thành viên chạy database riêng trên máy của mình. `localhost`/`127.0.0.1` luôn chỉ máy đang chạy lệnh, không phải database dùng chung của nhóm.
+
+#### Lựa chọn A — SQL Server Express và Windows Authentication
+
+Dùng lựa chọn này nếu SQL Server Express đã được cài và instance `SQLEXPRESS` đang chạy. Cấu hình source hiện tại là server `.\SQLEXPRESS`, database `HavenDb`, Windows Authentication, mã hóa bật và tin cậy chứng chỉ server:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:HavenDb" 'Server=.\SQLEXPRESS;Database=HavenDb;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True' --project src\Haven.Web\Haven.Web.csproj
+```
+
+Ứng dụng dùng quyền Windows của tài khoản đang chạy Web/EF. Đảm bảo dịch vụ SQL Server Express đang chạy và tài khoản đó được phép kết nối/tạo database. Không yêu cầu thành viên khác cài Express nếu họ chọn Docker Compose.
+
+#### Lựa chọn B — SQL Server bằng Docker Compose
+
+Compose định nghĩa service `haven-db` (container `haven-sqlserver`), SQL Server 2022 Developer, cổng host `127.0.0.1:1433` và volume `haven_sql_data`. Tạo file `.env` local từ mẫu rồi thay placeholder bằng mật khẩu SA mạnh, riêng cho máy bạn:
 
 ```powershell
 Copy-Item .env.example .env
+notepad .env
 ```
 
-Mở `.env` và đặt giá trị mạnh, riêng cho máy phát triển của bạn:
-
-```dotenv
-MSSQL_SA_PASSWORD=ReplaceWithYourOwnStrongPassword123!
-```
-
-Đây chỉ là ví dụ định dạng. Hãy thay bằng mật khẩu riêng đáp ứng yêu cầu của SQL Server. **Không commit hoặc chia sẻ file `.env`**; Git đã được cấu hình bỏ qua file này. Chỉ commit `.env.example` với giá trị minh họa, không chứa bí mật.
-
-### 3. Khởi động SQL Server
+Trong `.env`, thay `<MAT_KHAU_LOCAL>` bằng mật khẩu riêng trước khi khởi chạy. Compose tự đọc `.env`; file này chỉ cấu hình container, ứng dụng Web **không** đọc `.env`.
 
 ```powershell
-docker compose up -d
-docker compose ps
+docker compose up -d haven-db
+docker compose ps haven-db
+docker compose logs --tail 50 haven-db
+Test-NetConnection 127.0.0.1 -Port 1433
 ```
 
-Dịch vụ SQL Server được ánh xạ tại `127.0.0.1:1433`. Dữ liệu phát triển được lưu trong Docker volume `haven_sql_data`.
+Compose chưa khai báo health check. Trong log, đợi SQL Server báo `SQL Server is now ready for client connections`; `Test-NetConnection` xác nhận cổng TCP có thể truy cập nhưng không thay cho thông báo sẵn sàng của SQL Server.
 
-Dừng container mà không xóa dữ liệu:
+Đặt cùng database `HavenDb` cho ứng dụng, dùng SQL Authentication với tài khoản `sa`. Thay placeholder bằng đúng mật khẩu vừa đặt trong `.env`:
 
 ```powershell
-docker compose down
+dotnet user-secrets set "ConnectionStrings:HavenDb" 'Server=127.0.0.1,1433;Database=HavenDb;User ID=sa;Password=<MAT_KHAU_LOCAL>;Encrypt=True;TrustServerCertificate=True' --project src\Haven.Web\Haven.Web.csproj
 ```
 
-Không dùng `docker compose down -v` trừ khi bạn chủ ý xóa volume dữ liệu phát triển.
+Volume `haven_sql_data` giữ database qua lần dừng hoặc tạo lại container. Dừng/khởi động lại an toàn:
 
-### 4. Restore, build và test
+```powershell
+docker compose stop haven-db
+docker compose start haven-db
+```
 
-Chạy từ thư mục gốc repository:
+`docker compose down` cũng giữ volume. Không xóa volume nếu cần giữ dữ liệu; lệnh `docker compose down -v` sẽ xóa volume và database local của bạn. Volume chỉ nằm trên Docker Engine của máy đang chạy Compose, không được chia sẻ với thành viên khác.
+
+### 3. Bảo vệ thông tin kết nối
+
+Web đọc khóa `ConnectionStrings:HavenDb`. `appsettings.Development.json` có sẵn connection string không chứa mật khẩu cho lựa chọn Express (`.\SQLEXPRESS`, Windows Authentication); đây chỉ là mặc định tiện lợi cho máy có đúng instance đó, không phải database dùng chung hay mặc định cho Docker. Người dùng Docker phải đặt User Secret/environment variable theo cấu hình Compose ở trên. `WebApplication.CreateBuilder(args)` nạp lần lượt `appsettings.json`, `appsettings.Development.json`, User Secrets trong môi trường `Development`, environment variables rồi command-line arguments; nguồn sau có ưu tiên cao hơn. Hai launch profile `http` và `https` đặt `ASPNETCORE_ENVIRONMENT=Development`.
+
+Web project có `UserSecretsId`; lệnh `dotnet user-secrets set` ở trên lưu connection string riêng ngoài repository. Environment variable tương đương (chỉ tồn tại trong cửa sổ PowerShell hiện tại) là:
+
+```powershell
+$env:ConnectionStrings__HavenDb = 'Server=127.0.0.1,1433;Database=HavenDb;User ID=sa;Password=<MAT_KHAU_LOCAL>;Encrypt=True;TrustServerCertificate=True'
+```
+
+Thay placeholder cục bộ trước khi chạy; không chia sẻ lệnh đã điền, terminal history, log hoặc ảnh chụp chứa password. `.env` chỉ được Compose đọc và đã bị Git bỏ qua; không dùng nó làm cấu hình connection string cho Web. Không commit password/connection string trong `.env`, `appsettings*.json` hoặc bất kỳ file nào.
+
+### 4. Migrations và seed data
+
+Ứng dụng **không tự áp dụng migrations khi khởi động**. Trước khi cập nhật, xác nhận connection string đang chọn đúng server và database local của bạn. Có thể kết nối bằng SSMS/SQL client và xác nhận bằng truy vấn:
+
+```sql
+SELECT @@SERVERNAME AS ServerName, DB_NAME() AS DatabaseName;
+```
+
+Từ thư mục gốc, xem migrations hiện có và cập nhật database phát triển đã xác nhận:
+
+```powershell
+dotnet ef migrations list --project src\Haven.Infrastructure\Haven.Infrastructure.csproj --startup-project src\Haven.Web\Haven.Web.csproj
+dotnet ef database update --project src\Haven.Infrastructure\Haven.Infrastructure.csproj --startup-project src\Haven.Web\Haven.Web.csproj
+```
+
+Các lệnh EF yêu cầu `dotnet-ef`; nếu máy chưa có, cài một lần bằng `dotnet tool install --global dotnet-ef --version 10.0.13`. Không tự chạy lệnh cập nhật lên production hoặc database dùng chung; không reset database.
+
+Sau khi schema đã được áp dụng, mỗi lần Web khởi động sẽ gọi `AdministrativeLocationSeeder`: nạp danh mục tỉnh/xã nếu bảng đang trống và dừng với lỗi nếu dữ liệu hiện có không khớp; seeder không ghi đè dữ liệu hiện có. `IdentityBootstrapper` chỉ tạo/cấp quyền Admin khi cả `Haven:AdminBootstrap:Email` và `Haven:AdminBootstrap:Password` được cấu hình. Không có bước tự chạy migration khi startup.
+
+Migration mới nhất `AddPolicyConsentAndPrivacyRequests` tạo lịch sử đồng ý chính sách và hàng đợi yêu cầu quyền riêng tư. Migration `AddListingVideosAndAdministrativeLocations` bổ sung metadata video, danh mục tỉnh/xã và hai mã địa điểm nullable cho tin đăng. Các cột văn bản Province/District hiện có không bị đổi hoặc backfill. Migration được lưu trong repository; `dotnet ef migrations list` cho biết trạng thái của database đang kết nối. Chỉ áp dụng migration lên database phát triển đã chọn bằng lệnh ở trên; ứng dụng không tự động chạy migration khi khởi động.
+
+### 5. Restore, build và test
+
+Từ thư mục gốc:
 
 ```powershell
 dotnet restore HAVEN.slnx
+dotnet build HAVEN.slnx --configuration Debug --no-restore
 dotnet build HAVEN.slnx --configuration Release --no-restore
 dotnet test HAVEN.slnx --configuration Release --no-build
 ```
 
-### 5. Tạo/cập nhật schema database
-
-Sau khi đã cấu hình `HavenDb` trong user secrets hoặc biến môi trường, áp dụng các migration đã có:
-
-```powershell
-dotnet ef database update --project src/Haven.Infrastructure/Haven.Infrastructure.csproj --startup-project src/Haven.Web/Haven.Web.csproj
-```
-
-Lệnh này chỉ nên chạy trên database phát triển mà bạn chủ động chọn; không tự động áp dụng migration vào production.
-
-Migration mới nhất `AddPolicyConsentAndPrivacyRequests` tạo lịch sử đồng ý chính sách và hàng đợi yêu cầu quyền riêng tư. Migration `AddListingVideosAndAdministrativeLocations` bổ sung metadata video, danh mục tỉnh/xã và hai mã địa điểm nullable cho tin đăng. Các cột văn bản Province/District hiện có không bị đổi hoặc backfill. Migration chỉ được tạo trong repository, chưa áp dụng vào bất kỳ database nào. Chỉ áp dụng lên database phát triển đã chọn bằng lệnh ở trên; ứng dụng không tự động chạy migration khi khởi động.
+`Haven.IntegrationTests` dùng EF Core InMemory qua `WebApplicationFactory`; `Haven.UnitTests` kiểm tra tầng ứng dụng/miền. Các test này không kết nối SQL Server thật và không chứng nhận connection, migrations hay hành vi riêng của SQL Server. CI chạy restore, build Release và test Release theo các lệnh tương ứng trong workflow.
 
 ### Chính sách và quyền riêng tư
 
@@ -227,12 +278,19 @@ Toàn bộ `POST`, `PUT`, `DELETE` MVC/API đều yêu cầu antiforgery token. 
 ### 6. Chạy ứng dụng web
 
 ```powershell
-dotnet run --project src/Haven.Web/Haven.Web.csproj
+dotnet run --project src\Haven.Web\Haven.Web.csproj --launch-profile https
 ```
 
-Mở địa chỉ HTTP/HTTPS mà terminal hiển thị. URL cụ thể phụ thuộc cấu hình chạy local của máy bạn.
+Launch profile `https` đặt Development và lắng nghe `https://localhost:7081` cùng `http://localhost:5104`. Nếu HTTPS development certificate chưa được tin cậy, chạy `dotnet dev-certs https --trust`; có thể tạm dùng `http://localhost:5104`.
 
-> Lưu ý: cấu hình `HavenDb` trong `appsettings.Development.json` mặc định dùng SQL Server Express local. Hãy override bằng User Secrets/biến môi trường nếu dùng kết nối khác. Sau đó áp dụng migration bằng lệnh ở bước 5; ứng dụng không tự động thay đổi schema khi khởi động.
+### Khắc phục sự cố
+
+- **Thiếu `HavenDb`:** Web dừng với lỗi `Connection string 'HavenDb' was not configured.` Đặt `ConnectionStrings:HavenDb` trong User Secrets của Web project hoặc `ConnectionStrings__HavenDb` trong environment variables; đảm bảo đang chạy profile `http`/`https` ở Development.
+- **Không kết nối được `.\SQLEXPRESS`:** đây là cấu hình Express + Windows Authentication. Kiểm tra instance `SQLEXPRESS` đã cài/chạy, Windows account hiện tại có quyền truy cập, và connection string không bị environment variable/User Secrets khác ghi đè.
+- **Docker chưa sẵn sàng hoặc cổng bận:** kiểm tra `docker compose ps haven-db`, `docker compose logs --tail 50 haven-db` và `Test-NetConnection 127.0.0.1 -Port 1433`. Đợi log báo SQL Server sẵn sàng; cổng host `1433` cần còn trống.
+- **Sai server/database/authentication:** Express dùng `.\SQLEXPRESS`, database `HavenDb`, Windows Authentication; Compose dùng `127.0.0.1,1433`, database `HavenDb`, SQL Authentication (`sa`). Xác nhận server/database trong SQL client trước khi chạy migration; không gửi connection string hoặc password cho người khác.
+- **Chưa có schema:** ứng dụng không chạy migration tự động. Với database local đã xác nhận, chạy `dotnet ef database update` cùng `--project` Infrastructure và `--startup-project` Web như phần migrations ở trên.
+- **Test đạt nhưng ứng dụng lỗi với SQL Server:** integration tests dùng EF Core InMemory, không phải SQL Server. Kiểm tra connection, quyền, migrations và dữ liệu bằng SQL Server local; test InMemory không xác minh khác biệt về provider SQL.
 
 ## 🌿 Quy trình nhánh
 
@@ -242,7 +300,7 @@ Mở địa chỉ HTTP/HTTPS mà terminal hiển thị. URL cụ thể phụ thu
 - `fix/<mo-ta-loi>`: sửa lỗi thông thường.
 - `hotfix/<mo-ta>`: xử lý lỗi khẩn cấp theo thống nhất của nhóm.
 
-Không phát triển tính năng trực tiếp trên `main` hoặc `develop`. Tạo nhánh công việc từ `develop`, sau đó mở Pull Request về `develop`. Chỉ đưa phiên bản đã được nhóm xác nhận từ `develop` sang `main` qua Pull Request.
+Không phát triển tính năng trực tiếp trên `main` hoặc `develop`. Tạo nhánh công việc từ `develop`; Pull Request tính năng, sửa lỗi hoặc tài liệu gửi về `develop`. Pull Request phát hành đi từ `develop` sang `main`. Chạy build/test theo các lệnh ở trên và yêu cầu CI thành công; không commit secrets, file `.env` hoặc output build.
 
 Xem hướng dẫn đầy đủ tại [CONTRIBUTING.md](CONTRIBUTING.md).
 

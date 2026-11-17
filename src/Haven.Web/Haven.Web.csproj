@@ -18,6 +18,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>xduc199.HAVEN.Web</UserSecretsId>
   </PropertyGroup>
 
 </Project>

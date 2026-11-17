@@ -110,6 +110,7 @@ public sealed class MvcWorkflowTests
         Assert.Contains("name=\"keyword\"", homeMarkup);
         Assert.Contains("name=\"purpose\"", homeMarkup);
         Assert.Contains("name=\"propertyTypeId\"", homeMarkup);
+        Assert.Contains("đang được giới thiệu.", homeMarkup);
         Assert.Contains("Không chỉ tìm một bất động sản.", homeMarkup);
         Assert.Contains("/profile/listings/create", homeMarkup);
         Assert.Contains("Chính sách quyền riêng tư", homeMarkup);
