@@ -4,34 +4,39 @@ namespace Haven.Web.ViewModels.Account;
 
 public sealed class RegisterViewModel
 {
-    [Required]
-    [StringLength(100, MinimumLength = 1)]
+    [Required(ErrorMessage = "Hãy nhập tên hiển thị.")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "Tên hiển thị không được vượt quá 100 ký tự.")]
     public string DisplayName { get; set; } = string.Empty;
 
-    [Required]
-    [EmailAddress]
-    [StringLength(256)]
+    [Required(ErrorMessage = "Hãy nhập email.")]
+    [EmailAddress(ErrorMessage = "Email chưa đúng định dạng.")]
+    [StringLength(256, ErrorMessage = "Email không được vượt quá 256 ký tự.")]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
-    [StringLength(256, MinimumLength = 12)]
+    [Required(ErrorMessage = "Hãy nhập mật khẩu.")]
+    [StringLength(256, MinimumLength = 12, ErrorMessage = "Mật khẩu phải có từ 12 đến 256 ký tự.")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 
-    [Required]
-    [Compare(nameof(Password))]
+    [Required(ErrorMessage = "Hãy xác nhận mật khẩu.")]
+    [Compare(nameof(Password), ErrorMessage = "Mật khẩu xác nhận không khớp.")]
     [DataType(DataType.Password)]
     public string ConfirmPassword { get; set; } = string.Empty;
+
+    public bool AcceptedTerms { get; set; }
+    public bool ConsentedPersonalDataProcessing { get; set; }
+    public string TermsVersion { get; set; } = Haven.Web.Services.PolicyVersions.Terms;
+    public string PrivacyVersion { get; set; } = Haven.Web.Services.PolicyVersions.Privacy;
 }
 
 public sealed class LoginViewModel
 {
-    [Required]
-    [EmailAddress]
+    [Required(ErrorMessage = "Hãy nhập email.")]
+    [EmailAddress(ErrorMessage = "Email chưa đúng định dạng.")]
     [StringLength(256)]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
+    [Required(ErrorMessage = "Hãy nhập mật khẩu.")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 

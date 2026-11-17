@@ -15,10 +15,14 @@ public sealed class OwnedListingsController : ControllerBase
     private const string OwnedListingRouteName = "GetOwnedListing";
 
     private readonly ListingApplicationService _listingService;
+    private readonly ListingImageApplicationService _imageService;
+    private readonly ListingVideoApplicationService _videoService;
 
-    public OwnedListingsController(ListingApplicationService listingService)
+    public OwnedListingsController(ListingApplicationService listingService, ListingImageApplicationService imageService, ListingVideoApplicationService videoService)
     {
         _listingService = listingService;
+        _imageService = imageService;
+        _videoService = videoService;
     }
 
     [HttpPost]
@@ -241,7 +245,8 @@ public sealed class OwnedListingsController : ControllerBase
 
         try
         {
-            var deleted = await _listingService.DeleteOwnedAsync(
+            if (!await _videoService.DeleteOwnedVideosAsync(ownerId, id, cancellationToken)) return NotFound();
+            var deleted = await _imageService.DeleteOwnedListingAsync(
                 ownerId,
                 id,
                 cancellationToken);
@@ -265,7 +270,7 @@ public sealed class OwnedListingsController : ControllerBase
     private ConflictObjectResult StateConflict(string message) =>
         Conflict(new ProblemDetails
         {
-            Title = "The listing cannot be changed in its current state.",
+            Title = "Tin đăng hiện không ở trạng thái phù hợp để chỉnh sửa.",
             Detail = message,
             Status = StatusCodes.Status409Conflict
         });

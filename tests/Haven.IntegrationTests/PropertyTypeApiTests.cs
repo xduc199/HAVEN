@@ -91,7 +91,7 @@ public sealed class PropertyTypeApiTests
                 displayName = "Catalog User",
                 email = "catalog.user@example.com",
                 password = "StrongPassword123!"
-            });
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
         Assert.Equal(HttpStatusCode.Created, registrationResponse.StatusCode);
 
         using var forbiddenResponse = await client.GetAsync(

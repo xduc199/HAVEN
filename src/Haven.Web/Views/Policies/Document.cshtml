@@ -1,0 +1,41 @@
+@model Haven.Web.ViewModels.Policies.PolicyPageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+<section class="policy-page container py-5">
+    <header class="policy-header">
+        <p class="text-uppercase small text-muted">HAVEN · Thông tin và chính sách</p>
+        <h1>@Model.Title</h1>
+        <p>Phiên bản @Model.Version · Có hiệu lực từ @Model.EffectiveDate.ToString("dd/MM/yyyy") · Cập nhật lần cuối @Model.LastUpdated.ToString("dd/MM/yyyy")</p>
+    </header>
+    <div class="policy-grid">
+        <nav class="policy-toc" aria-label="Mục lục">
+            <strong>Trong trang này</strong>
+            @for (var index = 0; index < Model.Sections.Count; index++)
+            {
+                <a href="#muc-@index">@Model.Sections[index].Heading</a>
+            }
+        </nav>
+        <article class="policy-content">
+            @for (var index = 0; index < Model.Sections.Count; index++)
+            {
+                var policySection = Model.Sections[index];
+                <section id="muc-@index">
+                    <h2>@policySection.Heading</h2>
+                    @foreach (var paragraph in policySection.Paragraphs) { <p>@paragraph</p> }
+                </section>
+            }
+            @if (Model.Key == "Privacy" || Model.Key == "Complaints")
+            {
+                <section><h2>Thông tin đơn vị vận hành và hỗ trợ</h2>
+                    <dl><dt>Đơn vị</dt><dd>@Model.OperatorName</dd><dt>Email hỗ trợ</dt><dd>@Model.SupportEmail</dd><dt>Điện thoại</dt><dd>@Model.SupportPhone</dd><dt>Địa chỉ</dt><dd>@Model.SupportAddress</dd></dl>
+                </section>
+            }
+            <aside class="policy-related"><h2>Chính sách liên quan</h2>
+                @foreach (var item in Model.OtherPolicies) { <a asp-controller="Policies" asp-action="@item.Key">@item.Title</a> }
+                @if (User.Identity?.IsAuthenticated == true) { <a asp-controller="PrivacyCenter" asp-action="Index">Quyền riêng tư của tôi</a> }
+            </aside>
+            <p class="small text-muted">Nội dung này mô tả chức năng HAVEN hiện có, không thay thế tư vấn pháp lý.</p>
+        </article>
+    </div>
+</section>

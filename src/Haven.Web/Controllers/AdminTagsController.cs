@@ -140,7 +140,7 @@ public sealed class AdminTagsController(TagApplicationService tagService) : Cont
                 TagAssignmentResult.TagNotFound => NotFound(),
                 TagAssignmentResult.TagInactive => Conflict(new ProblemDetails
                 {
-                    Title = "Inactive tags cannot be assigned."
+                    Title = "Không thể gắn nhãn đã bị vô hiệu hóa."
                 }),
                 _ => Problem()
             };

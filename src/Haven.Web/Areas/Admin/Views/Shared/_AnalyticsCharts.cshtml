@@ -5,57 +5,57 @@
 }
 <div class="admin-grid admin-chart-grid">
     <section class="admin-card">
-        <h2>Listings theo ngày</h2>
+        <h2>Tin đăng theo ngày</h2>
         @if (Model.ListingsByDay.All(item => item.Count == 0))
         {
-            <p class="admin-empty">Không có listing trong khoảng thời gian này.</p>
+            <p class="admin-empty">Chưa có tin đăng trong khoảng thời gian này.</p>
         }
         else
         {
-            <div class="admin-chart" role="img" aria-label="Biểu đồ listings theo ngày">
+            <div class="admin-chart" role="img" aria-label="Biểu đồ tin đăng theo ngày">
                 @foreach (var item in Model.ListingsByDay)
                 {
                     var height = Math.Max(3, (int)(item.Count * 100 / maxListings));
                     <span class="admin-chart__bar" style="--bar-height:@height%" title="@item.Date: @item.Count">
                         <span class="admin-chart__value">@item.Count</span>
-                        <span class="admin-chart__label">@item.Date.ToString("MM-dd")</span>
+                        <span class="admin-chart__label">@item.Date.ToString("dd/MM")</span>
                     </span>
                 }
             </div>
         }
     </section>
     <section class="admin-card">
-        <h2>Consultations theo ngày</h2>
+        <h2>Yêu cầu tư vấn theo ngày</h2>
         @if (Model.ConsultationsByDay.All(item => item.Count == 0))
         {
-            <p class="admin-empty">Không có consultation trong khoảng thời gian này.</p>
+            <p class="admin-empty">Chưa có yêu cầu tư vấn trong khoảng thời gian này.</p>
         }
         else
         {
-            <div class="admin-chart" role="img" aria-label="Biểu đồ consultations theo ngày">
+            <div class="admin-chart" role="img" aria-label="Biểu đồ yêu cầu tư vấn theo ngày">
                 @foreach (var item in Model.ConsultationsByDay)
                 {
                     var height = Math.Max(3, (int)(item.Count * 100 / maxConsultations));
                     <span class="admin-chart__bar admin-chart__bar--gold" style="--bar-height:@height%" title="@item.Date: @item.Count">
                         <span class="admin-chart__value">@item.Count</span>
-                        <span class="admin-chart__label">@item.Date.ToString("MM-dd")</span>
+                        <span class="admin-chart__label">@item.Date.ToString("dd/MM")</span>
                     </span>
                 }
             </div>
         }
     </section>
     <section class="admin-card">
-        <h2>Listings theo trạng thái</h2>
+        <h2>Tin đăng theo trạng thái</h2>
         @foreach (var item in Model.ListingsByStatus)
         {
             <p class="admin-stat-row"><span>@item.Label</span><strong>@item.Count</strong></p>
         }
     </section>
     <section class="admin-card">
-        <h2>Listings theo Property Type</h2>
+        <h2>Tin đăng theo loại bất động sản</h2>
         @if (Model.ListingsByPropertyType.Count == 0)
         {
-            <p class="admin-empty">Chưa có dữ liệu Property Type.</p>
+            <p class="admin-empty">Chưa có dữ liệu loại bất động sản.</p>
         }
         else
         {
@@ -66,7 +66,7 @@
         }
     </section>
     <section class="admin-card">
-        <h2>Consultations theo trạng thái</h2>
+        <h2>Yêu cầu tư vấn theo trạng thái</h2>
         @foreach (var item in Model.ConsultationsByStatus)
         {
             <p class="admin-stat-row"><span>@item.Label</span><strong>@item.Count</strong></p>

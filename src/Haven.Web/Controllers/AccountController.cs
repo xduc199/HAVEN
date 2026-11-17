@@ -1,8 +1,12 @@
 using Haven.Infrastructure.Identity;
+using Haven.Infrastructure.Context;
+using Haven.Domain.Privacy;
+using Haven.Web.Services;
 using Haven.Web.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haven.Web.Controllers;
 
@@ -13,17 +17,23 @@ public sealed class AccountController : Controller
     private readonly SignInManager<HavenUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AccountController> _logger;
+    private readonly ApplicationDbContext _db;
+    private readonly TimeProvider _clock;
 
     public AccountController(
         UserManager<HavenUser> userManager,
         SignInManager<HavenUser> signInManager,
         RoleManager<IdentityRole> roleManager,
-        ILogger<AccountController> logger)
+        ILogger<AccountController> logger,
+        ApplicationDbContext db,
+        TimeProvider clock)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _db = db;
+        _clock = clock;
     }
 
     [AllowAnonymous]
@@ -35,6 +45,12 @@ public sealed class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
+        if (!model.AcceptedTerms)
+            ModelState.AddModelError(nameof(model.AcceptedTerms), "Bạn cần đồng ý với Điều khoản sử dụng.");
+        if (!model.ConsentedPersonalDataProcessing)
+            ModelState.AddModelError(nameof(model.ConsentedPersonalDataProcessing), "Bạn cần xác nhận đồng ý xử lý dữ liệu cá nhân để tạo tài khoản.");
+        if (model.TermsVersion != PolicyVersions.Terms || model.PrivacyVersion != PolicyVersions.Privacy)
+            ModelState.AddModelError(string.Empty, "Phiên bản chính sách đã thay đổi. Hãy tải lại trang đăng ký.");
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -55,6 +71,9 @@ public sealed class AccountController : Controller
             Email = email,
             DisplayName = model.DisplayName.Trim()
         };
+        await using var registrationTransaction = _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync()
+            : null;
         var createResult = await _userManager.CreateAsync(user, model.Password);
         if (!createResult.Succeeded)
         {
@@ -65,16 +84,47 @@ public sealed class AccountController : Controller
         var roleResult = await _userManager.AddToRoleAsync(user, "User");
         if (!roleResult.Succeeded)
         {
-            var rollback = await _userManager.DeleteAsync(user);
+            var rollbackSucceeded = true;
+            if (registrationTransaction is not null)
+                await registrationTransaction.RollbackAsync();
+            else
+                rollbackSucceeded = (await _userManager.DeleteAsync(user)).Succeeded;
             _logger.LogError(
                 "Could not assign the User role to a registered account. Rollback succeeded: {RollbackSucceeded}. Codes: {ErrorCodes}",
-                rollback.Succeeded,
+                rollbackSucceeded,
                 string.Join(", ", roleResult.Errors.Select(error => error.Code)));
             ModelState.AddModelError(
                 string.Empty,
                 "Không thể hoàn tất đăng ký. Vui lòng thử lại sau.");
             return View(model);
         }
+
+        try
+        {
+            var now = _clock.GetUtcNow();
+            _db.PolicyConsents.AddRange(
+                PolicyConsent.Record(user.Id, "Terms", PolicyVersions.Terms, PolicyConsentAction.Granted, "Registration", now),
+                PolicyConsent.Record(user.Id, "Privacy", PolicyVersions.Privacy, PolicyConsentAction.Granted, "Registration", now));
+            await _db.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+            var rollbackSucceeded = true;
+            if (registrationTransaction is not null)
+                await registrationTransaction.RollbackAsync();
+            else
+            {
+                foreach (var entry in _db.ChangeTracker.Entries<PolicyConsent>().Where(entry => entry.State == EntityState.Added).ToArray())
+                    entry.State = EntityState.Detached;
+                rollbackSucceeded = (await _userManager.DeleteAsync(user)).Succeeded;
+            }
+            _logger.LogError(exception, "Could not record required policy consent. Account rollback succeeded: {RollbackSucceeded}", rollbackSucceeded);
+            ModelState.AddModelError(string.Empty, "Không thể hoàn tất đăng ký. Vui lòng thử lại sau.");
+            return View(model);
+        }
+
+        if (registrationTransaction is not null)
+            await registrationTransaction.CommitAsync();
 
         await _signInManager.SignInAsync(user, isPersistent: false);
         TempData["SuccessMessage"] = "Tài khoản đã được tạo.";

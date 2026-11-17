@@ -63,7 +63,7 @@ public sealed class AdminPropertyTypesController : ControllerBase
         {
             return Conflict(new ProblemDetails
             {
-                Title = "A property type with this name already exists.",
+                Title = "Loại bất động sản này đã tồn tại.",
                 Detail = exception.Message,
                 Status = StatusCodes.Status409Conflict
             });
@@ -108,7 +108,7 @@ public sealed class AdminPropertyTypesController : ControllerBase
         {
             return Conflict(new ProblemDetails
             {
-                Title = "A property type with this name already exists.",
+                Title = "Loại bất động sản này đã tồn tại.",
                 Detail = exception.Message,
                 Status = StatusCodes.Status409Conflict
             });

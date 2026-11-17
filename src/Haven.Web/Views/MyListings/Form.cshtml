@@ -1,10 +1,11 @@
 @model Haven.Web.ViewModels.Listings.ListingFormViewModel
 @{
     ViewData["Title"] = ViewContext.RouteData.Values["id"] is null ? "Tạo tin đăng" : "Sửa tin đăng";
+    var listingId = ViewContext.RouteData.Values["id"];
 }
 <section class="page-container">
     <h1>@ViewData["Title"]</h1>
-    <form method="post" class="haven-form">
+    <form method="post" enctype="multipart/form-data" class="haven-form">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="All" role="alert"></div>
         @if (Model.PropertyTypes.Count == 0)
@@ -55,18 +56,86 @@
                 </div>
             </div>
         </fieldset>
+        @if (!Model.IsEdit)
+        {
+            <fieldset class="listing-form-section">
+                <legend>Hình ảnh</legend>
+                <div class="haven-field">
+                    <label asp-for="Images">Chọn ảnh (JPEG, PNG hoặc WebP; tối đa 10 ảnh, 10 MB mỗi ảnh)</label>
+                    <input asp-for="Images" type="file" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input />
+                    <div class="listing-image-preview" data-image-preview aria-live="polite"></div>
+                </div>
+            </fieldset>
+            <fieldset class="listing-form-section">
+                <legend>Video giới thiệu</legend>
+                <div class="haven-field">
+                    <label asp-for="Videos">Chọn video MP4 hoặc WebM (tối đa 3 video, 100 MB mỗi video)</label>
+                    <input asp-for="Videos" type="file" accept="video/mp4,video/webm,.mp4,.webm" multiple data-video-preview-input />
+                    <div class="listing-video-preview" data-video-preview aria-live="polite"></div>
+                </div>
+            </fieldset>
+        }
+        else
+        {
+            <fieldset class="listing-form-section">
+                <legend>Ảnh hiện có (@Model.ExistingImages.Count)</legend>
+                @if (Model.ExistingImages.Count > 0)
+                {
+                    <div class="listing-gallery listing-gallery--manage">
+                        @foreach (var image in Model.ExistingImages)
+                        {
+                            <article class="listing-gallery__item"><img src="/listing-images/@image.Id" alt="Ảnh tin @Model.Title" />
+                                @if (image.IsPrimary) { <span class="status-badge">Ảnh đại diện</span> }
+                                <div class="property-card__actions">
+                                    @if (!image.IsPrimary) { <form asp-controller="MyListings" asp-action="SetPrimaryImage" asp-route-id="@listingId" asp-route-imageId="@image.Id" method="post">@Html.AntiForgeryToken()<button class="haven-button-secondary" type="submit">Chọn ảnh chính</button></form> }
+                                    <form asp-controller="MyListings" asp-action="DeleteImage" asp-route-id="@listingId" asp-route-imageId="@image.Id" method="post">@Html.AntiForgeryToken()<button class="haven-button-danger" type="submit">Xóa ảnh</button></form>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+                else { <p class="is-empty">Tin chưa có ảnh.</p> }
+                <p class="muted">Bạn có thể thêm ảnh tại trang chi tiết tin sau khi lưu thay đổi.</p>
+            </fieldset>
+            <fieldset class="listing-form-section">
+                <legend>Video hiện có (@Model.ExistingVideos.Count)</legend>
+                @if (Model.ExistingVideos.Count > 0)
+                {
+                    <ul class="listing-video-list">
+                        @foreach (var video in Model.ExistingVideos)
+                        {
+                            <li><a href="/listing-videos/@video.Id" target="_blank" rel="noopener">Video @video.SortOrder · @((video.Length / 1048576d).ToString("N1")) MB</a></li>
+                        }
+                    </ul>
+                }
+                else { <p class="is-empty">Tin chưa có video.</p> }
+                <p class="muted">Thêm hoặc xóa video tại trang chi tiết tin sau khi lưu thay đổi.</p>
+            </fieldset>
+        }
         <fieldset class="listing-form-section">
             <legend>Vị trí</legend>
+            @if (Model.IsEdit && Model.ProvinceCode is null)
+            {
+                <p class="app-alert app-alert--warning" role="status">Tin này còn giữ địa chỉ dạng văn bản cũ: @Model.District, @Model.Province. Chọn địa điểm mới để chuẩn hóa; nếu không chọn, địa chỉ cũ được giữ nguyên.</p>
+            }
+            <input asp-for="Province" type="hidden" />
+            <input asp-for="District" type="hidden" />
             <div class="listing-form-grid">
                 <div class="haven-field">
-                    <label asp-for="Province">Tỉnh / thành phố</label>
-                    <input asp-for="Province" autocomplete="address-level1" />
-                    <span asp-validation-for="Province"></span>
+                    <label asp-for="ProvinceCode">Tỉnh / thành phố</label>
+                    <select asp-for="ProvinceCode" data-location-province>
+                        <option value="">Chọn tỉnh / thành phố</option>
+                        @foreach (var province in Model.Provinces) { <option value="@province.Code">@province.Name</option> }
+                    </select>
+                    <span asp-validation-for="ProvinceCode"></span>
                 </div>
                 <div class="haven-field">
-                    <label asp-for="District">Quận / huyện</label>
-                    <input asp-for="District" autocomplete="address-level2" />
-                    <span asp-validation-for="District"></span>
+                    <label asp-for="WardCode">Xã / phường / đặc khu</label>
+                    <select asp-for="WardCode" data-location-ward data-selected="@Model.WardCode" disabled="@(Model.Wards.Count == 0)">
+                        <option value="">Chọn xã / phường</option>
+                        @foreach (var ward in Model.Wards) { <option value="@ward.Code">@ward.Name</option> }
+                    </select>
+                    <span asp-validation-for="WardCode"></span>
                 </div>
                 <div class="haven-field listing-form-grid__wide">
                     <label asp-for="AddressLine">Địa chỉ</label>
@@ -96,4 +165,4 @@
         </div>
     </form>
 </section>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@section Scripts { <partial name="_ValidationScriptsPartial" /> <script src="~/js/listing-images.js" asp-append-version="true"></script> }

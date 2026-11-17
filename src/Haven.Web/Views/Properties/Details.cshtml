@@ -1,11 +1,38 @@
 @model Haven.Web.ViewModels.Properties.PropertyDetailsViewModel
 @{
     ViewData["Title"] = Model.Listing.Title;
+    ViewData["MetaDescription"] = Model.Listing.Description.Length > 180 ? Model.Listing.Description[..180] : Model.Listing.Description;
     var listing = Model.Listing;
 }
 <section class="page-container">
     <p><a asp-action="Index">Tìm bất động sản</a> / Chi tiết</p>
     <article class="content-card">
+        @if (Model.Images.Count > 0)
+        {
+            <div class="listing-gallery listing-gallery--public" aria-label="Hình ảnh bất động sản">
+                @foreach (var image in Model.Images)
+                {
+                    <img src="/listing-images/@image.Id" alt="Ảnh @listing.Title" loading="lazy" />
+                }
+    <section class="listing-video-gallery" aria-label="Video bất động sản">
+        <h2>Video bất động sản</h2>
+        @if (Model.Videos.Count > 0)
+        {
+            <div class="listing-video-list">
+                @foreach (var video in Model.Videos)
+                {
+                    <video controls preload="metadata" playsinline src="/listing-videos/@video.Id"></video>
+                }
+            </div>
+        }
+        else { <p class="is-empty">Tin đăng này chưa có video.</p> }
+    </section>
+            </div>
+        }
+        else
+        {
+            <p class="is-empty">Tin đăng chưa có hình ảnh.</p>
+        }
         <p class="muted">@listing.PropertyTypeName · @(listing.Purpose == Haven.Domain.Properties.ListingPurpose.Sale ? "Mua bán" : "Cho thuê")</p>
         <h1>@listing.Title</h1>
         <h2>@listing.PriceAmount.ToString("N0") ₫</h2>

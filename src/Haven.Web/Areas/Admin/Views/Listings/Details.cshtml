@@ -5,20 +5,63 @@
     var listingTags = ViewData["ListingTags"] as IReadOnlyList<Tag> ?? [];
     var availableTags = ViewData["AvailableTags"] as IReadOnlyList<Tag> ?? [];
     var assignableTags = availableTags.Where(tag => listingTags.All(existing => existing.Id != tag.Id)).ToArray();
+    var listingImages = ViewData["ListingImages"] as IReadOnlyList<Haven.Application.Listings.ListingImageInfo> ?? [];
+    var listingVideos = ViewData["ListingVideos"] as IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> ?? [];
 }
 <section class="page-container">
     <h1>@Model.Title</h1>
     <article class="content-card">
-        <p>Trạng thái: <span class="status-badge">@Model.Status</span></p>
+        <p>Trạng thái: <span class="status-badge">@Model.Status.GetDisplayName()</span></p>
         <p>Owner ID: @Model.OwnerId</p>
-        <p>@Model.Purpose · @Model.PriceAmount.ToString("N0") ₫ · @Model.AreaSqm.ToString("N1") m²</p>
+        <p>@Model.Purpose.GetDisplayName() · @Model.PriceAmount.ToString("N0") ₫ · @Model.AreaSqm.ToString("N1") m²</p>
         <p>@Model.AddressLine, @Model.District, @Model.Province</p>
         <p>@Model.Description</p>
         <section class="admin-card">
-            <h2>Tags</h2>
+            <h2>Hình ảnh (@listingImages.Count)</h2>
+            @if (listingImages.Count > 0)
+            {
+                <div class="listing-gallery listing-gallery--manage">
+                    @foreach (var image in listingImages)
+                    {
+                        <article class="listing-gallery__item"><img src="/listing-images/@image.Id" alt="Ảnh tin @Model.Title" />
+                            @if (image.IsPrimary) { <span class="status-badge">Ảnh đại diện</span> }
+                            <div class="property-card__actions">
+                                @if (!image.IsPrimary) { <form asp-action="SetPrimaryImage" asp-route-id="@Model.Id" asp-route-imageId="@image.Id" method="post">@Html.AntiForgeryToken()<button class="admin-button" type="submit">Chọn ảnh chính</button></form> }
+                                <form asp-action="DeleteImage" asp-route-id="@Model.Id" asp-route-imageId="@image.Id" method="post">@Html.AntiForgeryToken()<button class="admin-button admin-button--danger" type="submit">Xóa ảnh</button></form>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else { <p class="admin-empty">Tin chưa có ảnh.</p> }
+            <form asp-action="UploadImages" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="admin-filter">
+                @Html.AntiForgeryToken()
+                <label for="admin-listing-images">Thêm ảnh</label><input id="admin-listing-images" name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input />
+                <div class="listing-image-preview" data-image-preview></div>
+                <button class="admin-button" type="submit">Tải ảnh lên</button>
+            </form>
+        </section>
+        <section class="admin-card">
+            <h2>Video (@listingVideos.Count)</h2>
+            @if (listingVideos.Count > 0)
+            {
+                <div class="listing-video-list">
+                    @foreach (var video in listingVideos)
+                    {
+                        <article class="listing-video-item"><video controls preload="metadata" playsinline src="/listing-videos/@video.Id"></video><p>@video.ContentType · @((video.Length / 1048576d).ToString("N1")) MB</p><form asp-action="DeleteVideo" asp-route-id="@Model.Id" asp-route-videoId="@video.Id" method="post">@Html.AntiForgeryToken()<button class="admin-button admin-button--danger" type="submit">Xóa video</button></form></article>
+                    }
+                </div>
+            }
+            else { <p class="admin-empty">Tin chưa có video.</p> }
+            <form asp-action="UploadVideos" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="admin-filter">
+                @Html.AntiForgeryToken()<label for="admin-listing-videos">Thêm video MP4/WebM (tối đa 3, 100 MB mỗi video)</label><input id="admin-listing-videos" name="videos" type="file" accept="video/mp4,video/webm,.mp4,.webm" multiple data-video-preview-input /><div class="listing-video-preview" data-video-preview></div><button class="admin-button" type="submit">Tải video lên</button>
+            </form>
+        </section>
+        <section class="admin-card">
+            <h2>Nhãn</h2>
             @if (listingTags.Count == 0)
             {
-                <p class="admin-empty">Listing chưa có tag.</p>
+                <p class="admin-empty">Tin đăng chưa có nhãn.</p>
             }
             else
             {
@@ -40,7 +83,7 @@
             {
                 <form asp-action="AssignTag" asp-route-id="@Model.Id" method="post" class="admin-filter">
                     @Html.AntiForgeryToken()
-                    <label for="tagId">Gắn Tag</label>
+                    <label for="tagId">Gắn nhãn</label>
                     <select id="tagId" name="TagId">
                         @foreach (var tag in assignableTags)
                         {
@@ -70,3 +113,4 @@
     </article>
     <p><a asp-action="Index">Quay lại</a></p>
 </section>
+@section Scripts { <script src="~/js/listing-images.js" asp-append-version="true"></script> }

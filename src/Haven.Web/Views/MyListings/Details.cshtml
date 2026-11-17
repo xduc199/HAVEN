@@ -1,33 +1,90 @@
-@model Haven.Application.Listings.OwnedListingDetails
+@model Haven.Web.ViewModels.Properties.OwnedListingDetailsPage
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Listing.Title;
 }
 <section class="page-container">
-    <div class="page-heading"><div><h1>@Model.Title</h1><p><span class="status-badge">@Model.Status</span> · Cập nhật @Model.UpdatedAtUtc.ToLocalTime().ToString("g")</p></div><a class="haven-button-secondary" asp-action="Index">Danh sách tin</a></div>
+    <div class="page-heading"><div><h1>@Model.Listing.Title</h1><p><span class="status-badge">@Model.Listing.Status.GetDisplayName()</span> · Cập nhật @Model.Listing.UpdatedAtUtc.ToVietnamDateTime()</p></div><a class="haven-button-secondary" asp-action="Index">Danh sách tin</a></div>
     <article class="content-card">
-        <p>@Model.Purpose · @Model.PriceAmount.ToString("N0") ₫ · @Model.AreaSqm.ToString("N1") m²</p>
-        <p>@Model.AddressLine, @Model.District, @Model.Province</p>
-        <p>@Model.Description</p>
-        @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+        <p>@Model.Listing.Purpose.GetDisplayName() · @Model.Listing.PriceAmount.ToString("N0") ₫ · @Model.Listing.AreaSqm.ToString("N1") m²</p>
+        <p>@Model.Listing.AddressLine, @Model.Listing.District, @Model.Listing.Province</p>
+        <p>@Model.Listing.Description</p>
+        @if (!string.IsNullOrWhiteSpace(Model.Listing.RejectionReason))
         {
-            <p class="is-error">Lý do từ chối: @Model.RejectionReason</p>
+            <p class="is-error">Lý do từ chối: @Model.Listing.RejectionReason</p>
         }
         <div class="form-actions">
-            @if (Model.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected or Haven.Domain.Properties.ListingStatus.Approved)
+            @if (Model.Listing.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected or Haven.Domain.Properties.ListingStatus.Approved)
             {
-                <a class="haven-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Chỉnh sửa</a>
+                <a class="haven-button-secondary" asp-action="Edit" asp-route-id="@Model.Listing.Id">Chỉnh sửa</a>
             }
-            @if (Model.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected)
+            @if (Model.Listing.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected)
             {
-                <form asp-action="Submit" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Gửi tin đăng này để kiểm duyệt?');">
+                <form asp-action="Submit" asp-route-id="@Model.Listing.Id" method="post" onsubmit="return confirm('Gửi tin đăng này để kiểm duyệt?');">
                     @Html.AntiForgeryToken()
                     <button class="haven-button" type="submit">Gửi duyệt</button>
                 </form>
-                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Xóa tin đăng này?');">
+                <form asp-action="Delete" asp-route-id="@Model.Listing.Id" method="post" onsubmit="return confirm('Xóa tin đăng này?');">
                     @Html.AntiForgeryToken()
                     <button class="haven-button-danger" type="submit">Xóa</button>
                 </form>
             }
         </div>
     </article>
+    <section class="listing-gallery-section" aria-labelledby="listing-images-title">
+        <div class="page-heading"><div><h2 id="listing-images-title">Ảnh bất động sản</h2><p>@Model.Images.Count ảnh · tối đa 10 ảnh, 10 MB mỗi ảnh</p></div></div>
+        @if (Model.Images.Count > 0)
+        {
+            <div class="listing-gallery listing-gallery--manage">
+                @foreach (var image in Model.Images)
+                {
+                    <article class="listing-gallery__item">
+                        <img src="/listing-images/@image.Id" alt="Ảnh tin @Model.Listing.Title" loading="lazy" />
+                        @if (image.IsPrimary) { <span class="status-badge">Ảnh đại diện</span> }
+                        <div class="property-card__actions">
+                            @if (!image.IsPrimary)
+                            {
+                                <form asp-action="SetPrimaryImage" asp-route-id="@Model.Listing.Id" asp-route-imageId="@image.Id" method="post">@Html.AntiForgeryToken()<button class="haven-button-secondary" type="submit">Chọn ảnh chính</button></form>
+                            }
+                            <form asp-action="DeleteImage" asp-route-id="@Model.Listing.Id" asp-route-imageId="@image.Id" method="post" onsubmit="return confirm('Xóa ảnh này?');">@Html.AntiForgeryToken()<button class="haven-button-danger" type="submit">Xóa ảnh</button></form>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else { <p class="is-empty">Tin đăng chưa có ảnh. Thêm ảnh rõ nét để người xem hiểu hơn về bất động sản.</p> }
+        @if (Model.Listing.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected or Haven.Domain.Properties.ListingStatus.Approved)
+        {
+            <form asp-action="UploadImages" asp-route-id="@Model.Listing.Id" method="post" enctype="multipart/form-data" class="haven-form listing-image-upload">
+                @Html.AntiForgeryToken()
+                <div class="haven-field"><label for="images">Thêm ảnh</label><input id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input /><div class="listing-image-preview" data-image-preview aria-live="polite"></div></div>
+                <button class="haven-button" type="submit">Tải ảnh lên</button>
+            </form>
+        }
+    </section>
+    <section class="listing-gallery-section" aria-labelledby="listing-videos-title">
+        <div class="page-heading"><div><h2 id="listing-videos-title">Video bất động sản</h2><p>@Model.Videos.Count video · tối đa 3 video, 100 MB mỗi video (MP4/WebM)</p></div></div>
+        @if (Model.Videos.Count > 0)
+        {
+            <div class="listing-video-list">
+                @foreach (var video in Model.Videos)
+                {
+                    <article class="listing-video-item">
+                        <video controls preload="metadata" playsinline src="/listing-videos/@video.Id"></video>
+                        <p>@video.ContentType · @((video.Length / 1048576d).ToString("N1")) MB</p>
+                        <form asp-action="DeleteVideo" asp-route-id="@Model.Listing.Id" asp-route-videoId="@video.Id" method="post" onsubmit="return confirm('Xóa video này?');">@Html.AntiForgeryToken()<button class="haven-button-danger" type="submit">Xóa video</button></form>
+                    </article>
+                }
+            </div>
+        }
+        else { <p class="is-empty">Tin đăng chưa có video.</p> }
+        @if (Model.Listing.Status is Haven.Domain.Properties.ListingStatus.Draft or Haven.Domain.Properties.ListingStatus.Rejected or Haven.Domain.Properties.ListingStatus.Approved)
+        {
+            <form asp-action="UploadVideos" asp-route-id="@Model.Listing.Id" method="post" enctype="multipart/form-data" class="haven-form listing-video-upload">
+                @Html.AntiForgeryToken()
+                <div class="haven-field"><label for="videos">Thêm video MP4 hoặc WebM (tối đa 3 video, 100 MB mỗi video)</label><input id="videos" name="videos" type="file" accept="video/mp4,video/webm,.mp4,.webm" multiple data-video-preview-input /><div class="listing-video-preview" data-video-preview aria-live="polite"></div></div>
+                <button class="haven-button" type="submit">Tải video lên</button>
+            </form>
+        }
+    </section>
 </section>
+@section Scripts { <script src="~/js/listing-images.js" asp-append-version="true"></script> }

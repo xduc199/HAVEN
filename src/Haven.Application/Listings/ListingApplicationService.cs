@@ -46,7 +46,9 @@ public sealed class ListingApplicationService
             addressLine: command.AddressLine,
             nowUtc: nowUtc,
             bedrooms: command.Bedrooms,
-            bathrooms: command.Bathrooms);
+            bathrooms: command.Bathrooms,
+            provinceCode: command.ProvinceCode,
+            wardCode: command.WardCode);
 
         await _repository.AddAsync(listing, cancellationToken);
         await _repository.SaveChangesAsync(cancellationToken);
@@ -139,7 +141,9 @@ public sealed class ListingApplicationService
         {
             Keyword = NormalizeOptional(criteria.Keyword),
             Province = NormalizeOptional(criteria.Province),
-            District = NormalizeOptional(criteria.District)
+            District = NormalizeOptional(criteria.District),
+            ProvinceCode = NormalizeOptional(criteria.ProvinceCode),
+            WardCode = NormalizeOptional(criteria.WardCode)
         };
         var page = await _repository.SearchApprovedAsync(
             normalizedCriteria,
@@ -241,7 +245,9 @@ public sealed class ListingApplicationService
             addressLine: command.AddressLine,
             nowUtc: _timeProvider.GetUtcNow(),
             bedrooms: command.Bedrooms,
-            bathrooms: command.Bathrooms);
+            bathrooms: command.Bathrooms,
+            provinceCode: command.ProvinceCode,
+            wardCode: command.WardCode);
 
         await _repository.SaveChangesAsync(cancellationToken);
 
@@ -397,29 +403,6 @@ public sealed class ListingApplicationService
         return listing is null
             ? null
             : ModerationListingDetails.From(listing);
-    }
-
-    public async Task<bool> DeleteOwnedAsync(
-        string ownerId,
-        int listingId,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
-        var listing = await GetOwnedAsync(ownerId, listingId, cancellationToken);
-        if (listing is null)
-        {
-            return false;
-        }
-
-        if (!listing.CanBeDeletedByOwner)
-        {
-            throw new InvalidOperationException(
-                "Only draft or rejected listings can be deleted by their owner.");
-        }
-
-        await _repository.RemoveAsync(listing, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
-        return true;
     }
 
     private async Task EnsureActivePropertyTypeAsync(

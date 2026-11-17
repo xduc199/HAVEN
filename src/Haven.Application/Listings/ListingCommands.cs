@@ -13,7 +13,9 @@ public sealed record CreateListingCommand(
     string District,
     string AddressLine,
     int? Bedrooms = null,
-    int? Bathrooms = null);
+    int? Bathrooms = null,
+    string? ProvinceCode = null,
+    string? WardCode = null);
 
 public sealed record UpdateListingCommand(
     int PropertyTypeId,
@@ -26,4 +28,6 @@ public sealed record UpdateListingCommand(
     string District,
     string AddressLine,
     int? Bedrooms = null,
-    int? Bathrooms = null);
+    int? Bathrooms = null,
+    string? ProvinceCode = null,
+    string? WardCode = null);

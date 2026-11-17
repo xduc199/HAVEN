@@ -1,0 +1,37 @@
+@model Haven.Web.ViewModels.Privacy.PrivacyCenterViewModel
+@using Haven.Domain.Privacy
+@using Haven.Web.Services
+@{
+    ViewData["Title"] = "Quyền riêng tư của tôi";
+}
+<section class="page-container policy-page">
+    <h1>Quyền riêng tư của tôi</h1>
+    <p>Hồ sơ: @Model.DisplayName · @Model.Email</p>
+    <h2>Lịch sử chính sách đã chấp thuận</h2>
+    @if (Model.Consents.Count == 0) { <p>Chưa có lịch sử chấp thuận được ghi nhận.</p> }
+    else
+    {
+        <div class="table-responsive"><table class="table"><thead><tr><th>Tài liệu</th><th>Phiên bản</th><th>Thao tác</th><th>Thời điểm</th></tr></thead><tbody>
+        @foreach (var item in Model.Consents) { <tr><td>@(item.DocumentKey == "Terms" ? "Điều khoản sử dụng" : "Chính sách quyền riêng tư")</td><td>@item.Version</td><td>@(item.Action == PolicyConsentAction.Granted ? "Đã đồng ý" : "Đã rút lại")</td><td>@item.OccurredAtUtc.ToVietnamDateTime()</td></tr> }
+        </tbody></table></div>
+    }
+    <h2>Gửi yêu cầu về dữ liệu hoặc phản ánh</h2>
+    <p>Yêu cầu chỉ bạn và quản trị viên được phân quyền xem. Gửi yêu cầu không tự động xóa dữ liệu; HAVEN sẽ ghi nhận kết quả xử lý tại đây.</p>
+    <form asp-action="CreateRequest" method="post" class="haven-form">
+        <div class="haven-field"><label for="Type">Loại yêu cầu</label><select id="Type" name="Type" required>
+            <option value="">Chọn loại yêu cầu</option>
+            <option value="1">Truy cập dữ liệu của tôi</option><option value="2">Cập nhật dữ liệu</option><option value="3">Xóa dữ liệu hoặc tài khoản</option><option value="4">Hạn chế xử lý dữ liệu</option><option value="5">Rút lại sự đồng ý xử lý dữ liệu</option><option value="6">Phản ánh tin đăng</option><option value="7">Yêu cầu khác</option>
+        </select></div>
+        <div class="haven-field"><label for="ListingId">Mã tin đăng (bắt buộc với phản ánh tin)</label><input id="ListingId" name="ListingId" type="number" min="1" /></div>
+        <div class="haven-field"><label for="Message">Nội dung</label><textarea id="Message" name="Message" maxlength="3000" required></textarea></div>
+        <button class="haven-button" type="submit">Gửi yêu cầu</button>
+    </form>
+    <h2>Yêu cầu đã gửi</h2>
+    @if (Model.Requests.Count == 0) { <p>Bạn chưa gửi yêu cầu nào.</p> }
+    else
+    {
+        <div class="table-responsive"><table class="table"><thead><tr><th>Loại</th><th>Tin</th><th>Nội dung</th><th>Trạng thái</th><th>Ngày gửi</th><th>Kết quả</th></tr></thead><tbody>
+        @foreach (var item in Model.Requests) { <tr><td>@item.Type.GetDisplayName()</td><td>@item.ListingId</td><td>@item.Message</td><td>@item.Status.GetDisplayName()</td><td>@item.CreatedAtUtc.ToVietnamDateTime()</td><td>@item.Resolution</td></tr> }
+        </tbody></table></div>
+    }
+</section>

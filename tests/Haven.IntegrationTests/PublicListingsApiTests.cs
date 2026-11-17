@@ -4,8 +4,11 @@ using Haven.Application.Abstractions;
 using Haven.Application.Listings;
 using Haven.Application.Tags;
 using Haven.Domain.Properties;
+using Haven.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -96,6 +99,11 @@ public sealed class PublicListingsApiTests
         var customizedFactory = _factory.WithWebHostBuilder(builder =>
             builder.ConfigureTestServices(services =>
             {
+                services.RemoveAll<IDbContextOptionsConfiguration<ApplicationDbContext>>();
+                services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+                services.RemoveAll<ApplicationDbContext>();
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseInMemoryDatabase(Guid.NewGuid().ToString("N")));
                 services.RemoveAll<IListingRepository>();
                 services.AddSingleton<IListingRepository>(
                     new StubListingRepository(listing));

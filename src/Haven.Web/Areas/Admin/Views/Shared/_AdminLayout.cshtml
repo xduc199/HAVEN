@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN Admin" : "HAVEN Admin")</title>
+    <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN Quản trị" : "HAVEN Quản trị")</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
@@ -18,15 +18,17 @@
 <body class="admin-shell">
     <aside class="admin-sidebar" id="admin-sidebar">
         <a class="admin-brand" asp-area="" asp-controller="Home" asp-action="Index">
-            <span class="admin-brand__mark">H</span><span>HAVEN <small>ADMIN</small></span>
+            <span class="admin-brand__mark">H</span><span>HAVEN <small>QUẢN TRỊ</small></span>
         </a>
         <nav class="admin-nav" aria-label="Điều hướng quản trị">
-            <a class="admin-nav__link@(Active("Dashboard"))" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" aria-current="@(string.Equals(controller, "Dashboard", StringComparison.OrdinalIgnoreCase) ? "page" : null)">Dashboard</a>
-            <a class="admin-nav__link@(Active("Listings"))" asp-area="Admin" asp-controller="Listings" asp-action="Index">Listings</a>
-            <a class="admin-nav__link@(Active("PropertyTypes"))" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Property Types</a>
-            <a class="admin-nav__link@(Active("Tags"))" asp-area="Admin" asp-controller="Tags" asp-action="Index">Tags</a>
-            <a class="admin-nav__link@(Active("Consultations"))" asp-area="Admin" asp-controller="Consultations" asp-action="Index">Consultations</a>
-            <a class="admin-nav__link@(Active("Reports"))" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
+            <a class="admin-nav__link@(Active("Dashboard"))" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" aria-current="@(string.Equals(controller, "Dashboard", StringComparison.OrdinalIgnoreCase) ? "page" : null)">Tổng quan</a>
+            <a class="admin-nav__link@(Active("Listings"))" asp-area="Admin" asp-controller="Listings" asp-action="Index">Tin đăng</a>
+            <a class="admin-nav__link@(Active("Users"))" asp-area="Admin" asp-controller="Users" asp-action="Index">Người dùng</a>
+            <a class="admin-nav__link@(Active("PropertyTypes"))" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Loại bất động sản</a>
+            <a class="admin-nav__link@(Active("Tags"))" asp-area="Admin" asp-controller="Tags" asp-action="Index">Nhãn</a>
+            <a class="admin-nav__link@(Active("Consultations"))" asp-area="Admin" asp-controller="Consultations" asp-action="Index">Yêu cầu tư vấn</a>
+            <a class="admin-nav__link@(Active("PrivacyRequests"))" asp-area="Admin" asp-controller="PrivacyRequests" asp-action="Index">Quyền riêng tư và phản ánh</a>
+            <a class="admin-nav__link@(Active("Reports"))" asp-area="Admin" asp-controller="Reports" asp-action="Index">Báo cáo</a>
         </nav>
         <a class="admin-back-link" asp-area="" asp-controller="Home" asp-action="Index">← Về website</a>
     </aside>
@@ -34,8 +36,8 @@
         <header class="admin-header">
             <button type="button" class="admin-menu-toggle" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Mở hoặc thu gọn menu">☰</button>
             <div class="admin-header__identity">
-                <span>@(User.Identity?.Name ?? "Admin")</span>
-                <span class="admin-role">Admin</span>
+                <span>@(User.Identity?.Name ?? "Quản trị viên")</span>
+                <span class="admin-role">Quản trị viên</span>
                 <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" data-api-action="logout">
                     @Html.AntiForgeryToken()
                     <div class="api-form-message" data-api-message hidden></div>
@@ -44,8 +46,8 @@
             </div>
         </header>
         <main class="admin-content" id="main-content">
-            <nav class="admin-breadcrumb" aria-label="Breadcrumb">
-                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
+            <nav class="admin-breadcrumb" aria-label="Đường dẫn điều hướng">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Quản trị</a>
                 <span aria-hidden="true">/</span>
                 <span>@ViewData["Title"]</span>
             </nav>

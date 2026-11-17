@@ -18,9 +18,9 @@
                 {
                     <tr>
                         <td>@listing.Title</td>
-                        <td><span class="status-badge">@listing.Status</span></td>
+                        <td><span class="status-badge">@listing.Status.GetDisplayName()</span></td>
                         <td>@listing.PriceAmount.ToString("N0") ₫</td>
-                        <td>@listing.UpdatedAtUtc.ToLocalTime().ToString("g")</td>
+                        <td>@listing.UpdatedAtUtc.ToVietnamDateTime()</td>
                         <td><a asp-action="Details" asp-route-id="@listing.Id">Xem</a></td>
                     </tr>
                 }

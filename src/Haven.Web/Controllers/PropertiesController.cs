@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Haven.Application.Favorites;
 using Haven.Application.Listings;
+using Haven.Application.Locations;
 using Haven.Application.PropertyTypes;
 using Haven.Domain.Properties;
 using Haven.Web.ViewModels.Properties;
@@ -15,15 +16,24 @@ public sealed class PropertiesController : Controller
     private readonly ListingApplicationService _listingService;
     private readonly PropertyTypeApplicationService _propertyTypeService;
     private readonly FavoriteApplicationService _favoriteService;
+    private readonly ListingImageApplicationService _imageService;
+    private readonly ListingVideoApplicationService _videoService;
+    private readonly AdministrativeLocationApplicationService _locations;
 
     public PropertiesController(
         ListingApplicationService listingService,
         PropertyTypeApplicationService propertyTypeService,
-        FavoriteApplicationService favoriteService)
+        FavoriteApplicationService favoriteService,
+        ListingImageApplicationService imageService,
+        ListingVideoApplicationService videoService,
+        AdministrativeLocationApplicationService locations)
     {
         _listingService = listingService;
         _propertyTypeService = propertyTypeService;
         _favoriteService = favoriteService;
+        _imageService = imageService;
+        _videoService = videoService;
+        _locations = locations;
     }
 
     [AllowAnonymous]
@@ -39,6 +49,8 @@ public sealed class PropertiesController : Controller
         CancellationToken cancellationToken)
     {
         model.PropertyTypes = await GetPropertyTypeOptionsAsync(cancellationToken);
+        model.Provinces = await _locations.GetProvincesAsync(cancellationToken);
+        if (!string.IsNullOrWhiteSpace(model.ProvinceCode)) model.Wards = await _locations.GetWardsAsync(model.ProvinceCode, cancellationToken);
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -60,10 +72,13 @@ public sealed class PropertiesController : Controller
                     model.Bedrooms,
                     model.Sort,
                     model.Page,
-                    12),
+                    12,
+                    ProvinceCode: model.ProvinceCode,
+                    WardCode: model.WardCode),
                 cancellationToken);
 
-            model.Items = MapCards(result.Items, model.PropertyTypes);
+            var imageIds = await _imageService.GetPrimaryImageIdsAsync(result.Items.Select(item => item.Id).ToArray(), cancellationToken);
+            model.Items = MapCards(result.Items, model.PropertyTypes, imageIds);
             model.TotalCount = result.TotalCount;
             model.TotalPages = result.TotalPages;
         }
@@ -106,7 +121,9 @@ public sealed class PropertiesController : Controller
         return View(new PropertyDetailsViewModel(
             listing,
             isFavorite,
-            await GetPropertyTypeOptionsAsync(cancellationToken)));
+            await GetPropertyTypeOptionsAsync(cancellationToken),
+            await _imageService.GetPublicImagesAsync(id, cancellationToken),
+            await _videoService.GetPublicVideosAsync(id, cancellationToken)));
     }
 
     [AllowAnonymous]
@@ -169,7 +186,8 @@ public sealed class PropertiesController : Controller
 
     private static IReadOnlyList<PropertyCardViewModel> MapCards(
         IReadOnlyList<PublicListingSummary> items,
-        IReadOnlyList<PropertyTypeOptionViewModel> propertyTypes)
+        IReadOnlyList<PropertyTypeOptionViewModel> propertyTypes,
+        IReadOnlyDictionary<int, int> imageIds)
     {
         var names = propertyTypes.ToDictionary(type => type.Id, type => type.Name);
         return items.Select(item => new PropertyCardViewModel(
@@ -181,6 +199,7 @@ public sealed class PropertiesController : Controller
             names.GetValueOrDefault(item.PropertyTypeId, "Bất động sản"),
             item.Province,
             item.District,
-            item.Bedrooms)).ToArray();
+            item.Bedrooms,
+            imageIds.TryGetValue(item.Id, out var imageId) ? imageId : null)).ToArray();
     }
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Haven.Domain.Properties;
+using Haven.Application.Abstractions;
 using Haven.Web.Models.Validation;
 using Haven.Web.ViewModels.Properties;
 
@@ -35,6 +36,14 @@ public sealed class ListingFormViewModel
     [StringLength(Listing.DistrictMaxLength, MinimumLength = 1)]
     public string District { get; set; } = string.Empty;
 
+    public string? ProvinceCode { get; set; }
+
+    public string? WardCode { get; set; }
+
+    public IReadOnlyList<AdministrativeLocationOption> Provinces { get; set; } = [];
+
+    public IReadOnlyList<AdministrativeLocationOption> Wards { get; set; } = [];
+
     [Required]
     [StringLength(Listing.AddressLineMaxLength, MinimumLength = 1)]
     public string AddressLine { get; set; } = string.Empty;
@@ -44,6 +53,13 @@ public sealed class ListingFormViewModel
 
     [Range(0, int.MaxValue)]
     public int? Bathrooms { get; set; }
+
+    public List<Microsoft.AspNetCore.Http.IFormFile> Images { get; set; } = [];
+    public List<Microsoft.AspNetCore.Http.IFormFile> Videos { get; set; } = [];
+    public bool IsEdit { get; set; }
+    public ListingStatus? CurrentStatus { get; set; }
+    public IReadOnlyList<Haven.Application.Listings.ListingImageInfo> ExistingImages { get; set; } = [];
+    public IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> ExistingVideos { get; set; } = [];
 
     public IReadOnlyList<PropertyTypeOptionViewModel> PropertyTypes { get; set; } = [];
 }

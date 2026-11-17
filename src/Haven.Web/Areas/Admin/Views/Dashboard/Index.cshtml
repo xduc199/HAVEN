@@ -5,7 +5,7 @@
         ?? new Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel();
 }
 <section class="page-container">
-    <h1>Bảng điều khiển Admin</h1>
+    <h1>Tổng quan quản trị</h1>
     @if (ViewData["HasActivePropertyTypes"] is false)
     {
         <aside class="admin-alert admin-alert--warning" role="status">
@@ -28,53 +28,53 @@
         <label>Đến ngày <input type="date" name="ToDate" value="@filter.ToDate?.ToString("yyyy-MM-dd")" /></label>
         <button class="admin-button" type="submit">Áp dụng</button>
     </form>
-    <p class="admin-muted">Thống kê @Model.DateRange.FromDate.ToString("yyyy-MM-dd") – @Model.DateRange.ToDate.ToString("yyyy-MM-dd"). Tổng người dùng là số hiện có toàn hệ thống.</p>
+    <p class="admin-muted">Thống kê từ @Model.DateRange.FromDate.ToString("dd/MM/yyyy") đến @Model.DateRange.ToDate.ToString("dd/MM/yyyy"). Tổng người dùng là số hiện có toàn hệ thống.</p>
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="admin-alert admin-alert--error" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage))</div>
     }
     <div class="stats-grid">
-        <article class="admin-card admin-kpi"><span>Listings</span><strong>@Model.Kpis.TotalListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Draft</span><strong>@Model.DraftListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Pending</span><strong>@Model.Kpis.PendingListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Approved</span><strong>@Model.Kpis.ApprovedListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Rejected</span><strong>@Model.RejectedListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Hidden</span><strong>@Model.HiddenListings</strong></article>
-        <article class="admin-card admin-kpi"><span>Consultations</span><strong>@Model.TotalConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>New</span><strong>@Model.Kpis.NewConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>In Progress</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>Completed</span><strong>@Model.CompletedConsultations</strong></article>
-        <article class="admin-card admin-kpi"><span>Users</span><strong>@Model.TotalUsers</strong></article>
+        <article class="admin-card admin-kpi"><span>Tin đăng</span><strong>@Model.Kpis.TotalListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Bản nháp</span><strong>@Model.DraftListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Chờ duyệt</span><strong>@Model.Kpis.PendingListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Đã duyệt</span><strong>@Model.Kpis.ApprovedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Bị từ chối</span><strong>@Model.RejectedListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Đã ẩn</span><strong>@Model.HiddenListings</strong></article>
+        <article class="admin-card admin-kpi"><span>Yêu cầu tư vấn</span><strong>@Model.TotalConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Mới tiếp nhận</span><strong>@Model.Kpis.NewConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Đang xử lý</span><strong>@Model.Kpis.InProgressConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Đã hoàn tất</span><strong>@Model.CompletedConsultations</strong></article>
+        <article class="admin-card admin-kpi"><span>Người dùng</span><strong>@Model.TotalUsers</strong></article>
     </div>
     <partial name="_AnalyticsCharts" model="Model" />
     <div class="admin-grid admin-latest-grid">
         <section class="admin-card">
-            <h2>Listing mới nhất</h2>
-            @if (Model.LatestListings.Count == 0) { <p class="admin-empty">Không có listing trong kỳ.</p> }
+            <h2>Tin đăng mới nhất</h2>
+            @if (Model.LatestListings.Count == 0) { <p class="admin-empty">Chưa có tin đăng trong kỳ.</p> }
             else
             {
-                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Listing</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody>
-                @foreach (var item in Model.LatestListings) { <tr><td><a asp-area="Admin" asp-controller="Listings" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></td><td>@item.PropertyTypeName</td><td>@item.Status</td></tr> }
+                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Tin đăng</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody>
+                @foreach (var item in Model.LatestListings) { <tr><td><a asp-area="Admin" asp-controller="Listings" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></td><td>@item.PropertyTypeName</td><td>@item.Status.GetDisplayName()</td></tr> }
                 </tbody></table></div>
             }
         </section>
         <section class="admin-card">
             <h2>Đang chờ duyệt</h2>
-            @if (Model.PendingListings.Count == 0) { <p class="admin-empty">Không có listing chờ duyệt.</p> }
+            @if (Model.PendingListings.Count == 0) { <p class="admin-empty">Không có tin đăng chờ duyệt.</p> }
             else
             {
-                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Listing</th><th>Loại</th></tr></thead><tbody>
+                <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Tin đăng</th><th>Loại</th></tr></thead><tbody>
                 @foreach (var item in Model.PendingListings) { <tr><td><a asp-area="Admin" asp-controller="Listings" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></td><td>@item.PropertyTypeName</td></tr> }
                 </tbody></table></div>
             }
         </section>
         <section class="admin-card">
-            <h2>Consultation mới nhất</h2>
-            @if (Model.LatestConsultations.Count == 0) { <p class="admin-empty">Không có consultation trong kỳ.</p> }
+            <h2>Yêu cầu tư vấn mới nhất</h2>
+            @if (Model.LatestConsultations.Count == 0) { <p class="admin-empty">Chưa có yêu cầu tư vấn trong kỳ.</p> }
             else
             {
                 <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Người gửi</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead><tbody>
-                @foreach (var item in Model.LatestConsultations) { <tr><td><a asp-area="Admin" asp-controller="Consultations" asp-action="Details" asp-route-id="@item.Id">@item.ContactName</a></td><td>@item.Status</td><td>@item.CreatedAtUtc.ToLocalTime().ToString("g")</td></tr> }
+                @foreach (var item in Model.LatestConsultations) { <tr><td><a asp-area="Admin" asp-controller="Consultations" asp-action="Details" asp-route-id="@item.Id">@item.ContactName</a></td><td>@item.Status.GetDisplayName()</td><td>@item.CreatedAtUtc.ToVietnamDateTime()</td></tr> }
                 </tbody></table></div>
             }
         </section>
@@ -83,5 +83,6 @@
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="Listings" asp-action="Index">Quản lý tin</a>
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Loại bất động sản</a>
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="Consultations" asp-action="Index">Yêu cầu tư vấn</a>
+        <a class="haven-button-secondary" asp-area="Admin" asp-controller="PrivacyRequests" asp-action="Index">Yêu cầu quyền riêng tư</a>
     </nav>
 </section>
