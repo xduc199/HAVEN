@@ -4,6 +4,25 @@
 }
 <section class="page-container">
     <h1>Hồ sơ của tôi</h1>
+    <section class="account-avatar-panel" aria-labelledby="avatar-heading">
+        <div>
+            <h2 id="avatar-heading">Ảnh đại diện</h2>
+            <p>JPG, PNG hoặc WebP · tối đa 5 MB</p>
+        </div>
+        <form asp-action="UpdateAvatar" method="post" enctype="multipart/form-data" data-avatar-upload>
+            @Html.AntiForgeryToken()
+            <span class="haven-avatar haven-avatar--large account-avatar-preview" role="img" aria-label="Ảnh đại diện xem trước">
+                <span class="haven-avatar__fallback" aria-hidden="true">@(string.IsNullOrWhiteSpace(Model.DisplayName) ? "H" : Model.DisplayName.Trim()[0].ToString().ToUpperInvariant())</span>
+                <img class="haven-avatar__image" src="@(Model.AvatarPath ?? "/image/avatar-placeholder.svg")" alt="" data-avatar-preview />
+            </span>
+            <label for="avatar-file">Chọn ảnh</label>
+            <input id="avatar-file" type="file" name="avatar" accept="image/jpeg,image/png,image/webp" required />
+            <div class="account-avatar-actions">
+                <button class="haven-button" type="submit" data-avatar-save disabled>Lưu ảnh</button>
+                <button class="haven-button-secondary" type="button" data-avatar-cancel hidden>Hủy</button>
+            </div>
+        </form>
+    </section>
     <form method="post" class="haven-form" data-api-action="profile">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="All" role="alert"></div>
@@ -14,4 +33,4 @@
     </form>
     <p class="form-actions"><a class="haven-button-secondary" asp-action="ChangePassword">Đổi mật khẩu</a><a class="haven-button-secondary" asp-controller="MyListings" asp-action="Index">Quản lý tin đăng</a></p>
 </section>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@section Scripts { <partial name="_ValidationScriptsPartial" /><script src="~/js/avatar.js" asp-append-version="true"></script> }

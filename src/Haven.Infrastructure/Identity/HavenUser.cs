@@ -9,4 +9,7 @@ public sealed class HavenUser : IdentityUser
 
     [MaxLength(DisplayNameMaxLength)]
     public string DisplayName { get; set; } = string.Empty;
+
+    [MaxLength(256)]
+    public string? AvatarPath { get; set; }
 }

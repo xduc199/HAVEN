@@ -4,14 +4,19 @@
 }
 <section class="page-container">
     <div class="admin-page-heading">
-        <div><h1>Quản lý người dùng</h1><p class="admin-muted">Tìm tài khoản và quản lý quyền truy cập. Tài khoản quản trị được bảo vệ khỏi thao tác khóa.</p></div>
+        <div>
+            <p class="admin-eyebrow">Tài khoản và quyền truy cập</p>
+            <h1>Quản lý người dùng</h1>
+            <p class="admin-muted">Khóa tài khoản ngăn đăng nhập mới và thu hồi phiên hiện tại khi cookie được kiểm tra lại. Khóa tạm thời do đăng nhập sai được quản lý riêng.</p>
+        </div>
     </div>
-    <form method="get" class="admin-filter">
+    <form method="get" class="admin-filter admin-filter--users">
         <label for="user-search">Tìm theo tên hoặc email</label>
         <input id="user-search" type="search" name="search" value="@Model.Search" maxlength="200" />
         <button class="admin-button" type="submit">Tìm kiếm</button>
         @if (!string.IsNullOrWhiteSpace(Model.Search)) { <a asp-action="Index">Xóa bộ lọc</a> }
     </form>
+    <p class="admin-result-count">@Model.TotalCount tài khoản · Trang @Model.Page / @Math.Max(Model.TotalPages, 1)</p>
     @if (Model.Items.Count == 0)
     {
         <p class="admin-empty">Không tìm thấy tài khoản phù hợp.</p>
@@ -19,22 +24,47 @@
     else
     {
         <div class="admin-table-wrap">
-            <table class="admin-table">
-                <thead><tr><th>Người dùng</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+            <table class="admin-table admin-user-table" aria-label="Danh sách tài khoản người dùng">
+                <thead><tr><th scope="col">Người dùng</th><th scope="col">Email</th><th scope="col">Vai trò</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead>
                 <tbody>
                 @foreach (var user in Model.Items)
                 {
+                    var avatar = new Haven.Web.ViewModels.AvatarViewModel(user.AvatarPath, user.DisplayName, "small");
                     <tr>
-                        <td>@user.DisplayName</td><td>@user.Email</td><td>@user.Roles</td>
-                        <td>@(user.IsLocked ? "Đã khóa" : "Đang hoạt động")</td>
+                        <td><span class="admin-user-cell"><partial name="_Avatar" model="avatar" /><strong class="admin-user-name">@user.DisplayName</strong></span></td>
+                        <td class="admin-user-email">@user.Email</td>
+                        <td>@user.Roles</td>
+                        <td>
+                            @if (user.IsAdminLocked)
+                            {
+                                <span class="admin-status admin-status--locked">Đã khóa bởi Admin</span>
+                            }
+                            else if (user.IsTemporarilyLocked)
+                            {
+                                <span class="admin-status admin-status--temporary">Khóa tạm thời do đăng nhập sai · đến @(user.TemporaryLockoutEnd?.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))</span>
+                            }
+                            else
+                            {
+                                <span class="admin-status admin-status--active">Đang hoạt động</span>
+                            }
+                        </td>
                         <td>
                             @if (!user.IsAdmin)
                             {
-                                <form asp-action="SetLockout" method="post" class="admin-inline-form">
+                                <form asp-action="SetLockout" method="post" class="admin-inline-form" data-admin-lockout-form data-confirm="@(user.IsAdminLocked ? $"Mở khóa tài khoản {user.Email}?" : $"Khóa tài khoản {user.Email}? Người dùng sẽ không đăng nhập được.")" data-loading="@(user.IsAdminLocked ? "Đang mở khóa…" : "Đang khóa…")">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@user.Id" />
-                                    <input type="hidden" name="locked" value="@(!user.IsLocked)" />
-                                    <button class="admin-button admin-button--secondary" type="submit">@(user.IsLocked ? "Mở khóa" : "Khóa tài khoản")</button>
+                                    <input type="hidden" name="locked" value="@(user.IsAdminLocked ? "false" : "true")" />
+                                    <input type="hidden" name="search" value="@Model.Search" />
+                                    <input type="hidden" name="page" value="@Model.Page" />
+                                    @if (user.IsTemporarilyLocked)
+                                    {
+                                        <span class="admin-muted admin-lockout-note">Chờ hết hạn</span>
+                                    }
+                                    else
+                                    {
+                                        <button class="admin-button @(user.IsAdminLocked ? "admin-button--secondary" : "admin-button--danger")" type="submit" data-loading-label>@(user.IsAdminLocked ? "Mở khóa" : "Khóa tài khoản")</button>
+                                    }
                                 </form>
                             }
                             else { <span class="admin-muted">Được bảo vệ</span> }

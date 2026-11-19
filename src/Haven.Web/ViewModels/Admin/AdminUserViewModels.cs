@@ -16,8 +16,11 @@ public sealed record AdminUserRowViewModel(
     string DisplayName,
     string Email,
     string Roles,
-    bool IsLocked,
-    bool IsAdmin);
+    bool IsAdminLocked,
+    bool IsTemporarilyLocked,
+    DateTimeOffset? TemporaryLockoutEnd,
+    bool IsAdmin,
+    string? AvatarPath = null);
 
 public sealed record AdminUserPageViewModel(
     IReadOnlyList<AdminUserRowViewModel> Items,

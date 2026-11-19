@@ -37,21 +37,12 @@ body {
    ========================================= */
 
 :root {
-    --haven-gold: #D4A72C;
-    --haven-gold-hover: #C08F1A;
-    --haven-white: #FFFFFF;
-    --haven-cream: #FFF9E8;
-    --haven-light-gold: #F5E7B2;
-    --haven-black: #252525;
-    --haven-gray: #737373;
-    --haven-light-gray: #F8F8F8;
-    --haven-border: #E5E5E5;
-    --bs-primary: #D4A72C;
+    --bs-primary: var(--haven-gold);
     --bs-primary-rgb: 212, 167, 44;
-    --bs-link-color: #C08F1A;
-    --bs-link-hover-color: #947014;
-    --font-body: "Inter", Arial, Helvetica, sans-serif;
-    --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --bs-link-color: var(--haven-gold-hover);
+    --bs-link-hover-color: #8B6814;
+    --font-body: var(--haven-font-body);
+    --font-display: var(--haven-font-display);
 }
 
 /* Cài đặt chung */

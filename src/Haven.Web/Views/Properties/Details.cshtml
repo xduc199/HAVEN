@@ -44,7 +44,16 @@
         }
         <h2>Mô tả</h2>
         <p>@listing.Description</p>
-        <p class="muted">Người đăng: @(listing.OwnerDisplayName ?? "Thành viên HAVEN")</p>
+        @if (Model.Owner is { } owner)
+        {
+            var ownerName = owner.DisplayName;
+            var ownerAvatar = new Haven.Web.ViewModels.AvatarViewModel(owner.AvatarPath, ownerName, "medium");
+            <a class="listing-owner-link" asp-controller="Members" asp-action="Profile" asp-route-id="@owner.Id">
+                <partial name="_Avatar" model="ownerAvatar" />
+                <span><small>Người đăng</small><strong>@ownerName</strong><span>Xem hồ sơ</span></span>
+            </a>
+        }
+        else { <p class="muted">Người đăng: @(listing.OwnerDisplayName ?? "Thành viên HAVEN")</p> }
         <div class="property-card__actions">
             @if (User.Identity?.IsAuthenticated == true)
             {

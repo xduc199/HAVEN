@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ảnh đại diện mặc định">
+  <rect width="128" height="128" rx="64" fill="#FFF9E8"/>
+  <circle cx="64" cy="48" r="23" fill="#D4A72C"/>
+  <path d="M22 118c4-25 20-39 42-39s38 14 42 39" fill="#D4A72C"/>
+</svg>
