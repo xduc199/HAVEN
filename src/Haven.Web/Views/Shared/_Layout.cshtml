@@ -1,15 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#183b35" />
+    <meta name="theme-color" content="#D4A72C" />
     <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN" : "HAVEN")</title>
     <meta name="description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
     <meta property="og:title" content="@(ViewData["Title"] is string pageTitle ? $"{pageTitle} | HAVEN" : "HAVEN")" />
     <meta property="og:description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
     <link rel="icon" type="image/png" href="~/image/logo3.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/haven-tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/frontend.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Haven.Web.styles.css" asp-append-version="true" />
@@ -72,15 +73,11 @@
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a class="app-header__cta" asp-controller="MyListings" asp-action="Create">Đăng tin</a>
-                    <a class="app-nav__link app-header__profile" asp-controller="Account" asp-action="Profile">Tài khoản</a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="app-logout-form" data-api-action="logout">
-                        @Html.AntiForgeryToken()
-                        <div class="api-form-message" data-api-message hidden></div>
-                        <button class="app-logout" type="submit">Đăng xuất</button>
-                    </form>
+                    @await Component.InvokeAsync("AccountAvatar")
                 }
                 else
                 {
+                    <a class="app-nav__link app-header__register" asp-controller="Account" asp-action="Register">Đăng ký</a>
                     <a class="app-nav__link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
                     <a class="app-header__cta" asp-controller="MyListings" asp-action="Create">Đăng tin</a>
                 }
@@ -99,7 +96,6 @@
         <div class="app-footer__inner">
             <div class="app-footer__about">
                 <a class="app-footer__brand" asp-controller="Home" asp-action="Index">HAVEN</a>
-                <p>Không gian sống, lựa chọn xứng tầm.</p>
                 <span>Khám phá và tìm kiếm bất động sản theo cách của bạn.</span>
             </div>
             <nav aria-label="Khám phá bất động sản" class="app-footer__group">
@@ -132,6 +128,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/api-forms.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/avatar.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,12 +1,12 @@
 :root {
     color-scheme: light;
-    --admin-ink: #1d2b3a;
-    --admin-muted: #687789;
-    --admin-border: #dce3e9;
-    --admin-surface: #fff;
-    --admin-canvas: #f3f6f9;
-    --admin-primary: #17324d;
-    --admin-accent: #d8a54e;
+    --admin-ink: var(--haven-charcoal);
+    --admin-muted: var(--haven-gray);
+    --admin-border: var(--haven-border);
+    --admin-surface: var(--haven-white);
+    --admin-canvas: var(--haven-soft-gray);
+    --admin-primary: var(--haven-charcoal);
+    --admin-accent: var(--haven-gold);
 }
 
 * { box-sizing: border-box; }
@@ -16,7 +16,9 @@ body.admin-shell {
     margin: 0;
     background: var(--admin-canvas);
     color: var(--admin-ink);
-    font: 16px/1.5 "Segoe UI", system-ui, sans-serif;
+    font: 16px/1.6 var(--haven-font-body);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
 }
 
 .admin-sidebar {
@@ -37,19 +39,20 @@ body.admin-shell {
 .admin-brand__mark { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: .6rem; background: var(--admin-accent); color: var(--admin-primary); }
 .admin-nav { display: grid; gap: .4rem; margin-top: 2.5rem; }
 .admin-nav__link, .admin-back-link { display: block; padding: .75rem .85rem; border-radius: .5rem; color: #e8eff5; text-decoration: none; }
-.admin-nav__link:hover, .admin-nav__link--active { background: rgb(255 255 255 / 13%); color: #fff; }
+.admin-nav__link { transition: background-color var(--haven-motion-fast) ease, color var(--haven-motion-fast) ease; }
+.admin-nav__link:hover, .admin-nav__link--active { background: rgb(255 255 255 / 10%); color: #fff; }
 .admin-nav__link--active { box-shadow: inset 3px 0 var(--admin-accent); }
 .admin-back-link { margin-top: auto; border-top: 1px solid rgb(255 255 255 / 20%); border-radius: 0; padding-top: 1rem; }
 .admin-main { min-height: 100vh; margin-left: 16rem; }
 .admin-header { min-height: 4.5rem; display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding: .75rem clamp(1rem, 3vw, 2.5rem); border-bottom: 1px solid var(--admin-border); background: var(--admin-surface); }
 .admin-header__identity { display: flex; align-items: center; gap: .8rem; }
-.admin-role { padding: .2rem .55rem; border-radius: 999px; background: #e7f0f7; color: var(--admin-primary); font-size: .8rem; }
+.admin-role { padding: .2rem .55rem; border-radius: 999px; background: var(--haven-cream); color: var(--admin-primary); font-size: .8rem; }
 .admin-logout, .admin-menu-toggle { padding: .5rem .75rem; border: 1px solid var(--admin-border); border-radius: .45rem; background: var(--admin-surface); color: var(--admin-ink); }
 .admin-menu-toggle { display: none; margin-right: auto; }
 .admin-content { width: min(100%, 90rem); margin: 0 auto; padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 3rem; }
 .admin-breadcrumb { display: flex; gap: .5rem; margin: .25rem 0 1.25rem; color: var(--admin-muted); font-size: .9rem; }
 .admin-breadcrumb a { color: var(--admin-primary); }
-.admin-card { padding: 1.25rem; border: 1px solid var(--admin-border); border-radius: .75rem; background: var(--admin-surface); box-shadow: 0 .4rem 1.25rem rgb(23 50 77 / 5%); }
+.admin-card { padding: 1.25rem; border: 1px solid var(--admin-border); border-radius: .75rem; background: var(--admin-surface); box-shadow: var(--haven-shadow-sm); }
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; }
 .admin-kpi strong { display: block; margin-top: .35rem; font-size: 1.75rem; }
 .admin-muted { color: var(--admin-muted); }
@@ -57,9 +60,9 @@ body.admin-shell {
 .admin-filter label, .admin-form label { display: grid; gap: .3rem; }
 .admin-filter input, .admin-filter select, .admin-form input, .admin-form select, .admin-form textarea { min-height: 2.5rem; padding: .45rem .6rem; border: 1px solid var(--admin-border); border-radius: .4rem; }
 .admin-table-wrap { overflow-x: auto; border: 1px solid var(--admin-border); border-radius: .6rem; background: #fff; }
-.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table { width: 100%; min-width: 48rem; border-collapse: collapse; }
 .admin-table th, .admin-table td { padding: .7rem .8rem; border-bottom: 1px solid var(--admin-border); text-align: left; vertical-align: top; }
-.admin-table th { background: #f7f9fb; white-space: nowrap; }
+.admin-table th { background: var(--haven-soft-gray); white-space: nowrap; }
 .admin-empty { padding: 1.25rem; border: 1px dashed var(--admin-border); border-radius: .6rem; background: #fff; color: var(--admin-muted); }
 .admin-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1rem; }
 .admin-button { display: inline-flex; min-height: 2.5rem; align-items: center; justify-content: center; padding: .5rem .8rem; border: 1px solid var(--admin-primary); border-radius: .45rem; background: var(--admin-primary); color: #fff; text-decoration: none; cursor: pointer; }
@@ -80,7 +83,7 @@ body.admin-shell {
 .admin-checkbox { display: flex !important; align-items: center; gap: .55rem !important; margin-top: .5rem; }
 .admin-checkbox input { min-height: auto; }
 .admin-chart-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
-.admin-chart { display: flex; min-height: 12rem; align-items: end; gap: .35rem; overflow-x: auto; padding: 1rem .25rem .25rem; }
+.admin-chart { display: flex; height: 15rem; min-height: 15rem; align-items: end; gap: .35rem; overflow-x: auto; padding: 1rem .25rem 1.8rem; box-sizing: border-box; }
 .admin-chart__bar { position: relative; display: flex; width: 2rem; min-width: 2rem; height: var(--bar-height); align-items: center; justify-content: end; border-radius: .3rem .3rem 0 0; background: #527b9e; color: #fff; }
 .admin-chart__bar--gold { background: #c28f3c; }
 .admin-chart__value { font-size: .7rem; }
@@ -108,6 +111,7 @@ body.admin-shell {
 @media (max-width: 800px) {
     .admin-sidebar { transform: translateX(-100%); box-shadow: 0 0 2rem rgb(0 0 0 / 20%); }
     .admin-shell.admin-sidebar-open .admin-sidebar { transform: translateX(0); }
+.admin-shell.admin-sidebar-open .admin-sidebar-backdrop { display: block; }
     .admin-main { margin-left: 0; }
     .admin-menu-toggle { display: inline-block; }
     .admin-header { justify-content: space-between; }
@@ -127,3 +131,134 @@ body.admin-shell {
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Shared HAVEN brand accents for the administration workspace */
+.admin-sidebar { background: var(--admin-primary); }
+.admin-brand__mark { border-radius: .25rem; background: var(--admin-accent); color: var(--admin-primary); }
+.admin-button { border-color: var(--admin-accent); background: var(--admin-accent); color: #252525; transition: transform 200ms cubic-bezier(.22,1,.36,1), background-color 200ms ease; }
+.admin-button:hover { border-color: #C08F1A; background: #C08F1A; color: #252525; transform: translateY(-1px); }
+.admin-button--secondary { border-color: var(--admin-border); background: #fff; color: var(--admin-ink); }
+.admin-button--secondary:hover { border-color: var(--admin-accent); background: var(--haven-cream); color: var(--admin-ink); }
+.admin-table th { background: var(--haven-soft-gray); }
+.admin-table tbody tr:hover { background: var(--haven-cream); }
+.admin-filter input:focus, .admin-filter select:focus, .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: #D4A72C; box-shadow: 0 0 0 3px rgb(212 167 44 / 18%); outline: 0; }
+.admin-chart__bar { background: var(--admin-accent); color: var(--admin-ink); }
+.admin-chart__bar--gold { background: var(--haven-gold-hover); }
+.admin-chart__value { position: absolute; bottom: calc(100% + .15rem); left: 50%; color: var(--admin-ink); font-size: .7rem; font-variant-numeric: tabular-nums; transform: translateX(-50%); }
+.admin-button:focus-visible, .admin-logout:focus-visible, .admin-menu-toggle:focus-visible, .admin-nav__link:focus-visible { outline: 3px solid var(--haven-gold); outline-offset: 3px; }
+
+/* Admin views reuse the HAVEN tokens while keeping their own workspace layout. */
+.admin-shell :where(h1, h2, h3) { color: var(--admin-ink); font-family: var(--haven-font-display); font-weight: 500; line-height: 1.15; text-wrap: balance; }
+.admin-shell h1 { font-size: clamp(1.9rem, 3vw, 2.65rem); letter-spacing: -.01em; }
+.admin-shell h2 { font-size: clamp(1.35rem, 2vw, 1.75rem); }
+.admin-shell h3 { font-size: 1.2rem; }
+.admin-sidebar { overflow-y: auto; overscroll-behavior: contain; }
+.admin-nav { gap: .25rem; margin-top: 2rem; }
+.admin-nav__link, .admin-back-link { min-height: 2.75rem; border-radius: var(--haven-radius-sm); }
+.admin-main { min-width: 0; background: var(--admin-canvas); }
+.admin-header { position: sticky; top: 0; z-index: 15; }
+.admin-header__identity form { margin: 0; }
+.admin-content { min-width: 0; padding-block: clamp(1.25rem, 2vw, 2rem) 3rem; }
+.admin-page-heading { margin-bottom: .25rem; }
+.admin-page-heading h1 { margin-bottom: .45rem; }
+.admin-page-heading p { max-width: 64rem; margin: 0; }
+.admin-eyebrow { margin: 0 0 .45rem; color: var(--admin-muted); font-size: .72rem; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+.admin-result-count { margin: -.25rem 0 .25rem; color: var(--admin-muted); font-size: .85rem; }
+.admin-filter { padding: 1rem; border: 1px solid var(--admin-border); border-radius: var(--haven-radius); background: var(--admin-surface); }
+.admin-filter label, .admin-form label, .haven-field label { color: var(--admin-ink); font-size: .9rem; font-weight: 600; }
+.admin-filter input, .admin-filter select, .admin-form input, .admin-form select, .admin-form textarea,
+.haven-form input, .haven-form select, .haven-form textarea, .form-actions select {
+    width: 100%; min-width: 0; min-height: 2.75rem; padding: .55rem .7rem; border: 1px solid var(--admin-border); border-radius: var(--haven-radius-sm); background: var(--admin-surface); color: var(--admin-ink); font: inherit;
+}
+.admin-filter input:focus, .admin-filter select:focus, .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus,
+.haven-form input:focus, .haven-form select:focus, .haven-form textarea:focus, .form-actions select:focus {
+    border-color: var(--haven-gold-hover); box-shadow: 0 0 0 3px rgb(212 167 44 / 18%); outline: 0;
+}
+.admin-filter--users label { flex: 0 0 100%; }
+.admin-filter--users input { flex: 1 1 22rem; width: auto; max-width: 42rem; }
+.admin-card, .content-card { min-width: 0; padding: clamp(1rem, 1.8vw, 1.5rem); border: 1px solid var(--admin-border); border-radius: var(--haven-radius); background: var(--admin-surface); box-shadow: var(--haven-shadow-sm); }
+.admin-card h2, .content-card h2 { margin: 0 0 1rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1rem; }
+.stats-grid .admin-card { min-height: 7.5rem; }
+.admin-kpi strong { color: var(--admin-ink); font-size: clamp(1.5rem, 2.2vw, 2rem); font-variant-numeric: tabular-nums; }
+.admin-form, .haven-form { display: grid; width: min(100%, 52rem); gap: 1rem; }
+.haven-field { display: grid; min-width: 0; gap: .35rem; }
+.haven-field > span, .admin-form .field-validation-error, .haven-field .field-validation-error { color: #AD3434; font-size: .82rem; }
+.admin-form textarea, .haven-form textarea { min-height: 8rem; resize: vertical; }
+.admin-checkbox { display: flex !important; width: fit-content; align-items: center; gap: .55rem !important; }
+.admin-checkbox input, .haven-form input[type="checkbox"], .haven-field input[type="checkbox"] { width: 1.1rem; min-height: 1.1rem; accent-color: var(--haven-gold-hover); }
+.admin-actions, .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; margin-top: 1rem; }
+.form-actions form, .admin-actions form { margin: 0; }
+.admin-button, .haven-button, .haven-button-secondary, .haven-button-danger {
+    display: inline-flex; min-height: var(--haven-control-height); align-items: center; justify-content: center; gap: .4rem; padding: .55rem .9rem; border: 1px solid var(--haven-gold); border-radius: var(--haven-radius-sm); background: var(--haven-gold); color: var(--haven-charcoal); font: inherit; font-size: .9rem; font-weight: 650; line-height: 1.25; text-align: center; text-decoration: none; cursor: pointer; transition: background-color var(--haven-motion-fast) ease, border-color var(--haven-motion-fast) ease, color var(--haven-motion-fast) ease;
+}
+.admin-button:hover, .haven-button:hover { border-color: var(--haven-gold-hover); background: var(--haven-gold-hover); color: var(--haven-charcoal); text-decoration: none; }
+.admin-button--secondary, .haven-button-secondary { border-color: var(--admin-border); background: var(--admin-surface); color: var(--admin-ink); }
+.admin-button--secondary:hover, .haven-button-secondary:hover { border-color: var(--haven-gold); background: var(--haven-cream); color: var(--admin-ink); }
+.admin-button--danger, .haven-button-danger { border-color: #AD3434; background: #AD3434; color: #fff; }
+.admin-button--danger:hover, .haven-button-danger:hover { border-color: #842929; background: #842929; color: #fff; }
+.admin-button:disabled, .haven-button:disabled { cursor: wait; opacity: .7; }
+.admin-status, .status-badge { display: inline-flex; max-width: 100%; align-items: center; padding: .25rem .55rem; border: 1px solid transparent; border-radius: 999px; font-size: .78rem; font-weight: 650; line-height: 1.35; white-space: normal; }
+.admin-status--active { border-color: #B9DCC8; background: #EAF7EF; color: #24633D; }
+.admin-status--locked { border-color: #E7B8B5; background: #FFF0EF; color: #842E2A; }
+.admin-status--temporary { border-color: #E6D39C; background: #FFF9E8; color: #70520E; }
+.admin-user-table { min-width: 58rem; }
+.admin-user-name { display: block; min-width: 10rem; }
+.admin-user-email { min-width: 13rem; overflow-wrap: anywhere; }
+.admin-inline-form { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin: 0; }
+.admin-lockout-note { font-size: .82rem; }
+.admin-table tbody tr:last-child td { border-bottom: 0; }
+.admin-table td { line-height: 1.5; }
+.admin-table a:not(.admin-button) { color: #70520E; font-weight: 600; text-underline-offset: .18em; }
+.admin-empty { margin: 0; border-radius: var(--haven-radius-sm); background: var(--haven-white); line-height: 1.6; }
+.app-alert, .admin-alert { border: 1px solid transparent; border-radius: var(--haven-radius-sm); line-height: 1.5; }
+.app-alert--success, .admin-alert--success { border-color: #B9DCC8; }
+.app-alert--error, .admin-alert--error { border-color: #E7B8B5; }
+.admin-chart-grid, .admin-latest-grid { align-items: start; }
+.admin-chart { height: 15rem; min-height: 15rem; padding-inline: .75rem; }
+.admin-chart__bar { border-radius: .2rem .2rem 0 0; }
+.admin-stat-row { align-items: baseline; }
+.listing-video-item { min-width: 0; }
+.listing-video-item video { display: block; width: 100%; max-height: 32rem; background: #111; }
+.listing-gallery--manage { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.listing-gallery__item .admin-button { min-height: 2.5rem; }
+.admin-sidebar-backdrop { display: none; }
+
+@media (max-width: 800px) {
+    .admin-sidebar { width: min(19rem, 86vw); }
+    .admin-sidebar-backdrop { position: fixed; inset: 0; z-index: 19; display: none; border: 0; background: rgb(37 37 37 / 38%); }
+    .admin-shell.admin-sidebar-open .admin-sidebar-backdrop { display: block; }
+    .admin-header { min-height: 4rem; }
+    .admin-content { padding-inline: clamp(.85rem, 3vw, 1.5rem); }
+    .admin-filter { align-items: stretch; }
+    .admin-filter label, .admin-filter input, .admin-filter select { width: 100%; }
+}
+
+@media (max-width: 520px) {
+    .admin-header { gap: .5rem; padding-inline: .75rem; }
+    .admin-header__identity { min-width: 0; }
+    .admin-header__identity > span:first-child { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .admin-content { padding: 1rem .75rem 2rem; }
+    .admin-filter, .admin-card, .content-card { padding: 1rem; }
+    .admin-table th, .admin-table td { padding: .55rem .6rem; }
+    .admin-actions > *, .form-actions > *, .admin-actions form, .form-actions form { max-width: 100%; }
+    .admin-button, .haven-button, .haven-button-secondary, .haven-button-danger { min-height: 2.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-sidebar, .admin-nav__link, .admin-button, .haven-button, .haven-button-secondary, .haven-button-danger { transition: none; }
+}
+.admin-user-cell { display: flex; min-width: 12rem; align-items: center; gap: .65rem; }
+.admin-header__identity .account-menu__name { display: none; }
+.admin-header .account-menu > summary { list-style: none; cursor: pointer; }
+.admin-header .account-menu > summary::-webkit-details-marker { display: none; }
+.admin-header .account-menu__panel { position: absolute; top: calc(100% + .65rem); right: 0; z-index: 30; display: grid; min-width: 13rem; padding: .4rem; border: 1px solid var(--admin-border); background: #fff; box-shadow: var(--haven-shadow-md); }
+.admin-header .account-menu__panel a, .admin-header .account-menu__panel button { display: block; width: 100%; padding: .65rem .75rem; border: 0; background: transparent; color: var(--admin-ink); text-align: left; text-decoration: none; font: inherit; }
+.admin-header .account-menu__panel a:hover, .admin-header .account-menu__panel button:hover { background: var(--haven-cream); }
+.admin-header .account-menu__panel form { margin: 0; border-top: 1px solid var(--admin-border); }
+.admin-shell .haven-avatar { position: relative; display: inline-grid; flex: 0 0 auto; overflow: hidden; place-items: center; border: 1px solid rgb(255 255 255 / 35%); border-radius: 50%; background: var(--haven-cream); color: var(--admin-ink); font-weight: 650; }
+.admin-shell .haven-avatar--small { width: 2.25rem; height: 2.25rem; font-size: .9rem; }
+.admin-shell .haven-avatar--medium { width: 3rem; height: 3rem; font-size: 1.1rem; }
+.admin-shell .haven-avatar--large { width: 6.5rem; height: 6.5rem; font-size: 2rem; }
+.admin-shell .haven-avatar__fallback { grid-area: 1 / 1; }
+.admin-shell .haven-avatar__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

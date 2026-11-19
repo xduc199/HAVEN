@@ -1,0 +1,100 @@
+/* HAVEN design tokens — shared by public and admin surfaces */
+:root {
+    color-scheme: light;
+    --haven-gold: #D4A72C;
+    --haven-gold-hover: #C08F1A;
+    --haven-white: #FFFFFF;
+    --haven-cream: #FFF9E8;
+    --haven-pale-gold: #F5E7B2;
+    --haven-charcoal: #252525;
+    --haven-gray: #737373;
+    --haven-soft-gray: #F8F8F8;
+    --haven-border: #E5E5E5;
+    --haven-success: #24744D;
+    --haven-warning: #946200;
+    --haven-danger: #AD3434;
+
+    --haven-font-body: "Inter", "Segoe UI", Arial, sans-serif;
+    --haven-font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --haven-text-xs: .75rem;
+    --haven-text-sm: .875rem;
+    --haven-text-base: 1rem;
+    --haven-text-lg: 1.125rem;
+    --haven-content-width: 75rem;
+    --haven-space-1: .25rem;
+    --haven-space-2: .5rem;
+    --haven-space-3: .75rem;
+    --haven-space-4: 1rem;
+    --haven-space-6: 1.5rem;
+    --haven-space-8: 2rem;
+    --haven-section-space: clamp(3rem, 6vw, 5rem);
+    --haven-control-height: 2.875rem;
+    --haven-radius-sm: .25rem;
+    --haven-radius: .5rem;
+    --haven-radius-lg: .75rem;
+    --haven-shadow-sm: 0 2px 8px rgb(37 37 37 / 5%);
+    --haven-shadow: 0 8px 24px rgb(37 37 37 / 7%);
+    --haven-shadow-lg: 0 18px 40px rgb(37 37 37 / 10%);
+    --haven-motion-fast: 180ms;
+    --haven-motion-normal: 300ms;
+    --haven-motion-slow: 560ms;
+    --haven-motion-hero: 1000ms;
+    --haven-ease: cubic-bezier(.22, 1, .36, 1);
+    --haven-z-header: 30;
+    --haven-z-dropdown: 40;
+    --haven-z-overlay: 1000;
+
+    /* Legacy component names map to the same palette. */
+    --haven-primary: var(--haven-gold);
+    --haven-primary-strong: var(--haven-gold-hover);
+    --haven-secondary: var(--haven-cream);
+    --haven-accent: var(--haven-gold);
+    --haven-background: var(--haven-white);
+    --haven-surface: var(--haven-white);
+    --haven-text: var(--haven-charcoal);
+    --haven-muted: var(--haven-gray);
+    --haven-ui-border: var(--haven-border);
+    --haven-radius-legacy: var(--haven-radius);
+    --haven-shadow-legacy: var(--haven-shadow);
+    --haven-content-width-legacy: var(--haven-content-width);
+}
+
+body.app-shell,
+body.admin-shell {
+    color: var(--haven-charcoal);
+    background: var(--haven-white);
+    font-family: var(--haven-font-body);
+    font-size: var(--haven-text-base);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+:where(h1, h2, h3, .app-brand__name, .admin-brand) {
+    font-family: var(--haven-font-display);
+    font-weight: 500;
+    text-wrap: balance;
+}
+
+:where(p, li, td, label, a, button, input, select, textarea) {
+    overflow-wrap: break-word;
+}
+
+:where(button, input, select, textarea) { font: inherit; }
+
+:where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 3px solid rgb(192 143 26 / 72%);
+    outline-offset: 3px;
+}
+
+::selection { color: var(--haven-charcoal); background: var(--haven-pale-gold); }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}

@@ -1,0 +1,11 @@
+@model Haven.Web.ViewModels.AvatarViewModel
+@{
+    var initial = string.IsNullOrWhiteSpace(Model.DisplayName) ? "H" : Model.DisplayName.Trim()[0].ToString().ToUpperInvariant();
+}
+<span class="haven-avatar haven-avatar--@Model.Size" role="img" aria-label="Ảnh đại diện của @Model.DisplayName">
+    <span class="haven-avatar__fallback" aria-hidden="true">@initial</span>
+    @if (!string.IsNullOrWhiteSpace(Model.Url))
+    {
+        <img class="haven-avatar__image" src="@Model.Url" alt="" loading="lazy" data-avatar-image />
+    }
+</span>

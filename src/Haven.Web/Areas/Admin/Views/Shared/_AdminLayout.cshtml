@@ -11,11 +11,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN Quản trị" : "HAVEN Quản trị")</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/haven-tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-shell">
+    <button type="button" class="admin-sidebar-backdrop" aria-label="Đóng menu quản trị" aria-hidden="true" tabindex="-1"></button>
     <aside class="admin-sidebar" id="admin-sidebar">
         <a class="admin-brand" asp-area="" asp-controller="Home" asp-action="Index">
             <span class="admin-brand__mark">H</span><span>HAVEN <small>QUẢN TRỊ</small></span>
@@ -36,13 +41,8 @@
         <header class="admin-header">
             <button type="button" class="admin-menu-toggle" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Mở hoặc thu gọn menu">☰</button>
             <div class="admin-header__identity">
-                <span>@(User.Identity?.Name ?? "Quản trị viên")</span>
                 <span class="admin-role">Quản trị viên</span>
-                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" data-api-action="logout">
-                    @Html.AntiForgeryToken()
-                    <div class="api-form-message" data-api-message hidden></div>
-                    <button class="admin-logout" type="submit">Đăng xuất</button>
-                </form>
+                @await Component.InvokeAsync("AccountAvatar")
             </div>
         </header>
         <main class="admin-content" id="main-content">
@@ -57,6 +57,7 @@
     </div>
     <script src="~/js/api-forms.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
+    <script src="~/js/avatar.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

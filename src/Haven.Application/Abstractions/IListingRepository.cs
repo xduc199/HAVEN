@@ -18,6 +18,16 @@ public interface IListingRepository
         string ownerId,
         CancellationToken cancellationToken = default);
 
+    Task<PublicOwnerProfile?> GetPublicOwnerForListingAsync(
+        int listingId,
+        CancellationToken cancellationToken = default);
+
+    Task<ListingSearchPage> GetApprovedForOwnerAsync(
+        string ownerId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
     Task<ListingSearchPage> SearchApprovedAsync(
         ListingSearchCriteria criteria,
         CancellationToken cancellationToken = default);

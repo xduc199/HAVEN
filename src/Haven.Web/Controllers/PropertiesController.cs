@@ -123,7 +123,8 @@ public sealed class PropertiesController : Controller
             isFavorite,
             await GetPropertyTypeOptionsAsync(cancellationToken),
             await _imageService.GetPublicImagesAsync(id, cancellationToken),
-            await _videoService.GetPublicVideosAsync(id, cancellationToken)));
+            await _videoService.GetPublicVideosAsync(id, cancellationToken),
+            await _listingService.GetPublicOwnerForListingAsync(id, cancellationToken)));
     }
 
     [AllowAnonymous]

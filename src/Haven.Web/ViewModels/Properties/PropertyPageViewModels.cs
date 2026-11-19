@@ -75,7 +75,8 @@ public sealed record PropertyDetailsViewModel(
     bool IsFavorite,
     IReadOnlyList<PropertyTypeOptionViewModel> PropertyTypes,
     IReadOnlyList<Haven.Application.Listings.ListingImageInfo> Images,
-    IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> Videos);
+    IReadOnlyList<Haven.Application.Listings.ListingVideoInfo> Videos,
+    Haven.Application.Listings.PublicOwnerProfile? Owner = null);
 
 public sealed record OwnedListingDetailsPage(
     Haven.Application.Listings.OwnedListingDetails Listing,

@@ -1,0 +1,17 @@
+@model Haven.Web.ViewModels.AvatarViewModel
+<details class="account-menu">
+    <summary aria-label="Mở menu tài khoản">
+        <partial name="_Avatar" model="Model" />
+        <span class="account-menu__name">@Model.DisplayName</span>
+    </summary>
+    <nav class="account-menu__panel" aria-label="Tài khoản">
+        <a asp-area="" asp-controller="Account" asp-action="Profile">Hồ sơ cá nhân</a>
+        <a asp-area="" asp-controller="MyListings" asp-action="Index">Quản lý tin đăng</a>
+        @if (User.IsInRole("Admin")) { <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Khu vực quản trị</a> }
+        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" data-api-action="logout">
+            @Html.AntiForgeryToken()
+            <div class="api-form-message" data-api-message hidden></div>
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </nav>
+</details>

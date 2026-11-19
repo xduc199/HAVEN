@@ -48,6 +48,32 @@ public sealed class EfListingRepository : IListingRepository
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public Task<PublicOwnerProfile?> GetPublicOwnerForListingAsync(
+        int listingId,
+        CancellationToken cancellationToken = default) =>
+        (from listing in _dbContext.Listings.AsNoTracking()
+         join user in _dbContext.Users.AsNoTracking() on listing.OwnerId equals user.Id
+         where listing.Id == listingId && listing.Status == ListingStatus.Approved
+         select new PublicOwnerProfile(user.Id, user.DisplayName, user.AvatarPath))
+        .SingleOrDefaultAsync(cancellationToken);
+
+    public async Task<ListingSearchPage> GetApprovedForOwnerAsync(
+        string ownerId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+        var query = _dbContext.Listings.AsNoTracking()
+            .Where(listing => listing.OwnerId == ownerId && listing.Status == ListingStatus.Approved);
+        var totalCount = await query.LongCountAsync(cancellationToken);
+        var listings = await query.OrderByDescending(listing => listing.CreatedAtUtc)
+            .ThenBy(listing => listing.Id)
+            .Skip((page - 1) * pageSize).Take(pageSize)
+            .ToListAsync(cancellationToken);
+        return new ListingSearchPage(listings, totalCount);
+    }
+
     public async Task<ListingSearchPage> SearchApprovedAsync(
         ListingSearchCriteria criteria,
         CancellationToken cancellationToken = default)

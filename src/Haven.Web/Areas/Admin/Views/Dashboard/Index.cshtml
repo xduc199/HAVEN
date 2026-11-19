@@ -5,7 +5,9 @@
         ?? new Haven.Web.ViewModels.Admin.AdminAnalyticsFilterViewModel();
 }
 <section class="page-container">
-    <h1>Tổng quan quản trị</h1>
+    <header class="admin-page-heading">
+        <div><h1>Tổng quan quản trị</h1><p class="admin-muted">Theo dõi tin đăng, yêu cầu tư vấn và tài khoản trong hệ thống.</p></div>
+    </header>
     @if (ViewData["HasActivePropertyTypes"] is false)
     {
         <aside class="admin-alert admin-alert--warning" role="status">
@@ -84,5 +86,6 @@
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="PropertyTypes" asp-action="Index">Loại bất động sản</a>
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="Consultations" asp-action="Index">Yêu cầu tư vấn</a>
         <a class="haven-button-secondary" asp-area="Admin" asp-controller="PrivacyRequests" asp-action="Index">Yêu cầu quyền riêng tư</a>
+        <a class="haven-button-secondary" asp-area="Admin" asp-controller="Users" asp-action="Index">Quản lý người dùng</a>
     </nav>
 </section>

@@ -19,6 +19,7 @@ public sealed class AccountController : Controller
     private readonly ILogger<AccountController> _logger;
     private readonly ApplicationDbContext _db;
     private readonly TimeProvider _clock;
+    private readonly AvatarImageStorage _avatarStorage;
 
     public AccountController(
         UserManager<HavenUser> userManager,
@@ -26,7 +27,8 @@ public sealed class AccountController : Controller
         RoleManager<IdentityRole> roleManager,
         ILogger<AccountController> logger,
         ApplicationDbContext db,
-        TimeProvider clock)
+        TimeProvider clock,
+        AvatarImageStorage avatarStorage)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -34,6 +36,7 @@ public sealed class AccountController : Controller
         _logger = logger;
         _db = db;
         _clock = clock;
+        _avatarStorage = avatarStorage;
     }
 
     [AllowAnonymous]
@@ -213,8 +216,53 @@ public sealed class AccountController : Controller
         return View(new ProfileViewModel
         {
             DisplayName = user.DisplayName,
-            Email = user.Email ?? string.Empty
+            Email = user.Email ?? string.Empty,
+            AvatarPath = user.AvatarPath
         });
+    }
+
+    [Authorize]
+    [HttpPost("profile/avatar")]
+    [ValidateAntiForgeryToken]
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    public async Task<IActionResult> UpdateAvatar(IFormFile? avatar, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            await _signInManager.SignOutAsync();
+            return Challenge();
+        }
+        if (avatar is null)
+        {
+            TempData["ErrorMessage"] = "Chọn ảnh đại diện trước khi lưu.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        try
+        {
+            var newPath = await _avatarStorage.SaveAsync(avatar, cancellationToken);
+            var oldPath = user.AvatarPath;
+            user.AvatarPath = newPath;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                await _avatarStorage.DeleteAsync(newPath);
+                AddIdentityErrors(result);
+                TempData["ErrorMessage"] = "Không thể cập nhật ảnh đại diện. Vui lòng thử lại.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            await _avatarStorage.DeleteAsync(oldPath);
+            TempData["SuccessMessage"] = "Ảnh đại diện đã được cập nhật.";
+        }
+        catch (InvalidDataException exception)
+        {
+            _logger.LogInformation("Avatar upload was rejected: {Reason}", exception.Message);
+            TempData["ErrorMessage"] = exception.Message;
+        }
+        return RedirectToAction(nameof(Profile));
     }
 
     [Authorize]
@@ -243,7 +291,8 @@ public sealed class AccountController : Controller
             return View(new ProfileViewModel
             {
                 DisplayName = model.DisplayName,
-                Email = user.Email ?? string.Empty
+                Email = user.Email ?? string.Empty,
+                AvatarPath = user.AvatarPath
             });
         }
 

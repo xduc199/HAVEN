@@ -38,12 +38,16 @@ public sealed class MvcWorkflowTests
 
         string userId;
         string? oldStamp;
+        int failedAttemptCount;
         using (var scope = factory.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
             var target = await userManager.FindByEmailAsync("lock.target@example.com");
             Assert.NotNull(target);
             userId = target!.Id;
+            for (var attempt = 0; attempt < 3; attempt++)
+                Assert.True((await userManager.AccessFailedAsync(target)).Succeeded);
+            failedAttemptCount = target.AccessFailedCount;
             oldStamp = target.SecurityStamp;
         }
         using var lockUser = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -73,6 +77,13 @@ public sealed class MvcWorkflowTests
             ["id"] = userId, ["locked"] = "false"
         }));
         Assert.Equal(HttpStatusCode.Redirect, unlock.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var target = await userManager.FindByIdAsync(userId);
+            Assert.NotNull(target);
+            Assert.Equal(failedAttemptCount, target!.AccessFailedCount);
+        }
         using var restoredLogin = await owner.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
         {
             ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!"
@@ -80,6 +91,234 @@ public sealed class MvcWorkflowTests
         Assert.Equal(HttpStatusCode.Redirect, restoredLogin.StatusCode);
         Assert.Equal("/", restoredLogin.Headers.Location?.OriginalString);
     }
+
+    [Fact]
+    public async Task AdminUserManagementKeepsTemporaryIdentityLockoutSeparate()
+    {
+        var clock = new MutableTimeProvider(DateTimeOffset.UtcNow);
+        using var factory = CreateFactory(clock, provisionAdmin: true);
+        using var owner = AntiforgeryTestClient.Create(factory);
+        using var loginAttempts = AntiforgeryTestClient.Create(factory);
+        using var admin = AntiforgeryTestClient.Create(factory);
+
+        using var registration = await owner.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["DisplayName"] = "Temporary Lock Target",
+            ["Email"] = "temporary.lock.target@example.com",
+            ["Password"] = "StrongPassword123!",
+            ["ConfirmPassword"] = "StrongPassword123!",
+            ["AcceptedTerms"] = "true",
+            ["ConsentedPersonalDataProcessing"] = "true",
+            ["TermsVersion"] = "1.0.0",
+            ["PrivacyVersion"] = "1.0.0"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
+
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            using var failedLogin = await loginAttempts.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["Email"] = "temporary.lock.target@example.com",
+                ["Password"] = "WrongPassword123!"
+            }));
+            Assert.Equal(HttpStatusCode.OK, failedLogin.StatusCode);
+        }
+
+        using var adminLogin = await admin.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "lock.admin@example.com",
+            ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, adminLogin.StatusCode);
+
+        string targetId;
+        DateTimeOffset? temporaryLockoutEnd;
+        string? securityStamp;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var target = await userManager.FindByEmailAsync("temporary.lock.target@example.com");
+            Assert.NotNull(target);
+            targetId = target!.Id;
+            temporaryLockoutEnd = target.LockoutEnd;
+            securityStamp = target.SecurityStamp;
+            Assert.True(temporaryLockoutEnd > clock.GetUtcNow());
+        }
+
+        using var unauthorizedLock = await owner.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = targetId,
+            ["locked"] = "true"
+        }));
+        using var unauthorizedUnlock = await owner.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = targetId,
+            ["locked"] = "false"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, unauthorizedLock.StatusCode);
+        Assert.Equal("/account/access-denied", unauthorizedLock.Headers.Location?.AbsolutePath);
+        Assert.Equal(HttpStatusCode.Redirect, unauthorizedUnlock.StatusCode);
+        Assert.Equal("/account/access-denied", unauthorizedUnlock.Headers.Location?.AbsolutePath);
+
+        using var missingTarget = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = "missing-user-id",
+            ["locked"] = "true"
+        }));
+        Assert.Equal(HttpStatusCode.NotFound, missingTarget.StatusCode);
+
+        using var userPage = await admin.GetAsync("/Admin/Users?search=temporary.lock.target");
+        Assert.Equal(HttpStatusCode.OK, userPage.StatusCode);
+        var markup = await userPage.Content.ReadAsStringAsync();
+        Assert.Contains("Khóa tạm thời do đăng nhập sai", markup);
+        Assert.Contains("Chờ hết hạn", markup);
+
+        using var forgedUnlock = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = targetId,
+            ["locked"] = "false",
+            ["search"] = "temporary.lock.target",
+            ["page"] = "1"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, forgedUnlock.StatusCode);
+        Assert.Contains("search=temporary.lock.target", forgedUnlock.Headers.Location?.OriginalString ?? string.Empty);
+
+        using var attemptToReplaceTemporaryLock = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = targetId,
+            ["locked"] = "true",
+            ["search"] = "temporary.lock.target",
+            ["page"] = "1"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, attemptToReplaceTemporaryLock.StatusCode);
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var target = await userManager.FindByIdAsync(targetId);
+            Assert.NotNull(target);
+            Assert.Equal(temporaryLockoutEnd, target!.LockoutEnd);
+            Assert.Equal(securityStamp, target.SecurityStamp);
+            Assert.True(await userManager.IsLockedOutAsync(target));
+        }
+
+        using var lockedSignIn = await owner.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "temporary.lock.target@example.com",
+            ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.OK, lockedSignIn.StatusCode);
+    }
+
+    [Fact]
+    public async Task AdminUserManagementRendersAndBindsTheLockoutFormValues()
+    {
+        using var factory = CreateFactory(provisionAdmin: true);
+        using var owner = AntiforgeryTestClient.Create(factory);
+        using var admin = AntiforgeryTestClient.Create(factory);
+
+        using var registration = await owner.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["DisplayName"] = "Rendered Lock Target",
+            ["Email"] = "rendered.lock.target@example.com",
+            ["Password"] = "StrongPassword123!",
+            ["ConfirmPassword"] = "StrongPassword123!",
+            ["AcceptedTerms"] = "true",
+            ["ConsentedPersonalDataProcessing"] = "true",
+            ["TermsVersion"] = "1.0.0",
+            ["PrivacyVersion"] = "1.0.0"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
+
+        using var adminLogin = await admin.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Email"] = "lock.admin@example.com",
+            ["Password"] = "StrongPassword123!"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, adminLogin.StatusCode);
+
+        string userId;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            userId = (await userManager.FindByEmailAsync("rendered.lock.target@example.com"))!.Id;
+        }
+
+        using var userPage = await admin.GetAsync("/Admin/Users?search=rendered.lock.target");
+        Assert.Equal(HttpStatusCode.OK, userPage.StatusCode);
+        var markup = await userPage.Content.ReadAsStringAsync();
+        Assert.Contains("action=\"/Admin/Users/SetLockout\"", markup);
+        Assert.Contains($"name=\"id\" value=\"{userId}\"", markup);
+        const string lockedFieldPrefix = "name=\"locked\" value=\"";
+        var initialLockStart = markup.IndexOf(lockedFieldPrefix, StringComparison.Ordinal);
+        Assert.True(initialLockStart >= 0);
+        initialLockStart += lockedFieldPrefix.Length;
+        var initialLockEnd = markup.IndexOf('"', initialLockStart);
+        var initialLockValue = markup[initialLockStart..initialLockEnd];
+        var lockInputStart = markup.LastIndexOf("<input", initialLockStart, StringComparison.Ordinal);
+        var lockInputEnd = markup.IndexOf('>', initialLockStart);
+        var lockInputMarkup = markup[lockInputStart..(lockInputEnd + 1)];
+        Assert.True(bool.TryParse(initialLockValue, out var shouldLock) && shouldLock, $"Rendered lock field: '{lockInputMarkup}'");
+        Assert.Contains("name=\"__RequestVerificationToken\"", markup);
+
+        using var missingId = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["locked"] = "true"
+        }));
+        using var missingLocked = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId
+        }));
+        using var malformedLocked = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId,
+            ["locked"] = "not-a-boolean"
+        }));
+        Assert.All(new[] { missingId, missingLocked, malformedLocked }, response => Assert.Equal(HttpStatusCode.Redirect, response.StatusCode));
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            Assert.Null((await userManager.FindByIdAsync(userId))!.LockoutEnd);
+        }
+
+        using var lockUser = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId,
+            ["locked"] = "True"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, lockUser.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var user = await userManager.FindByIdAsync(userId);
+            Assert.NotNull(user);
+            Assert.Equal(DateTimeOffset.MaxValue, user!.LockoutEnd);
+        }
+
+        using var lockedUserPage = await admin.GetAsync("/Admin/Users?search=rendered.lock.target");
+        var lockedMarkup = await lockedUserPage.Content.ReadAsStringAsync();
+        var unlockStart = lockedMarkup.IndexOf(lockedFieldPrefix, StringComparison.Ordinal);
+        Assert.True(unlockStart >= 0);
+        unlockStart += lockedFieldPrefix.Length;
+        var unlockEnd = lockedMarkup.IndexOf('"', unlockStart);
+        var unlockValue = lockedMarkup[unlockStart..unlockEnd];
+        Assert.True(bool.TryParse(unlockValue, out var shouldUnlock) && !shouldUnlock);
+
+        using var unlockUser = await admin.PostAsync("/Admin/Users/SetLockout", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["id"] = userId,
+            ["locked"] = "False"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, unlockUser.StatusCode);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<HavenUser>>();
+            var user = await userManager.FindByIdAsync(userId);
+            Assert.NotNull(user);
+            Assert.Null(user!.LockoutEnd);
+        }
+    }
+
     [Fact]
     public async Task LegacyAndInformationRoutesResolve()
     {

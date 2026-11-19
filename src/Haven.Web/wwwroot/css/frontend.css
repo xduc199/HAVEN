@@ -1,22 +1,3 @@
-:root {
-    color-scheme: light;
-    --haven-primary: #183b35;
-    --haven-primary-strong: #244d43;
-    --haven-secondary: #efede7;
-    --haven-accent: #b58a5a;
-    --haven-background: #f7f6f2;
-    --haven-surface: #ffffff;
-    --haven-text: #222824;
-    --haven-muted: #777c75;
-    --haven-ui-border: #e4e1d9;
-    --haven-success: #24744d;
-    --haven-warning: #946200;
-    --haven-danger: #ad3434;
-    --haven-radius: 0.45rem;
-    --haven-shadow: 0 0.5rem 1.5rem rgb(34 40 36 / 5%);
-    --haven-content-width: 75rem;
-}
-
 html {
     scroll-behavior: smooth;
 }
@@ -28,13 +9,10 @@ body.app-shell {
     margin: 0;
     background: var(--haven-background);
     color: var(--haven-text);
-    font-family: Inter, "Segoe UI", Roboto, system-ui, sans-serif;
-    line-height: 1.55;
+    font-family: var(--haven-font-body);
+    line-height: 1.65;
 }
 
-body.app-shell a {
-    color: var(--haven-primary);
-}
 
 a:focus-visible,
 button:focus-visible,
@@ -70,7 +48,7 @@ textarea:focus-visible {
 }
 
 .app-header__inner {
-    width: min(var(--haven-content-width), calc(100% - 2rem));
+    width: min(90rem, calc(100% - clamp(2rem, 6vw, 6rem)));
     min-height: 5.25rem;
     display: flex;
     align-items: center;
@@ -121,6 +99,7 @@ textarea:focus-visible {
 }
 
 .app-nav {
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,6 +152,9 @@ body.app-shell .app-header__actions a.app-header__cta {
     margin: 0;
 }
 
+.app-mobile-menu { display: none; }
+.app-mobile-menu:not([open]) > nav { display: none; }
+
 .app-logout {
     padding: 0.55rem 0.7rem;
     border: 1px solid var(--haven-ui-border);
@@ -183,6 +165,7 @@ body.app-shell .app-header__actions a.app-header__cta {
 
 .app-main {
     width: 100%;
+    min-width: 0;
     flex: 1 0 auto;
 }
 
@@ -277,7 +260,7 @@ body.app-shell .app-header__actions a.app-header__cta {
 }
 
 .page-container {
-    width: min(var(--haven-content-width), calc(100% - 2rem));
+    width: min(var(--haven-content-width), calc(100% - clamp(2rem, 6vw, 6rem)));
     margin: 0 auto;
     padding: 2rem 0;
 }
@@ -293,7 +276,7 @@ body.app-shell .app-header__actions a.app-header__cta {
 .page-heading h1,
 .page-heading h2 {
     margin: 0;
-    color: var(--haven-primary);
+    color: var(--haven-charcoal);
 }
 
 .page-heading p {
@@ -310,9 +293,9 @@ body.app-shell .app-header__actions a.app-header__cta {
     justify-content: center;
     padding: 0.55rem 0.9rem;
     border: 1px solid var(--haven-primary);
-    border-radius: 0.45rem;
+    border-radius: var(--haven-radius-sm);
     background: var(--haven-primary);
-    color: #fff;
+    color: var(--haven-charcoal);
     font: inherit;
     font-weight: 650;
     text-decoration: none;
@@ -362,6 +345,14 @@ body.app-shell .app-header__actions a.app-header__cta {
     border-radius: var(--haven-radius);
     background: var(--haven-surface);
     box-shadow: var(--haven-shadow);
+}
+
+.haven-form > *,
+.content-card,
+.property-card,
+.page-heading,
+.page-heading > * {
+    min-width: 0;
 }
 
 .listing-form-section {
@@ -480,6 +471,7 @@ body.app-shell .app-header__actions a.app-header__cta {
 }
 
 .property-card__image { display: block; width: calc(100% + 2.2rem); max-width: none; height: auto; aspect-ratio: 16 / 10; margin: -1.1rem -1.1rem 1rem; border-radius: var(--haven-radius) var(--haven-radius) 0 0; object-fit: cover; background: var(--haven-secondary); }
+.property-card__image--empty { width: calc(100% + 2.2rem); min-height: 12rem; margin: -1.1rem -1.1rem 1rem; aspect-ratio: 16 / 10; }
 .property-card__image--empty { display: grid; place-items: center; color: var(--haven-muted); font-size: .9rem; }
 
 .property-card__meta,
@@ -505,6 +497,7 @@ body.app-shell .app-header__actions a.app-header__cta {
 
 .data-table {
     width: 100%;
+    min-width: 46rem;
     border-collapse: collapse;
 }
 
@@ -553,11 +546,11 @@ body.app-shell .app-header__actions a.app-header__cta {
     white-space: nowrap;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .app-header__inner {
         flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.5rem 1.25rem;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
         padding: 0.8rem 0;
     }
 
@@ -569,17 +562,67 @@ body.app-shell .app-header__actions a.app-header__cta {
         margin-left: auto;
     }
 
-    .app-nav {
-        order: 3;
-        width: 100%;
-        justify-content: space-around;
-        gap: 0.5rem;
-        border-top: 1px solid var(--haven-ui-border);
-    }
-
     .app-header__actions {
+        order: 3;
         margin-left: auto;
     }
+
+    .app-header__inner > .app-nav,
+    .app-header__actions > .app-nav__link,
+    .app-header__actions > .app-header__profile {
+        display: none;
+    }
+
+    .app-mobile-menu {
+        position: relative;
+        display: block;
+        order: 2;
+        margin-left: auto;
+    }
+
+    .app-mobile-menu summary {
+        display: flex;
+        min-height: 2.75rem;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 0.65rem;
+        border: 1px solid var(--haven-ui-border);
+        border-radius: var(--haven-radius-sm);
+        color: var(--haven-text);
+        font-weight: 650;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .app-mobile-menu summary::-webkit-details-marker { display: none; }
+
+    .app-mobile-menu nav {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        z-index: var(--haven-z-dropdown);
+        width: min(22rem, calc(100vw - 2rem));
+        padding: 0.4rem;
+        border: 1px solid var(--haven-ui-border);
+        border-radius: var(--haven-radius);
+        background: var(--haven-surface);
+        box-shadow: var(--haven-shadow);
+    }
+
+    .app-mobile-menu[open] nav { display: grid; }
+
+    .app-mobile-menu nav a {
+        min-height: 2.75rem;
+        display: flex;
+        align-items: center;
+        padding: 0.6rem 0.75rem;
+        border-radius: var(--haven-radius-sm);
+        color: var(--haven-text);
+        text-decoration: none;
+    }
+
+    .app-mobile-menu nav a:hover,
+    .app-mobile-menu nav a:focus-visible { background: var(--haven-secondary); }
 }
 
 @media (max-width: 520px) {
@@ -599,25 +642,15 @@ body.app-shell .app-header__actions a.app-header__cta {
         font-size: 0.8rem;
     }
 
-    .app-nav {
-        justify-content: space-between;
-        overflow-x: auto;
-    }
-
-    .app-nav__link {
-        flex: 0 0 auto;
-        font-size: 0.84rem;
-    }
+    .app-header__inner { width: calc(100% - 1.25rem); }
 
     .listing-form-grid {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .app-header__actions {
-        order: 4;
-        width: 100%;
-        justify-content: flex-end;
-    }
+    .app-header__actions { order: 3; gap: 0.45rem; }
+
+    .app-header__actions .app-header__cta { min-height: 2.75rem; }
 
     .app-footer__inner {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -628,6 +661,12 @@ body.app-shell .app-header__actions a.app-header__cta {
     .app-footer__about,
     .app-footer__bottom { grid-column: 1 / -1; }
     .app-footer__bottom { flex-direction: column; gap: .35rem; }
+
+    .page-container { padding-block: 1.25rem; }
+    .page-heading { flex-direction: column; align-items: stretch; }
+    .haven-form { padding: 1rem; }
+    .property-card__actions > *,
+    .property-card__actions .haven-button-secondary { max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -671,3 +710,102 @@ body.app-shell .app-header__actions a.app-header__cta {
 .policy-consent { margin: 1rem 0; }
 .app-footer__policies { display: grid; gap: .4rem; }
 @media (max-width: 720px) { .policy-grid { grid-template-columns: 1fr; } .policy-toc { position: static; border-right: 0; border-bottom: 1px solid #e5e5e5; padding: 0 0 1rem; } }
+
+/* HAVEN motion and component system; palette tokens live in haven-tokens.css. */
+body.app-shell { margin-bottom: 0; background: #fff; color: var(--haven-charcoal); }
+body.app-shell a { color: inherit; }
+body.app-shell a:hover { color: var(--haven-charcoal); }
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom-color: transparent;
+    background: rgb(255 255 255 / 94%);
+    backdrop-filter: blur(14px);
+    transition: box-shadow var(--haven-motion-normal) ease, border-color var(--haven-motion-normal) ease, background-color var(--haven-motion-normal) ease;
+}
+.app-header.is-scrolled { border-bottom-color: var(--haven-border); box-shadow: 0 8px 24px rgb(37 37 37 / 6%); background: rgb(255 255 255 / 97%); }
+.app-brand__mark { border-radius: .25rem; background: var(--haven-gold); color: var(--haven-charcoal); }
+.app-brand__name { color: var(--haven-charcoal); font-family: "Cormorant Garamond", Georgia, serif; letter-spacing: .12em; }
+.app-brand__tagline { color: var(--haven-muted); }
+.app-nav__link { position: relative; color: var(--haven-charcoal); text-decoration: none; }
+.app-nav__link::after { position: absolute; right: 0; bottom: -.28rem; left: 0; height: 1px; background: var(--haven-gold); content: ""; transform: scaleX(0); transform-origin: left; transition: transform var(--haven-motion-normal) var(--haven-ease); }
+.app-nav__link:hover::after, .app-nav__link:focus-visible::after { transform: scaleX(1); }
+.app-header__cta {
+    border-color: var(--haven-gold);
+    border-radius: .25rem;
+    background: var(--haven-gold);
+    color: var(--haven-charcoal);
+    transition: transform var(--haven-motion-fast) var(--haven-ease), background-color var(--haven-motion-fast) ease, border-color var(--haven-motion-fast) ease, box-shadow var(--haven-motion-fast) ease;
+}
+.app-header__cta:hover { border-color: var(--haven-gold-hover); background: var(--haven-gold-hover); color: var(--haven-charcoal); box-shadow: 0 5px 14px rgb(192 143 26 / 18%); transform: translateY(-1px); }
+.haven-button-secondary { border-color: var(--haven-border); background: #fff; color: var(--haven-charcoal); transition: border-color var(--haven-motion-fast) ease, background-color var(--haven-motion-fast) ease, transform var(--haven-motion-fast) var(--haven-ease); }
+.haven-button-secondary:hover:not(:disabled) { border-color: var(--haven-gold); background: var(--haven-cream); color: var(--haven-charcoal); transform: translateY(-1px); }
+.app-logout { color: var(--haven-charcoal); }
+.app-logout:hover { color: var(--haven-gold-hover); }
+.app-footer { background: var(--haven-charcoal); color: #fff; }
+.app-footer__brand, .app-footer__group strong { color: #fff; }
+.app-footer__about p, .app-footer__group a, .app-footer__about > span, .app-footer__bottom { color: rgb(255 255 255 / 72%); }
+.app-footer__group a:hover { color: var(--haven-pale-gold); }
+.app-footer__bottom { border-top-color: rgb(255 255 255 / 18%); }
+.haven-form, .content-card, .property-card { border-color: var(--haven-border); box-shadow: 0 5px 18px rgb(37 37 37 / 4%); }
+.account-switch { margin: 1rem 0 0; color: var(--haven-gray); font-size: .9rem; }
+.account-switch a { color: var(--haven-gold-hover); font-weight: 650; text-underline-offset: .18em; }
+.property-card { transition: border-color var(--haven-motion-fast) ease; }
+.property-card:hover { border-color: rgb(212 167 44 / 52%); }
+.property-card__image { background: var(--haven-soft-gray); }
+.haven-field input, .haven-field select, .haven-field textarea, .admin-form input, .admin-form select, .admin-form textarea {
+    border-color: var(--haven-border);
+    border-radius: .35rem;
+    transition: border-color var(--haven-motion-fast) ease, box-shadow var(--haven-motion-fast) ease;
+}
+.haven-field input:focus, .haven-field select:focus, .haven-field textarea:focus { border-color: var(--haven-gold); box-shadow: 0 0 0 3px rgb(212 167 44 / 18%); outline: 0; }
+.app-mobile-menu summary { color: var(--haven-charcoal); }
+.app-mobile-menu nav { border-color: var(--haven-border); background: #fff; box-shadow: 0 12px 28px rgb(37 37 37 / 12%); }
+.app-mobile-menu nav a { color: var(--haven-charcoal); }
+.app-mobile-menu nav a:hover { background: var(--haven-cream); }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto !important; }
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+.haven-avatar { position: relative; display: inline-grid; flex: 0 0 auto; overflow: hidden; place-items: center; border: 1px solid rgb(37 37 37 / 12%); border-radius: 50%; background: var(--haven-cream); color: var(--haven-charcoal); font-weight: 650; }
+.haven-avatar--small { width: 2.25rem; height: 2.25rem; font-size: .9rem; }
+.haven-avatar--medium { width: 3rem; height: 3rem; font-size: 1.1rem; }
+.haven-avatar--large { width: 6.5rem; height: 6.5rem; font-size: 2rem; }
+.haven-avatar__fallback { grid-area: 1 / 1; }
+.haven-avatar__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.account-menu { position: relative; }
+.account-menu > summary { display: flex; align-items: center; gap: .5rem; list-style: none; cursor: pointer; }
+.account-menu > summary::-webkit-details-marker { display: none; }
+.account-menu > summary:focus-visible { outline: 2px solid var(--haven-gold-hover); outline-offset: 3px; }
+.account-menu__panel { position: absolute; top: calc(100% + .65rem); right: 0; z-index: 30; display: grid; min-width: 13rem; padding: .4rem; border: 1px solid var(--haven-border); background: var(--haven-white); box-shadow: var(--haven-shadow-md); }
+.account-menu__panel a, .account-menu__panel button { display: block; width: 100%; padding: .65rem .75rem; border: 0; background: transparent; color: var(--haven-charcoal); text-align: left; text-decoration: none; font: inherit; }
+.account-menu__panel a:hover, .account-menu__panel button:hover { background: var(--haven-cream); }
+.account-menu__panel form { margin: 0; border-top: 1px solid var(--haven-border); }
+.account-menu__name { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-avatar-panel, .public-profile-header { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; border: 1px solid var(--haven-border); background: var(--haven-white); }
+.account-avatar-panel form { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; }
+.account-avatar-panel form > label { flex-basis: 100%; font-weight: 600; }
+.account-avatar-panel input[type=file] { max-width: 100%; }
+.account-avatar-preview { width: 5rem; height: 5rem; border-radius: 50%; object-fit: cover; background: var(--haven-cream); }
+.account-avatar-actions { display: flex; gap: .5rem; }
+.public-profile-page > section > h2 { margin: 1.5rem 0 1rem; }
+.public-profile-eyebrow { margin: 0; color: var(--haven-gray); font-size: .8rem; }
+.public-profile-header h1 { margin: .2rem 0; }
+.public-profile-header p:last-child { margin: 0; color: var(--haven-gray); }
+.public-profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem; }
+.public-profile-listing { min-width: 0; border: 1px solid var(--haven-border); background: var(--haven-white); }
+.public-profile-listing__link { display: grid; min-height: 10rem; gap: .55rem; padding: 1.1rem; color: inherit; text-decoration: none; }
+.public-profile-listing__link:hover { background: var(--haven-cream); }
+.public-profile-listing h3 { margin: 0; font: 500 1.35rem/1.2 var(--haven-font-display); }
+.public-profile-listing__type, .public-profile-listing__link > span:last-child { color: var(--haven-gray); font-size: .85rem; }
+.public-profile-empty { padding: 1.25rem; border: 1px dashed var(--haven-border); color: var(--haven-gray); }
+.public-profile-pagination { display: flex; justify-content: center; gap: 1rem; padding-top: 1.25rem; }
+.listing-owner-link { display: inline-flex; align-items: center; gap: .7rem; margin-block: .75rem; color: inherit; text-decoration: none; }
+.listing-owner-link > span { display: grid; gap: .12rem; }
+.listing-owner-link small, .listing-owner-link > span > span { color: var(--haven-gray); font-size: .8rem; }
+.listing-owner-link:hover strong { color: var(--haven-gold-hover); }
+@media (max-width: 800px) { .account-menu__name { display: none; } }
+@media (max-width: 520px) { .account-avatar-panel, .public-profile-header { align-items: flex-start; padding: 1rem; } .haven-avatar--large { width: 5rem; height: 5rem; } .account-avatar-panel form { min-width: 0; } }

@@ -15,7 +15,7 @@
             <div class="admin-chart" role="img" aria-label="Biểu đồ tin đăng theo ngày">
                 @foreach (var item in Model.ListingsByDay)
                 {
-                    var height = Math.Max(3, (int)(item.Count * 100 / maxListings));
+                    var height = Haven.Application.Dashboard.ChartBarScale.GetHeightPercent(item.Count, maxListings);
                     <span class="admin-chart__bar" style="--bar-height:@height%" title="@item.Date: @item.Count">
                         <span class="admin-chart__value">@item.Count</span>
                         <span class="admin-chart__label">@item.Date.ToString("dd/MM")</span>
@@ -35,7 +35,7 @@
             <div class="admin-chart" role="img" aria-label="Biểu đồ yêu cầu tư vấn theo ngày">
                 @foreach (var item in Model.ConsultationsByDay)
                 {
-                    var height = Math.Max(3, (int)(item.Count * 100 / maxConsultations));
+                    var height = Haven.Application.Dashboard.ChartBarScale.GetHeightPercent(item.Count, maxConsultations);
                     <span class="admin-chart__bar admin-chart__bar--gold" style="--bar-height:@height%" title="@item.Date: @item.Count">
                         <span class="admin-chart__value">@item.Count</span>
                         <span class="admin-chart__label">@item.Date.ToString("dd/MM")</span>

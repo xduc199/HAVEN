@@ -130,6 +130,27 @@ public sealed class ListingApplicationService
         return await ToPublicDetailsAsync(listing, cancellationToken);
     }
 
+    public async Task<(IReadOnlyList<PublicListingDetails> Listings, long TotalCount)> GetApprovedForOwnerAsync(
+        string ownerId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+        if (page < 1 || pageSize is < 1 or > 100) throw new ArgumentOutOfRangeException(nameof(page));
+        var result = await _repository.GetApprovedForOwnerAsync(ownerId, page, pageSize, cancellationToken);
+        var details = new List<PublicListingDetails>(result.Listings.Count);
+        foreach (var listing in result.Listings)
+            details.Add(await ToPublicDetailsAsync(listing, cancellationToken));
+        return (details, result.TotalCount);
+    }
+
+    public Task<PublicOwnerProfile?> GetPublicOwnerForListingAsync(int listingId, CancellationToken cancellationToken = default)
+    {
+        if (listingId <= 0) throw new ArgumentOutOfRangeException(nameof(listingId));
+        return _repository.GetPublicOwnerForListingAsync(listingId, cancellationToken);
+    }
+
     public async Task<PublicListingSearchResults> SearchPublicAsync(
         ListingSearchCriteria criteria,
         CancellationToken cancellationToken = default)

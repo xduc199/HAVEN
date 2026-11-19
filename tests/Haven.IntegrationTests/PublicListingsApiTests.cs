@@ -138,6 +138,18 @@ public sealed class PublicListingsApiTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult<string?>("Public Owner");
 
+        public Task<PublicOwnerProfile?> GetPublicOwnerForListingAsync(
+            int listingId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<PublicOwnerProfile?>(new("private-owner", "Public Owner", null));
+
+        public Task<ListingSearchPage> GetApprovedForOwnerAsync(
+            string ownerId,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new ListingSearchPage([], 0));
+
         public Task<ListingSearchPage> SearchApprovedAsync(
             ListingSearchCriteria criteria,
             CancellationToken cancellationToken = default) =>

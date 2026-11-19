@@ -1,18 +1,73 @@
 @model Haven.Web.ViewModels.Account.LoginViewModel
 @{
     ViewData["Title"] = "Đăng nhập";
+    ViewData["PageShell"] = "auth-shell auth-shell--login";
 }
-<section class="page-container">
-    <h1>Đăng nhập</h1>
-    <form method="post" class="haven-form" data-api-action="login">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="All" role="alert"></div>
-        <div class="api-form-message" data-api-message hidden></div>
-        <input asp-for="ReturnUrl" type="hidden" />
-        <div class="haven-field"><label asp-for="Email">Email</label><input asp-for="Email" autocomplete="email" /><span asp-validation-for="Email"></span></div>
-        <div class="haven-field"><label asp-for="Password">Mật khẩu</label><input asp-for="Password" autocomplete="current-password" /><span asp-validation-for="Password"></span></div>
-        <div class="haven-field"><label><input asp-for="RememberMe" /> Ghi nhớ đăng nhập</label></div>
-        <button class="haven-button" type="submit">Đăng nhập</button>
-    </form>
+
+<section class="auth-experience auth-experience--login" aria-labelledby="auth-title">
+    <aside class="auth-visual" aria-label="HAVEN — không gian sống, lựa chọn xứng tầm">
+        <img class="auth-visual__image" src="~/image/haven-hero.jpg" asp-append-version="true"
+             alt="Kiến trúc khu căn hộ ven sông lúc hoàng hôn" fetchpriority="high" decoding="async" />
+        <div class="auth-visual__shade" aria-hidden="true"></div>
+        <div class="auth-visual__content">
+            <a class="auth-brand" asp-controller="Home" asp-action="Index" aria-label="HAVEN — về trang chủ">
+                <span class="auth-brand__mark" aria-hidden="true">H</span>
+                <span class="auth-brand__word">HAVEN</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="auth-panel">
+        <div class="auth-panel__top">
+            <a class="auth-back-link" asp-controller="Home" asp-action="Index"><span aria-hidden="true">←</span> Trang chủ</a>
+        </div>
+
+        <div class="auth-content">
+            <p class="auth-eyebrow auth-eyebrow--gold">WELCOME BACK</p>
+            <h1 id="auth-title">Chào mừng bạn trở về.</h1>
+            <p class="auth-intro">Không gian sống lý tưởng bắt đầu từ những lựa chọn đúng.</p>
+
+            <form method="post" class="auth-form" data-api-action="login">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="auth-validation-summary" role="alert"></div>
+                <div class="api-form-message auth-api-message" data-api-message hidden></div>
+                <input asp-for="ReturnUrl" type="hidden" />
+
+                <div class="auth-field">
+                    <label asp-for="Email">Địa chỉ email</label>
+                    <input asp-for="Email" type="email" autocomplete="email" inputmode="email" placeholder="ban@email.com" />
+                    <span asp-validation-for="Email" class="auth-field__error"></span>
+                </div>
+
+                <div class="auth-field">
+                    <div class="auth-field__label-row">
+                        <label asp-for="Password">Mật khẩu</label>
+                    </div>
+                    <div class="auth-password">
+                        <input asp-for="Password" autocomplete="current-password" placeholder="Nhập mật khẩu" />
+                        <button class="auth-password__toggle" type="button" data-password-toggle aria-controls="Password" aria-pressed="false">Hiện</button>
+                    </div>
+                    <span asp-validation-for="Password" class="auth-field__error"></span>
+                </div>
+
+                <label class="auth-remember" asp-for="RememberMe">
+                    <input asp-for="RememberMe" />
+                    <span>Ghi nhớ đăng nhập</span>
+                </label>
+
+                <button class="auth-submit" type="submit">
+                    <span data-submit-label>Đăng nhập</span>
+                    <span class="auth-submit__loading" aria-live="polite">Đang đăng nhập…</span>
+                </button>
+            </form>
+
+            <p class="auth-switch">Chưa có tài khoản? <a asp-controller="Account" asp-action="Register">Bắt đầu hành trình</a></p>
+            <p class="auth-legal">Tiếp tục đồng nghĩa với việc bạn sử dụng HAVEN theo <a asp-controller="Policies" asp-action="Privacy">Chính sách quyền riêng tư</a>.</p>
+        </div>
+
+        <div class="auth-panel__footer"><span>© @DateTime.Now.Year HAVEN</span></div>
+    </div>
 </section>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+
+@section Styles { <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" /> }
+@section Scripts { <partial name="_ValidationScriptsPartial" /><script src="~/js/auth.js" asp-append-version="true"></script> }
