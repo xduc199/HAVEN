@@ -1,12 +1,16 @@
+@{
+    var pageTitle = ViewData["Title"] as string;
+    var browserTitle = string.IsNullOrWhiteSpace(pageTitle) ? "HAVEN" : $"{pageTitle.Trim()} | HAVEN";
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#D4A72C" />
-    <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN" : "HAVEN")</title>
+    <title>@browserTitle</title>
     <meta name="description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
-    <meta property="og:title" content="@(ViewData["Title"] is string pageTitle ? $"{pageTitle} | HAVEN" : "HAVEN")" />
+    <meta property="og:title" content="@browserTitle" />
     <meta property="og:description" content="@(ViewData["MetaDescription"] as string ?? "Khám phá, đăng tin và tìm kiếm bất động sản phù hợp trên HAVEN.")" />
     <link rel="icon" type="image/png" href="~/image/logo3.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -20,14 +24,7 @@
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <header class="app-header">
         <div class="app-header__inner">
-            <a class="app-brand" asp-controller="Home" asp-action="Index"
-               aria-label="HAVEN - Trang chủ">
-                <span class="app-brand__mark" aria-hidden="true">H</span>
-                <span class="app-brand__text">
-                    <span class="app-brand__name">HAVEN</span>
-                    <span class="app-brand__tagline">Không gian sống, lựa chọn xứng tầm</span>
-                </span>
-            </a>
+            <partial name="_BrandLogo" model='@("wordmark")' />
 
             <nav class="app-nav" aria-label="Điều hướng chính">
                 <a class="app-nav__link" asp-controller="Properties" asp-action="Index">Khám phá</a>
@@ -95,7 +92,7 @@
     <footer class="app-footer">
         <div class="app-footer__inner">
             <div class="app-footer__about">
-                <a class="app-footer__brand" asp-controller="Home" asp-action="Index">HAVEN</a>
+                <partial name="_BrandLogo" model='@("emblem")' />
                 <span>Khám phá và tìm kiếm bất động sản theo cách của bạn.</span>
             </div>
             <nav aria-label="Khám phá bất động sản" class="app-footer__group">

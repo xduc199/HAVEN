@@ -1,6 +1,6 @@
 @model Haven.Web.ViewModels.Account.RegisterViewModel
 @{
-    ViewData["Title"] = "Đăng ký";
+    ViewData["Title"] = "Đăng ký tài khoản";
     ViewData["PageShell"] = "auth-shell auth-shell--register";
 }
 
@@ -10,10 +10,7 @@
              alt="Kiến trúc khu căn hộ ven sông lúc hoàng hôn" fetchpriority="low" decoding="async" />
         <div class="auth-visual__shade" aria-hidden="true"></div>
         <div class="auth-visual__content">
-            <a class="auth-brand" asp-controller="Home" asp-action="Index" aria-label="HAVEN — về trang chủ">
-                <span class="auth-brand__mark" aria-hidden="true">H</span>
-                <span class="auth-brand__word">HAVEN</span>
-            </a>
+            <partial name="_BrandLogo" model='@("emblem")' />
         </div>
     </aside>
 
@@ -24,7 +21,7 @@
 
         <div class="auth-content auth-content--register">
             <p class="auth-eyebrow auth-eyebrow--gold">YOUR JOURNEY BEGINS</p>
-            <h1 id="auth-title">Mỗi hành trình đều bắt đầu từ một nơi.</h1>
+            <h1 id="auth-title">Đăng ký tài khoản HAVEN</h1>
             <p class="auth-intro">Tạo tài khoản HAVEN để khám phá và lưu giữ những không gian phù hợp với bạn.</p>
 
             <form method="post" class="auth-form auth-form--register" data-api-action="register">

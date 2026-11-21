@@ -54,7 +54,7 @@ public sealed class ListingImagesMvcTests
             using var registration = await otherUser.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["DisplayName"] = "Other User", ["Email"] = "images.other@example.com",
-                ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
             Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
             using var forbiddenUpload = await UploadAsync(otherUser, listingId, "intrusion.jpg", Jpeg);
@@ -255,7 +255,7 @@ public sealed class ListingImagesMvcTests
         using var registration = await client.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
         {
             ["DisplayName"] = "Listing Owner", ["Email"] = email,
-            ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+            ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
         }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
         using (var scope = factory.Services.CreateScope())

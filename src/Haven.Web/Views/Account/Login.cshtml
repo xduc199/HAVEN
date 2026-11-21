@@ -10,10 +10,7 @@
              alt="Kiến trúc khu căn hộ ven sông lúc hoàng hôn" fetchpriority="high" decoding="async" />
         <div class="auth-visual__shade" aria-hidden="true"></div>
         <div class="auth-visual__content">
-            <a class="auth-brand" asp-controller="Home" asp-action="Index" aria-label="HAVEN — về trang chủ">
-                <span class="auth-brand__mark" aria-hidden="true">H</span>
-                <span class="auth-brand__word">HAVEN</span>
-            </a>
+            <partial name="_BrandLogo" model='@("emblem")' />
         </div>
     </aside>
 
@@ -24,7 +21,7 @@
 
         <div class="auth-content">
             <p class="auth-eyebrow auth-eyebrow--gold">WELCOME BACK</p>
-            <h1 id="auth-title">Chào mừng bạn trở về.</h1>
+            <h1 id="auth-title">Đăng nhập</h1>
             <p class="auth-intro">Không gian sống lý tưởng bắt đầu từ những lựa chọn đúng.</p>
 
             <form method="post" class="auth-form" data-api-action="login">

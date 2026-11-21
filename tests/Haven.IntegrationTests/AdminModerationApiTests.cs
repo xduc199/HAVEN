@@ -98,7 +98,7 @@ public sealed class AdminModerationApiTests
                 displayName = "Regular User",
                 email = "regular.user@example.com",
                 password = "StrongPassword123!"
-            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.1.0", privacyVersion = "1.1.0"});
         Assert.Equal(HttpStatusCode.Created, registrationResponse.StatusCode);
 
         using var forbiddenResponse = await userClient.GetAsync(
