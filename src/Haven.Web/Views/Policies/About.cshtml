@@ -1,10 +1,69 @@
 @{
     ViewData["Title"] = "Giới thiệu HAVEN";
+    ViewData["MetaDescription"] = "Tìm hiểu cách HAVEN hỗ trợ khám phá, đăng và quản lý tin bất động sản.";
 }
-<section class="policy-page container py-5">
-    <p class="text-uppercase small text-muted">Không gian sống, tìm thấy dễ dàng</p>
-    <h1>HAVEN giúp bạn khám phá bất động sản</h1>
-    <p>HAVEN cung cấp công cụ đăng tin, tìm kiếm bất động sản, lưu tin yêu thích, so sánh và gửi yêu cầu tư vấn. Nội dung tin do người đăng cung cấp và được kiểm duyệt trước khi công khai.</p>
-    <p>HAVEN hiện không thu tiền, ký hợp đồng, xác nhận quyền sở hữu hay thay mặt các bên môi giới bất động sản.</p>
-    <a class="haven-button" asp-controller="Properties" asp-action="Index">Khám phá bất động sản</a>
-</section>
+<main class="policy-about container">
+    <nav class="policy-breadcrumb" aria-label="Đường dẫn">
+        <ol>
+            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li aria-current="page">Giới thiệu HAVEN</li>
+        </ol>
+    </nav>
+
+    <header class="policy-about__hero">
+        <p class="policy-document__eyebrow">Về HAVEN</p>
+        <h1>Khám phá và đăng tin bất động sản với thông tin rõ ràng hơn.</h1>
+        <p>HAVEN tập hợp các công cụ tìm kiếm, xem tin và quản lý tin đăng trong một website để người dùng chủ động tìm hiểu lựa chọn phù hợp.</p>
+        <div class="policy-about__actions">
+            <a class="haven-button" asp-controller="Properties" asp-action="Index">Khám phá bất động sản</a>
+            <a class="policy-about__secondary" asp-controller="MyListings" asp-action="Create">Đăng tin bất động sản</a>
+        </div>
+    </header>
+
+    <section class="policy-about__story" aria-labelledby="about-story-title">
+        <div>
+            <p class="policy-document__eyebrow">Nền tảng</p>
+            <h2 id="about-story-title">Một nơi để tìm hiểu trước khi lựa chọn.</h2>
+        </div>
+        <div class="policy-about__story-copy">
+            <p>Việc tìm nhà thường bắt đầu từ nhiều tiêu chí cùng lúc: khu vực, loại hình, giá, diện tích và cách mỗi không gian đáp ứng nhu cầu sống. HAVEN giúp người dùng tìm kiếm và xem những thông tin này theo từng tin đăng.</p>
+            <p>Người có bất động sản cần giới thiệu có thể tạo tin, bổ sung hình ảnh và theo dõi trạng thái kiểm duyệt trong tài khoản. Các chức năng được xây dựng để hỗ trợ quá trình tìm hiểu; quyết định và giao dịch vẫn do các bên trực tiếp thực hiện.</p>
+        </div>
+    </section>
+
+    <section class="policy-about__capabilities" aria-labelledby="about-capabilities-title">
+        <header>
+            <p class="policy-document__eyebrow">Bạn có thể</p>
+            <h2 id="about-capabilities-title">Những công cụ có trên HAVEN</h2>
+        </header>
+        <ul>
+            <li><strong>Tìm kiếm theo nhu cầu</strong><span>Lọc tin theo hình thức mua bán hoặc cho thuê, loại hình, vị trí và các tiêu chí đang được hỗ trợ.</span></li>
+            <li><strong>Xem và cân nhắc</strong><span>Đọc thông tin chi tiết, lưu tin yêu thích và so sánh tối đa ba tin đã được duyệt.</span></li>
+            <li><strong>Đăng và quản lý tin</strong><span>Tạo tin nháp, gửi kiểm duyệt, theo dõi trạng thái và cập nhật tin theo quyền hiện có.</span></li>
+            <li><strong>Gửi yêu cầu tư vấn</strong><span>Gửi yêu cầu gắn với tin đăng bằng tài khoản; xem lại yêu cầu trong khu vực cá nhân.</span></li>
+        </ul>
+    </section>
+
+    <section class="policy-about__principles" aria-labelledby="about-principles-title">
+        <div>
+            <p class="policy-document__eyebrow">Nguyên tắc sử dụng</p>
+            <h2 id="about-principles-title">Thông tin rõ ràng, quyết định chủ động.</h2>
+        </div>
+        <div>
+            <p>Nội dung tin do người đăng cung cấp. Việc tin được duyệt chỉ phản ánh trạng thái kiểm duyệt trên nền tảng, không xác nhận quyền sở hữu, tình trạng pháp lý, chất lượng hoặc khả năng giao dịch của bất động sản.</p>
+            <p>Trước khi giao dịch, người mua, người thuê và người đăng cần trực tiếp xác minh thông tin, giấy tờ và thỏa thuận của mình. HAVEN hiện không nhận tiền đặt cọc hoặc thanh toán và không ký hợp đồng thay các bên.</p>
+            <a asp-controller="Policies" asp-action="PostingRules">Đọc Quy chế đăng tin</a>
+        </div>
+    </section>
+
+    <footer class="policy-about__closing">
+        <div>
+            <h2>Bắt đầu từ điều bạn đang tìm.</h2>
+            <p>Khám phá các tin đăng hiện có hoặc tạo tin để giới thiệu bất động sản của bạn.</p>
+        </div>
+        <div class="policy-about__actions">
+            <a class="haven-button" asp-controller="Properties" asp-action="Index">Tìm bất động sản</a>
+            <a class="policy-about__secondary" asp-controller="MyListings" asp-action="Create">Tạo tin đăng</a>
+        </div>
+    </footer>
+</main>

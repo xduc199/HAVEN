@@ -5,6 +5,7 @@ public sealed record PolicySectionViewModel(string Heading, IReadOnlyList<string
 public sealed record PolicyPageViewModel(
     string Key,
     string Title,
+    string Summary,
     string Version,
     DateOnly EffectiveDate,
     IReadOnlyList<PolicySectionViewModel> Sections,
