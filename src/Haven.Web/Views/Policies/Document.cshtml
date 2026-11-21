@@ -1,41 +1,81 @@
 @model Haven.Web.ViewModels.Policies.PolicyPageViewModel
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["MetaDescription"] = Model.Summary;
 }
-<section class="policy-page container py-5">
-    <header class="policy-header">
-        <p class="text-uppercase small text-muted">HAVEN · Thông tin và chính sách</p>
+<main class="policy-document container">
+    <nav class="policy-breadcrumb" aria-label="Đường dẫn">
+        <ol>
+            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <header class="policy-document__hero">
+        <p class="policy-document__eyebrow">Thông tin và chính sách</p>
         <h1>@Model.Title</h1>
-        <p>Phiên bản @Model.Version · Có hiệu lực từ @Model.EffectiveDate.ToString("dd/MM/yyyy") · Cập nhật lần cuối @Model.LastUpdated.ToString("dd/MM/yyyy")</p>
+        <p class="policy-document__summary">@Model.Summary</p>
+        <p class="policy-document__edition">
+            Phiên bản @Model.Version
+            <span aria-hidden="true">·</span>
+            Có hiệu lực từ <time datetime="@Model.EffectiveDate.ToString("yyyy-MM-dd")">@Model.EffectiveDate.ToString("dd/MM/yyyy")</time>
+        </p>
     </header>
-    <div class="policy-grid">
-        <nav class="policy-toc" aria-label="Mục lục">
-            <strong>Trong trang này</strong>
-            @for (var index = 0; index < Model.Sections.Count; index++)
-            {
-                <a href="#muc-@index">@Model.Sections[index].Heading</a>
-            }
-        </nav>
-        <article class="policy-content">
+
+    <div class="policy-document__layout">
+        <aside class="policy-document__aside">
+            <details class="policy-toc" open>
+                <summary>Mục lục</summary>
+                <nav aria-label="Mục lục trang">
+                    @for (var index = 0; index < Model.Sections.Count; index++)
+                    {
+                        <a href="#muc-@index">@Model.Sections[index].Heading</a>
+                    }
+                </nav>
+            </details>
+        </aside>
+
+        <article class="policy-document__content">
             @for (var index = 0; index < Model.Sections.Count; index++)
             {
                 var policySection = Model.Sections[index];
-                <section id="muc-@index">
-                    <h2>@policySection.Heading</h2>
-                    @foreach (var paragraph in policySection.Paragraphs) { <p>@paragraph</p> }
+                <section id="muc-@index" aria-labelledby="tieu-de-@index">
+                    <h2 id="tieu-de-@index">@policySection.Heading</h2>
+                    @foreach (var paragraph in policySection.Paragraphs)
+                    {
+                        <p>@paragraph</p>
+                    }
                 </section>
             }
-            @if (Model.Key == "Privacy" || Model.Key == "Complaints")
+
+            @if (Model.Key is "Privacy" or "Complaints")
             {
-                <section><h2>Thông tin đơn vị vận hành và hỗ trợ</h2>
-                    <dl><dt>Đơn vị</dt><dd>@Model.OperatorName</dd><dt>Email hỗ trợ</dt><dd>@Model.SupportEmail</dd><dt>Điện thoại</dt><dd>@Model.SupportPhone</dd><dt>Địa chỉ</dt><dd>@Model.SupportAddress</dd></dl>
+                <section class="policy-contact" aria-labelledby="policy-contact-title">
+                    <h2 id="policy-contact-title">Thông tin đơn vị vận hành</h2>
+                    <dl>
+                        <div><dt>Đơn vị</dt><dd>@Model.OperatorName</dd></div>
+                        <div><dt>Email hỗ trợ</dt><dd>@Model.SupportEmail</dd></div>
+                        <div><dt>Điện thoại</dt><dd>@Model.SupportPhone</dd></div>
+                        <div><dt>Địa chỉ</dt><dd>@Model.SupportAddress</dd></div>
+                    </dl>
                 </section>
             }
-            <aside class="policy-related"><h2>Chính sách liên quan</h2>
-                @foreach (var item in Model.OtherPolicies) { <a asp-controller="Policies" asp-action="@item.Key">@item.Title</a> }
-                @if (User.Identity?.IsAuthenticated == true) { <a asp-controller="PrivacyCenter" asp-action="Index">Quyền riêng tư của tôi</a> }
+
+            <aside class="policy-document__related" aria-labelledby="related-title">
+                <h2 id="related-title">Tài liệu liên quan</h2>
+                <nav aria-label="Tài liệu liên quan">
+                    @foreach (var item in Model.OtherPolicies)
+                    {
+                        <a asp-controller="Policies" asp-action="@item.Key">@item.Title</a>
+                    }
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="PrivacyCenter" asp-action="Index">Quyền riêng tư của tôi</a>
+                    }
+                </nav>
             </aside>
-            <p class="small text-muted">Nội dung này mô tả chức năng HAVEN hiện có, không thay thế tư vấn pháp lý.</p>
+
+            <p class="policy-document__notice">Tài liệu này mô tả chức năng HAVEN hiện có. Nội dung pháp lý cần được đơn vị vận hành rà soát trước khi áp dụng chính thức.</p>
         </article>
     </div>
-</section>
+</main>
