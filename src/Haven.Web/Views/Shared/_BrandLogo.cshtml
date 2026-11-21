@@ -1,0 +1,15 @@
+@model string?
+@{
+    var useEmblem = string.Equals(Model, "emblem", StringComparison.OrdinalIgnoreCase);
+    var logoClass = useEmblem ? "haven-brand-logo--emblem" : "haven-brand-logo--wordmark";
+}
+<a class="haven-brand-logo @logoClass" asp-area="" asp-controller="Home" asp-action="Index" aria-label="HAVEN — Trang chủ">
+    @if (useEmblem)
+    {
+        <img src="~/image/logo3.png" asp-append-version="true" alt="HAVEN" width="1254" height="1254" />
+    }
+    else
+    {
+        <img src="~/image/logo.png" asp-append-version="true" alt="HAVEN" width="1774" height="887" />
+    }
+</a>

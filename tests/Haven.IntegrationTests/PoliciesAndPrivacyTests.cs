@@ -50,7 +50,7 @@ public sealed class PoliciesAndPrivacyTests
         var missingConsent = await client.PostAsJsonAsync("/api/auth/register", new
         {
             displayName = "No Consent", email = "no-consent@example.com", password = "StrongPassword123!",
-            acceptedTerms = false, consentedPersonalDataProcessing = false, termsVersion = "1.0.0", privacyVersion = "1.0.0"
+            acceptedTerms = false, consentedPersonalDataProcessing = false, termsVersion = "1.1.0", privacyVersion = "1.1.0"
         });
         Assert.Equal(HttpStatusCode.BadRequest, missingConsent.StatusCode);
 
@@ -58,7 +58,7 @@ public sealed class PoliciesAndPrivacyTests
         using var accepted = await acceptedClient.PostAsJsonAsync("/api/auth/register", new
         {
             displayName = "Consent Owner", email = "consent.owner@example.com", password = "StrongPassword123!",
-            acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"
+            acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.1.0", privacyVersion = "1.1.0"
         });
         Assert.Equal(HttpStatusCode.Created, accepted.StatusCode);
         using (var scope = factory.Services.CreateScope())
@@ -67,7 +67,7 @@ public sealed class PoliciesAndPrivacyTests
             var userId = await db.Users.Where(user => user.Email == "consent.owner@example.com").Select(user => user.Id).SingleAsync();
             var entries = await db.PolicyConsents.Where(item => item.UserId == userId).ToListAsync();
             Assert.Equal(2, entries.Count);
-            Assert.All(entries, item => Assert.Equal("1.0.0", item.DocumentVersion));
+            Assert.All(entries, item => Assert.Equal("1.1.0", item.DocumentVersion));
             Assert.All(entries, item => Assert.Equal(PolicyConsentAction.Granted, item.Action));
         }
     }
@@ -95,7 +95,7 @@ public sealed class PoliciesAndPrivacyTests
         Assert.True(secondPage.StatusCode == HttpStatusCode.OK, $"Second privacy page returned {(int)secondPage.StatusCode}: {secondMarkup}");
         Assert.Contains("private request phrase", firstMarkup);
         Assert.Contains("Điều khoản sử dụng", firstMarkup);
-        Assert.Contains("1.0.0", firstMarkup);
+        Assert.Contains("1.1.0", firstMarkup);
         Assert.DoesNotContain("private request phrase", secondMarkup);
         Assert.Equal(HttpStatusCode.Redirect, adminQueue.StatusCode);
 
@@ -112,7 +112,7 @@ public sealed class PoliciesAndPrivacyTests
         using var response = await client.PostAsJsonAsync("/api/auth/register", new
         {
             displayName = "Privacy User", email, password = "StrongPassword123!",
-            acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"
+            acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.1.0", privacyVersion = "1.1.0"
         });
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }

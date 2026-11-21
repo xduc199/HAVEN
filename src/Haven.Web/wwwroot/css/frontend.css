@@ -57,47 +57,6 @@ textarea:focus-visible {
     margin: 0 auto;
 }
 
-.app-brand {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 0.7rem;
-    color: inherit;
-    text-decoration: none;
-}
-
-.app-brand__mark {
-    width: 2.6rem;
-    height: 2.6rem;
-    display: grid;
-    place-items: center;
-    border-radius: 0.65rem;
-    background: var(--haven-primary);
-    color: white;
-    font-size: 1.25rem;
-    font-weight: 750;
-}
-
-.app-brand__text {
-    display: grid;
-    line-height: 1.2;
-}
-
-.app-brand__name {
-    color: var(--haven-primary);
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-}
-
-.app-brand__tagline {
-    margin-top: 0.25rem;
-    color: var(--haven-muted);
-    font-size: 0.58rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
 .app-nav {
     min-width: 0;
     display: flex;
@@ -216,14 +175,6 @@ body.app-shell .app-header__actions a.app-header__cta {
     padding: 3.25rem 0 1.25rem;
     color: var(--haven-muted);
     font-size: 0.88rem;
-}
-
-.app-footer__brand {
-    color: var(--haven-primary);
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-decoration: none;
 }
 
 .app-footer__about p { margin: .7rem 0 .3rem; color: var(--haven-text); font-weight: 600; }
@@ -554,7 +505,7 @@ body.app-shell .app-header__actions a.app-header__cta {
         padding: 0.8rem 0;
     }
 
-    .app-brand {
+    .app-header__inner > .haven-brand-logo {
         margin-right: auto;
     }
 
@@ -632,11 +583,7 @@ body.app-shell .app-header__actions a.app-header__cta {
         width: min(100% - 1.25rem, var(--haven-content-width));
     }
 
-    .app-brand__tagline {
-        max-width: 12rem;
-        font-size: 0.5rem;
-    }
-
+    .haven-brand-logo--wordmark { width: 8.5rem; height: 2.7rem; }
     .app-header__cta {
         padding: 0.55rem 0.7rem;
         font-size: 0.8rem;
@@ -725,9 +672,6 @@ body.app-shell a:hover { color: var(--haven-charcoal); }
     transition: box-shadow var(--haven-motion-normal) ease, border-color var(--haven-motion-normal) ease, background-color var(--haven-motion-normal) ease;
 }
 .app-header.is-scrolled { border-bottom-color: var(--haven-border); box-shadow: 0 8px 24px rgb(37 37 37 / 6%); background: rgb(255 255 255 / 97%); }
-.app-brand__mark { border-radius: .25rem; background: var(--haven-gold); color: var(--haven-charcoal); }
-.app-brand__name { color: var(--haven-charcoal); font-family: "Cormorant Garamond", Georgia, serif; letter-spacing: .12em; }
-.app-brand__tagline { color: var(--haven-muted); }
 .app-nav__link { position: relative; color: var(--haven-charcoal); text-decoration: none; }
 .app-nav__link::after { position: absolute; right: 0; bottom: -.28rem; left: 0; height: 1px; background: var(--haven-gold); content: ""; transform: scaleX(0); transform-origin: left; transition: transform var(--haven-motion-normal) var(--haven-ease); }
 .app-nav__link:hover::after, .app-nav__link:focus-visible::after { transform: scaleX(1); }
@@ -744,9 +688,10 @@ body.app-shell a:hover { color: var(--haven-charcoal); }
 .app-logout { color: var(--haven-charcoal); }
 .app-logout:hover { color: var(--haven-gold-hover); }
 .app-footer { background: var(--haven-charcoal); color: #fff; }
-.app-footer__brand, .app-footer__group strong { color: #fff; }
+.app-footer__group strong { color: #fff; }
 .app-footer__about p, .app-footer__group a, .app-footer__about > span, .app-footer__bottom { color: rgb(255 255 255 / 72%); }
-.app-footer__group a:hover { color: var(--haven-pale-gold); }
+body.app-shell .app-footer__group a:hover,
+body.app-shell .app-footer__group a:focus-visible { color: var(--haven-pale-gold); }
 .app-footer__bottom { border-top-color: rgb(255 255 255 / 18%); }
 .haven-form, .content-card, .property-card { border-color: var(--haven-border); box-shadow: 0 5px 18px rgb(37 37 37 / 4%); }
 .account-switch { margin: 1rem 0 0; color: var(--haven-gray); font-size: .9rem; }
@@ -809,3 +754,91 @@ body.app-shell a:hover { color: var(--haven-charcoal); }
 .listing-owner-link:hover strong { color: var(--haven-gold-hover); }
 @media (max-width: 800px) { .account-menu__name { display: none; } }
 @media (max-width: 520px) { .account-avatar-panel, .public-profile-header { align-items: flex-start; padding: 1rem; } .haven-avatar--large { width: 5rem; height: 5rem; } .account-avatar-panel form { min-width: 0; } }
+
+/* Informational and policy pages */
+.policy-document,
+.policy-about { width: min(100% - 2rem, 74rem); margin-inline: auto; padding-block: clamp(1.5rem, 4vw, 3.5rem); }
+.policy-breadcrumb { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); color: var(--haven-gray); font-size: .84rem; }
+.policy-breadcrumb ol { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.policy-breadcrumb li + li::before { margin-right: .5rem; color: var(--haven-gray); content: "/"; }
+.policy-breadcrumb a { color: var(--haven-gray); text-underline-offset: .2em; }
+.policy-breadcrumb a:hover,
+.policy-breadcrumb a:focus-visible { color: var(--haven-charcoal); }
+.policy-document__hero { max-width: 54rem; margin-bottom: clamp(2rem, 5vw, 3.75rem); padding-bottom: clamp(1.5rem, 3vw, 2.5rem); border-bottom: 1px solid var(--haven-border); }
+.policy-document__eyebrow { margin: 0 0 .75rem; color: var(--haven-gray); font-size: .75rem; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; }
+.policy-document__hero h1,
+.policy-about__hero h1 { max-width: 18ch; margin: 0; color: var(--haven-charcoal); font: 500 clamp(2.4rem, 5.5vw, 4.3rem)/1.05 var(--haven-font-display); letter-spacing: -.025em; }
+.policy-document__summary { max-width: 48rem; margin: 1rem 0; color: var(--haven-gray); font-size: 1.05rem; line-height: 1.75; }
+.policy-document__edition { margin: 0; color: var(--haven-gray); font-size: .82rem; }
+.policy-document__edition span { padding-inline: .35rem; }
+.policy-document__layout { display: grid; grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr); align-items: start; gap: clamp(2rem, 5vw, 5rem); }
+.policy-document__aside { min-width: 0; }
+.policy-toc { position: sticky; top: 6rem; border-left: 1px solid var(--haven-border); padding-left: 1rem; }
+.policy-toc summary { margin-bottom: .75rem; color: var(--haven-charcoal); font-size: .9rem; font-weight: 650; cursor: pointer; }
+.policy-toc nav { display: grid; gap: .2rem; }
+.policy-toc a { padding: .35rem 0; color: var(--haven-gray); font-size: .83rem; line-height: 1.45; text-decoration: none; text-underline-offset: .18em; }
+.policy-toc a:hover,
+.policy-toc a:focus-visible { color: var(--haven-charcoal); text-decoration: underline; }
+.policy-document__content { min-width: 0; max-width: 48rem; color: var(--haven-charcoal); line-height: 1.8; }
+.policy-document__content section { scroll-margin-top: 6rem; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.policy-document__content h2,
+.policy-about h2 { margin: 0 0 .75rem; color: var(--haven-charcoal); font: 500 clamp(1.5rem, 2.5vw, 2rem)/1.2 var(--haven-font-display); letter-spacing: -.01em; }
+.policy-document__content p { margin: 0 0 .8rem; }
+.policy-contact { margin-top: 2.5rem; padding: 1.25rem; background: var(--haven-soft-gray); }
+.policy-contact dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1.5rem; margin: 0; }
+.policy-contact dl > div { min-width: 0; }
+.policy-contact dt { color: var(--haven-gray); font-size: .8rem; }
+.policy-contact dd { margin: .15rem 0 0; overflow-wrap: anywhere; }
+.policy-document__related { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--haven-border); }
+.policy-document__related nav { display: flex; flex-wrap: wrap; gap: .65rem 1.25rem; }
+.policy-document__related a,
+.policy-about__principles a { color: var(--haven-charcoal); text-decoration-color: var(--haven-gold); text-underline-offset: .22em; }
+.policy-document__related a:hover,
+.policy-about__principles a:hover { color: var(--haven-gold-hover); }
+.policy-document__notice { margin-top: 2rem; color: var(--haven-gray); font-size: .82rem; }
+.policy-about__hero { margin-bottom: clamp(3rem, 7vw, 6rem); padding: clamp(1.5rem, 6vw, 5rem); background: var(--haven-cream); }
+.policy-about__hero h1 { max-width: 16ch; }
+.policy-about__hero > p:not(.policy-document__eyebrow) { max-width: 43rem; margin: 1.25rem 0 0; color: var(--haven-gray); font-size: 1.05rem; line-height: 1.75; }
+.policy-about__actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; margin-top: 1.5rem; }
+.policy-about__secondary { color: var(--haven-charcoal); text-underline-offset: .22em; }
+.policy-about__secondary:hover { color: var(--haven-gold-hover); }
+.policy-about__story,
+.policy-about__principles { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 7vw, 7rem); margin-bottom: clamp(3.5rem, 8vw, 7rem); }
+.policy-about__story h2,
+.policy-about__principles h2 { max-width: 15ch; font-size: clamp(2rem, 3.6vw, 3rem); }
+.policy-about__story-copy { max-width: 43rem; color: var(--haven-gray); line-height: 1.8; }
+.policy-about__story-copy p { margin: 0 0 1rem; }
+.policy-about__capabilities { margin-bottom: clamp(3.5rem, 8vw, 7rem); padding-top: 1.25rem; border-top: 1px solid var(--haven-border); }
+.policy-about__capabilities header { max-width: 32rem; margin-bottom: 1.5rem; }
+.policy-about__capabilities ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; border-top: 1px solid var(--haven-border); list-style: none; }
+.policy-about__capabilities li { display: grid; align-content: start; gap: .45rem; min-width: 0; padding: 1.25rem 1rem 1.25rem 0; border-bottom: 1px solid var(--haven-border); }
+.policy-about__capabilities li:nth-child(odd) { margin-right: 1.25rem; }
+.policy-about__capabilities li strong { font: 500 1.35rem/1.25 var(--haven-font-display); }
+.policy-about__capabilities li span,
+.policy-about__principles > div:last-child { color: var(--haven-gray); line-height: 1.75; }
+.policy-about__principles > div:last-child p { margin: 0 0 1rem; }
+.policy-about__closing { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: clamp(1.5rem, 4vw, 3rem); background: var(--haven-charcoal); }
+.policy-about__closing h2 { color: #fff; }
+.policy-about__closing p { max-width: 35rem; margin: 0; color: rgb(255 255 255 / 76%); line-height: 1.65; }
+.policy-about__closing .policy-about__secondary { color: #fff; }
+.policy-about__closing .haven-button { flex-shrink: 0; }
+.policy-document a:focus-visible,
+.policy-about a:focus-visible { outline: 2px solid var(--haven-gold-hover); outline-offset: 3px; }
+@media (max-width: 760px) {
+    .policy-document__layout { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+    .policy-toc { position: static; border: 1px solid var(--haven-border); padding: .85rem 1rem; }
+    .policy-toc summary { margin: 0; }
+    .policy-toc[open] summary { margin-bottom: .65rem; }
+    .policy-contact dl { grid-template-columns: minmax(0, 1fr); }
+    .policy-about__story,
+    .policy-about__principles { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .policy-about__closing { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 520px) {
+    .policy-document,
+    .policy-about { width: min(100% - 1.25rem, 74rem); }
+    .policy-about__capabilities ul { grid-template-columns: minmax(0, 1fr); }
+    .policy-about__capabilities li:nth-child(odd) { margin-right: 0; }
+    .policy-about__hero { padding: 1.25rem; }
+    .policy-about__actions { align-items: stretch; }
+}

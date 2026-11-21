@@ -1,6 +1,8 @@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var pageTitle = ViewData["Title"] as string;
+    var browserTitle = string.IsNullOrWhiteSpace(pageTitle) ? "HAVEN Quản trị" : $"{pageTitle.Trim()} | HAVEN Quản trị";
     string Active(string target) => string.Equals(controller, target, StringComparison.OrdinalIgnoreCase)
         ? " admin-nav__link--active"
         : string.Empty;
@@ -10,7 +12,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@(ViewData["Title"] is string title ? $"{title} | HAVEN Quản trị" : "HAVEN Quản trị")</title>
+    <title>@browserTitle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" />
@@ -22,9 +24,10 @@
 <body class="admin-shell">
     <button type="button" class="admin-sidebar-backdrop" aria-label="Đóng menu quản trị" aria-hidden="true" tabindex="-1"></button>
     <aside class="admin-sidebar" id="admin-sidebar">
-        <a class="admin-brand" asp-area="" asp-controller="Home" asp-action="Index">
-            <span class="admin-brand__mark">H</span><span>HAVEN <small>QUẢN TRỊ</small></span>
-        </a>
+        <div class="admin-brand">
+            <partial name="_BrandLogo" model='@("emblem")' />
+            <span class="admin-brand__label">Quản trị<small>HỆ THỐNG</small></span>
+        </div>
         <nav class="admin-nav" aria-label="Điều hướng quản trị">
             <a class="admin-nav__link@(Active("Dashboard"))" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" aria-current="@(string.Equals(controller, "Dashboard", StringComparison.OrdinalIgnoreCase) ? "page" : null)">Tổng quan</a>
             <a class="admin-nav__link@(Active("Listings"))" asp-area="Admin" asp-controller="Listings" asp-action="Index">Tin đăng</a>

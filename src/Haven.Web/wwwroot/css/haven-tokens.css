@@ -70,7 +70,7 @@ body.admin-shell {
     -webkit-font-smoothing: antialiased;
 }
 
-:where(h1, h2, h3, .app-brand__name, .admin-brand) {
+:where(h1, h2, h3, .admin-brand) {
     font-family: var(--haven-font-display);
     font-weight: 500;
     text-wrap: balance;
@@ -88,6 +88,23 @@ body.admin-shell {
 }
 
 ::selection { color: var(--haven-charcoal); background: var(--haven-pale-gold); }
+
+.haven-brand-logo {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.haven-brand-logo img { display: block; max-width: 100%; max-height: 100%; }
+.haven-brand-logo--wordmark { width: clamp(8.5rem, 12vw, 10.75rem); height: 3.25rem; }
+.haven-brand-logo--wordmark img { width: 100%; height: 100%; object-fit: cover; object-position: center 50%; }
+.haven-brand-logo--emblem { width: 3.75rem; height: 3.75rem; }
+.haven-brand-logo--emblem img { width: 100%; height: 100%; object-fit: contain; }
+.app-footer .haven-brand-logo--emblem { width: 4.25rem; height: 4.25rem; margin-bottom: .55rem; }
+.admin-brand .haven-brand-logo--emblem { width: 3rem; height: 3rem; }
 
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }

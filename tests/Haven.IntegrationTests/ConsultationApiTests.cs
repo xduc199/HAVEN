@@ -245,7 +245,7 @@ public sealed class ConsultationApiTests
                 displayName,
                 email,
                 password = "StrongPassword123!"
-            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.1.0", privacyVersion = "1.1.0"});
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         using var body = JsonDocument.Parse(
             await response.Content.ReadAsStringAsync());

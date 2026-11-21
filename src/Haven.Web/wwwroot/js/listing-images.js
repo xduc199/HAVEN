@@ -33,22 +33,87 @@
         const container = province.closest("form") ?? province.parentElement?.parentElement;
         const ward = container?.querySelector("[data-location-ward]");
         if (!ward) return;
-        province.addEventListener("change", async () => {
-            const selected = ward.dataset.selected ?? "";
-            ward.replaceChildren(new Option("Chọn xã / phường", ""));
+        const provinceName = container.querySelector('input[name="Province"]');
+        const wardName = container.querySelector('input[name="District"]');
+        const status = container.querySelector("[data-location-status]") ?? document.createElement("span");
+        if (!status.isConnected) {
+            status.dataset.locationStatus = "";
+            status.className = "location-filter-status";
+            status.setAttribute("role", "status");
+            status.setAttribute("aria-live", "polite");
+            ward.insertAdjacentElement("afterend", status);
+        }
+
+        const placeholder = ward.options[0]?.textContent ?? "Chọn xã / phường";
+        let requestId = 0;
+        let activeRequest;
+
+        const updateLegacyNames = () => {
+            if (provinceName) provinceName.value = province.value ? province.selectedOptions[0]?.textContent?.trim() ?? "" : "";
+            if (wardName) wardName.value = ward.value ? ward.selectedOptions[0]?.textContent?.trim() ?? "" : "";
+        };
+
+        const loadWards = async (selectedWardCode = "") => {
+            activeRequest?.abort();
+            const currentRequestId = ++requestId;
+            const provinceCode = province.value;
+            ward.replaceChildren(new Option(provinceCode ? "Đang tải xã / phường…" : placeholder, ""));
             ward.disabled = true;
-            if (!province.value) { ward.dataset.selected = ""; return; }
-            try {
-                const response = await fetch(`/api/locations/provinces/${encodeURIComponent(province.value)}/wards`, { headers: { Accept: "application/json" } });
-                if (!response.ok) throw new Error("Không tải được danh mục địa điểm.");
-                const items = await response.json();
-                for (const item of items) ward.add(new Option(item.name, item.code, false, item.code === selected));
-                ward.disabled = false;
-                ward.dataset.selected = "";
-            } catch {
-                ward.replaceChildren(new Option("Không thể tải danh mục xã/phường", ""));
+            if (wardName) wardName.value = "";
+
+            if (!provinceCode) {
+                if (status) status.textContent = "";
+                return;
             }
+
+            if (status) status.textContent = "Đang tải danh sách xã / phường…";
+            const controller = new AbortController();
+            activeRequest = controller;
+
+            try {
+                const response = await fetch(`/api/locations/provinces/${encodeURIComponent(provinceCode)}/wards`, {
+                    headers: { Accept: "application/json" },
+                    signal: controller.signal
+                });
+                if (!response.ok) throw new Error("Không tải được danh mục địa phương.");
+                const items = await response.json();
+                if (!Array.isArray(items)) throw new Error("Dữ liệu địa phương không hợp lệ.");
+                if (currentRequestId !== requestId || province.value !== provinceCode) return;
+
+                ward.replaceChildren(new Option(placeholder, ""));
+                for (const item of items) {
+                    if (typeof item.code !== "string" || typeof item.name !== "string") continue;
+                    ward.add(new Option(item.name, item.code, false, item.code === selectedWardCode));
+                }
+                ward.disabled = ward.options.length <= 1;
+                if (status) status.textContent = ward.disabled
+                    ? "Không có xã / phường trong danh mục cho tỉnh / thành phố này."
+                    : "";
+                updateLegacyNames();
+            } catch (error) {
+                if (error.name === "AbortError" || currentRequestId !== requestId) return;
+                ward.replaceChildren(new Option("Không thể tải danh mục xã / phường", ""));
+                ward.disabled = true;
+                if (status) status.textContent = "Không tải được danh sách xã / phường. Hãy đổi tỉnh / thành phố hoặc thử lại.";
+            } finally {
+                if (currentRequestId === requestId) activeRequest = undefined;
+            }
+        };
+
+        ward.addEventListener("change", updateLegacyNames);
+        province.addEventListener("change", () => {
+            updateLegacyNames();
+            void loadWards();
         });
-        if (province.value && ward.options.length <= 1) province.dispatchEvent(new Event("change"));
+
+        if (!province.value) {
+            ward.replaceChildren(new Option(placeholder, ""));
+            ward.disabled = true;
+            if (status) status.textContent = "";
+        } else if (ward.options.length <= 1) {
+            void loadWards(ward.dataset.selected ?? ward.value);
+        } else if (status) {
+            status.textContent = "";
+        }
     });
 })();

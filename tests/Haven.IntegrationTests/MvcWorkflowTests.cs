@@ -25,7 +25,7 @@ public sealed class MvcWorkflowTests
         using var admin = AntiforgeryTestClient.Create(factory);
         using var ownerRegistration = await owner.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
         {
-            ["DisplayName"] = "Lock Target", ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+            ["DisplayName"] = "Lock Target", ["Email"] = "lock.target@example.com", ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
         }));
         Assert.Equal(HttpStatusCode.Redirect, ownerRegistration.StatusCode);
         using var adminLogin = await admin.PostAsync("/account/login", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -109,8 +109,8 @@ public sealed class MvcWorkflowTests
             ["ConfirmPassword"] = "StrongPassword123!",
             ["AcceptedTerms"] = "true",
             ["ConsentedPersonalDataProcessing"] = "true",
-            ["TermsVersion"] = "1.0.0",
-            ["PrivacyVersion"] = "1.0.0"
+            ["TermsVersion"] = "1.1.0",
+            ["PrivacyVersion"] = "1.1.0"
         }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -225,8 +225,8 @@ public sealed class MvcWorkflowTests
             ["ConfirmPassword"] = "StrongPassword123!",
             ["AcceptedTerms"] = "true",
             ["ConsentedPersonalDataProcessing"] = "true",
-            ["TermsVersion"] = "1.0.0",
-            ["PrivacyVersion"] = "1.0.0"
+            ["TermsVersion"] = "1.1.0",
+            ["PrivacyVersion"] = "1.1.0"
         }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -390,7 +390,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "MVC User",
                 ["Email"] = "mvc.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -444,7 +444,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "MVC Admin",
                 ["Email"] = "mvc.admin@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -618,7 +618,7 @@ public sealed class MvcWorkflowTests
                 displayName = "Antiforgery Listing User",
                 email = "antiforgery.listing@example.com",
                 password = "StrongPassword123!"
-            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.0.0", privacyVersion = "1.0.0"});
+            , acceptedTerms = true, consentedPersonalDataProcessing = true, termsVersion = "1.1.0", privacyVersion = "1.1.0"});
         Assert.Equal(HttpStatusCode.Created, registration.StatusCode);
         client.DefaultRequestHeaders.Remove("RequestVerificationToken");
 
@@ -656,7 +656,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "Listing Owner",
                 ["Email"] = "listing.owner@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -748,7 +748,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "No Type User",
                 ["Email"] = "no.type.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -797,7 +797,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "Login User",
                 ["Email"] = "login.user@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
 
@@ -832,7 +832,7 @@ public sealed class MvcWorkflowTests
                 ["DisplayName"] = "No Token",
                 ["Email"] = "no-token@example.com",
                 ["Password"] = "StrongPassword123!",
-                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

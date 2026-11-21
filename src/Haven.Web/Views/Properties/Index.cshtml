@@ -1,12 +1,12 @@
 @model Haven.Web.ViewModels.Properties.PropertySearchViewModel
 @using Haven.Application.Listings
 @{
-    ViewData["Title"] = "Tìm bất động sản";
+    ViewData["Title"] = "Tìm kiếm bất động sản";
 }
 <section class="page-container">
     <div class="page-heading">
         <div>
-            <h1>Tìm bất động sản</h1>
+            <h1>Tìm kiếm bất động sản</h1>
             <p>@Model.TotalCount tin công khai</p>
         </div>
     </div>
@@ -39,7 +39,8 @@
         </div>
         <div class="haven-field">
             <label asp-for="WardCode">Xã / phường / đặc khu</label>
-            <select asp-for="WardCode" data-location-ward data-selected="@Model.WardCode" disabled="@(Model.Wards.Count == 0)"><option value="">Tất cả xã/phường</option>@foreach (var ward in Model.Wards) { <option value="@ward.Code">@ward.Name</option> }</select>
+            <select asp-for="WardCode" data-location-ward data-selected="@Model.WardCode" disabled="@(Model.Wards.Count == 0)"><option value="">Tất cả xã / phường</option>@foreach (var ward in Model.Wards) { <option value="@ward.Code">@ward.Name</option> }</select>
+            <span class="location-filter-status" data-location-status role="status" aria-live="polite"></span>
         </div>
         <input asp-for="Province" type="hidden" />
         <input asp-for="District" type="hidden" />
@@ -100,3 +101,4 @@
         }
     }
 </section>
+@section Scripts { <script src="~/js/listing-images.js" asp-append-version="true"></script> }

@@ -12,9 +12,6 @@
 .app-shell--home { background: var(--home-paper); color: var(--home-ink); }
 .app-shell--home .app-header { position: sticky; top: 0; z-index: 20; background: rgb(255 255 255 / 94%); border-bottom-color: var(--haven-border); backdrop-filter: blur(10px); }
 .app-shell--home .app-header__inner { width: min(calc(100% - 3rem), 92rem); min-height: 5rem; }
-.app-shell--home .app-brand__mark { border-radius: 50%; background: var(--home-forest); }
-.app-shell--home .app-brand__name { font: 400 1.35rem Georgia, "Times New Roman", serif; letter-spacing: .14em; }
-.app-shell--home .app-brand__tagline { font-size: .66rem; letter-spacing: .02em; text-transform: none; }
 .app-shell--home .app-nav { gap: clamp(1rem, 2vw, 2rem); }
 .app-shell--home .app-nav__link { color: var(--home-ink); font-size: .86rem; }
 .app-shell--home .app-nav__link:hover { color: var(--home-forest); text-decoration: none; }
@@ -170,7 +167,6 @@
 
 @media (max-width: 1100px) {
     .app-shell--home .app-header__inner { width: calc(100% - 2rem); min-height: 4.6rem; flex-wrap: nowrap; gap: .7rem; padding: .5rem 0; }
-    .app-shell--home .app-brand__tagline { max-width: 12rem; font-size: .58rem; }
     .app-shell--home .app-nav,.app-shell--home .app-header__profile,.app-shell--home .app-header__actions > .app-nav__link,.app-shell--home .app-logout-form { display: none; }
     .app-shell--home .app-header__actions { width: auto; margin: 0; }
     .app-shell--home .app-header__cta { min-height: 2.45rem; margin: 0; padding: .5rem .7rem; font-size: .75rem; }
@@ -200,9 +196,6 @@
 @media (max-width: 640px) {
     .haven-home { --home-gutter: 1rem; padding-bottom: 3rem; }
     .app-shell--home .app-header__inner { min-height: 4.3rem; }
-    .app-shell--home .app-brand__mark { width: 2.1rem; height: 2.1rem; }
-    .app-shell--home .app-brand__name { font-size: 1.05rem; }
-    .app-shell--home .app-brand__tagline { max-width: 8rem; font-size: .52rem; }
     .haven-home__hero { min-height: min(39rem,calc(100svh - 4.3rem)); }
     .haven-home__hero-image { object-position: 60% center; }
     .haven-home__hero-shade { background: linear-gradient(90deg,rgb(37 37 37 / 76%),rgb(37 37 37 / 19%)),linear-gradient(0deg,rgb(37 37 37 / 48%),transparent 52%); }
@@ -243,7 +236,6 @@
 }
 
 /* HAVEN brand surface and motion refinements */
-.app-shell--home .app-brand__mark { border-radius: var(--haven-radius-sm); background: var(--haven-gold); color: var(--haven-charcoal); }
 .app-shell--home .app-header__cta { border: 1px solid var(--haven-gold); background: var(--haven-gold); color: var(--haven-charcoal); transition: background-color var(--haven-motion-fast) ease, transform var(--haven-motion-fast) var(--haven-ease); }
 .app-shell--home .app-header__cta:hover { border-color: var(--haven-gold-hover); background: var(--haven-gold-hover); transform: translateY(-1px); }
 .haven-home__hero { min-height: clamp(36rem, 60vw, 48rem); background: var(--haven-charcoal); }

@@ -50,7 +50,7 @@ public sealed class ListingVideosMvcTests
             using var other = AntiforgeryTestClient.Create(factory);
             using var registration = await other.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["DisplayName"] = "Other", ["Email"] = "video.other@example.com", ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+                ["DisplayName"] = "Other", ["Email"] = "video.other@example.com", ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
             }));
             Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
             using var forbiddenDelete = await other.PostAsync($"/profile/listings/{listingId}/videos/{videos[0].Id}/delete", new FormUrlEncodedContent([]));
@@ -246,7 +246,7 @@ public sealed class ListingVideosMvcTests
     {
         using var registration = await client.PostAsync("/account/register", new FormUrlEncodedContent(new Dictionary<string, string>
         {
-            ["DisplayName"] = "Video Owner", ["Email"] = email, ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.0.0", ["PrivacyVersion"] = "1.0.0"
+            ["DisplayName"] = "Video Owner", ["Email"] = email, ["Password"] = "StrongPassword123!", ["ConfirmPassword"] = "StrongPassword123!", ["AcceptedTerms"] = "true", ["ConsentedPersonalDataProcessing"] = "true", ["TermsVersion"] = "1.1.0", ["PrivacyVersion"] = "1.1.0"
         }));
         Assert.Equal(HttpStatusCode.Redirect, registration.StatusCode);
         using (var scope = factory.Services.CreateScope())

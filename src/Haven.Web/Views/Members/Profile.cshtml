@@ -1,5 +1,6 @@
 @model Haven.Web.ViewModels.PublicProfileViewModel
 @{
+    ViewData["Title"] = $"Hồ sơ thành viên: {Model.DisplayName}";
     ViewData["MetaDescription"] = $"Tin bất động sản công khai của {Model.DisplayName} trên HAVEN.";
     var avatar = new Haven.Web.ViewModels.AvatarViewModel(Model.AvatarPath, Model.DisplayName, "large");
 }

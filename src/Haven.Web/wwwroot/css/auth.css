@@ -80,36 +80,7 @@
     padding: clamp(1.75rem, 4vw, 4.25rem);
 }
 
-.auth-brand {
-    display: inline-flex;
-    width: fit-content;
-    align-items: center;
-    gap: .75rem;
-    color: var(--haven-white);
-    text-decoration: none;
-    animation: auth-rise 600ms var(--haven-ease) 120ms both;
-}
-
-.auth-brand:hover { color: var(--haven-white); }
-
-.auth-brand__mark {
-    display: grid;
-    width: 2.55rem;
-    aspect-ratio: 1;
-    place-items: center;
-    background: var(--haven-gold);
-    color: var(--haven-charcoal);
-    font-family: var(--haven-font-body);
-    font-size: 1.15rem;
-    font-weight: 700;
-}
-
-.auth-brand__word {
-    font-family: var(--haven-font-display);
-    font-size: 1.65rem;
-    font-weight: 500;
-    letter-spacing: .16em;
-}
+.auth-visual .haven-brand-logo--emblem { width: 4.5rem; height: 4.5rem; animation: auth-rise 600ms var(--haven-ease) 120ms both; }
 
 .auth-content h1 em {
     color: var(--haven-pale-gold);
@@ -369,8 +340,7 @@
     .auth-experience { grid-template-columns: minmax(0, 1fr); }
     .auth-visual { min-height: 11rem; height: 11rem; }
     .auth-visual__content { min-height: 0; flex-direction: row; align-items: flex-start; padding: 1.2rem clamp(1rem, 4vw, 2rem); }
-    .auth-brand__mark { width: 2.2rem; }
-    .auth-brand__word { font-size: 1.4rem; }
+    .auth-visual .haven-brand-logo--emblem { width: 3.5rem; height: 3.5rem; }
     .auth-panel { min-height: calc(100svh - 11rem); padding: 1.35rem clamp(1rem, 6vw, 3rem) 1rem; }
     .auth-content { width: min(100%, 35rem); padding-block: 2rem; }
     .auth-content--register { padding-block: 1.5rem; }
@@ -398,7 +368,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .auth-visual__image,
-    .auth-brand,
+    .auth-visual .haven-brand-logo,
     .auth-content > * { animation: none; }
     .auth-field input,
     .auth-password,

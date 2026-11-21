@@ -63,6 +63,9 @@ public sealed class AdministrativeLocationsMvcTests
         using var response = await client.GetAsync("/properties?provinceCode=01&wardCode=00004");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var html = await response.Content.ReadAsStringAsync();
+        Assert.Contains("data-location-province", html);
+        Assert.Contains("data-location-ward", html);
+        Assert.Contains("/js/listing-images.js", html);
         Assert.Contains("Legacy Ba Dinh", html);
         Assert.DoesNotContain("Other province listing", html);
     }
